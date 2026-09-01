@@ -1,0 +1,410 @@
+[
+  {
+    "id": "a-01",
+    "slug": "ledition-contre-le-fil",
+    "title": "L’édition contre le fil",
+    "dek": "Un cahier de dix textes n’est pas un réseau social. C’est une clôture volontaire.",
+    "body": "On a pris l’habitude d’appeler « information » ce qui défile. Un fil n’a pas de fin, donc pas de jugement. Il remplace la lecture par la réaction. Il te rend disponible, pas informé.\n\nUne édition est l’inverse. On choisit. On ferme. On assume qu’il y a des textes hors de la journée, et que ce n’est pas un échec. Dix articles, ce n’est pas une restriction marketing. C’est une forme : le journal du matin, le cahier du soir.\n\nLa philosophie sert ici de méthode, pas de décor. Qu’est-ce qui mérite une heure ? Qu’est-ce qui ne mérite qu’un titre ? Si tu ne peux pas le dire, tu n’as pas lu, tu as scrollé.\n\nCe cahier n’essaie pas de te retenir. Il essaie de te rendre à ta journée avec trois ou quatre phrases que tu pourrais annoter. Le reste — likes, streaks, « for you » — est le bruit que l’on laisse dehors.\n\nSi un texte t’arrête, découpe-le. Écris dans la marge. C’est le seul algorithme qui tienne : ta main.",
+    "section": "philosophie",
+    "publishedAt": "2026-09-01T06:00:00-04:00",
+    "editionDate": "2026-09-01",
+    "rank": 1,
+    "readingMinutes": 6,
+    "source": "Cabinet ZLN",
+    "region": "CULTURE",
+    "keywords": [
+      "édition",
+      "attention",
+      "lecture",
+      "réseaux"
+    ]
+  },
+  {
+    "id": "a-02",
+    "slug": "local-first-memoire",
+    "title": "Local-first, ou la mémoire qui t’appartient",
+    "dek": "Un carnet hors-ligne n’est pas un repli. C’est une architecture.",
+    "body": "Les applications de lecture ont appris à traiter tes notes comme un produit d’engagement. Elles vivent « dans le cloud », ce qui veut souvent dire : elles vivent chez quelqu’un d’autre, indexées pour te ramener.\n\nLocal-first inverse la charge. L’appareil est la source. Le serveur, s’il existe, est une réplique. La sync n’est pas un rite de connexion ; c’est une file d’opérations idempotentes que tu peux rejouer.\n\nC’est une décision d’informatique, pas un slogan. Tu acceptes les conflits. Tu dates chaque écriture. Tu refuses qu’une perte de réseau efface une pensée de 23 h.\n\nDans ce cahier, les coupures et les notes tiennent sans API. Si un endpoint PHP répond, on pousse la file puis on tire. Si le réseau ment, on continue d’écrire. L’édition du jour peut manquer ; le classeur, non.\n\nLa question n’est pas « cloud ou local ». C’est : qui peut t’interrompre au milieu d’une phrase ?",
+    "section": "informatique",
+    "publishedAt": "2026-09-01T06:10:00-04:00",
+    "editionDate": "2026-09-01",
+    "rank": 2,
+    "readingMinutes": 7,
+    "source": "Atelier",
+    "region": "TECH",
+    "keywords": [
+      "local-first",
+      "sync",
+      "architecture",
+      "notes"
+    ]
+  },
+  {
+    "id": "a-03",
+    "slug": "grain-avant-abstraction",
+    "title": "Le grain avant l’abstraction",
+    "dek": "Un écran de trop, une table de trop : le code commence par ce que tu comptes.",
+    "body": "On enseigne encore la programmation par les outils. Framework, store global, « clean architecture » photocopiée. Puis le produit ne sait plus ce qu’il affiche.\n\nLe grain est la première décision. Une édition, c’est dix articles datés. Une note, c’est un texte lié ou non à un article. Une coupure, c’est un identifiant d’article et un horodatage. Si tu ne peux pas le dire en une phrase, tu n’as pas un modèle : tu as un tas.\n\nFacebook à l’échelle n’a pas commencé par la beauté des composants. Il a commencé par des objets stables, des files, des versions, des lectures qui ne bloquent pas les écritures. La leçon utile n’est pas de copier leur surface. C’est de refuser le flou.\n\nDans une app de lecture, l’abstraction trop tôt produit le fil infini : on ne sait plus ce qu’est « assez ». Le composant Card devient le produit. Tu te retrouves à optimiser un placeholder.\n\nÉcris d’abord le contrat. Ensuite le store. Ensuite l’écran. Si l’écran dicte le contrat, tu auras un beau générique — et rien à transmettre.",
+    "section": "programmation",
+    "publishedAt": "2026-09-01T06:20:00-04:00",
+    "editionDate": "2026-09-01",
+    "rank": 3,
+    "readingMinutes": 8,
+    "source": "Atelier",
+    "region": "TECH",
+    "keywords": [
+      "grain",
+      "modèle",
+      "react-native",
+      "contrat"
+    ]
+  },
+  {
+    "id": "a-04",
+    "slug": "la-source-nest-pas-le-rapport",
+    "title": "La source n’est pas le rapport",
+    "dek": "Un tableau de bord qui se prend pour l’usine ment deux fois : au métier, et à lui-même.",
+    "body": "L’intelligence d’affaires commence trop souvent à la fin : la jauge, la couleur, le titre de section. On inverse ensuite pour trouver une colonne qui « fasse le chiffre ». C’est ainsi qu’un rapport devient une source fantôme.\n\nLa méthode tient en une ligne : question métier → grain → clé → source de vérité. Tant que la question n’est pas écrite, le visuel est du décor. Tant que le grain n’est pas unique, la somme est une opinion.\n\nLe mart se lit. Il ne se réinvente pas dans l’outil de présentation. Deux lecteurs — un logiciel de BI, un autre — peuvent regarder la même table. S’ils divergent, ce n’est pas « une question de visuel ». C’est que quelqu’un a recalculé.\n\nCe texte n’apporte aucun résultat chiffré. Ce n’est pas un oubli. C’est la discipline : on ne fabrique pas un KPI pour habiller une démo. On décrit le chemin, on pointe le trou, on s’arrête.\n\nSi tu remplaces un fil social par un cahier, applique la même hygiène. Une phrase annotée vaut mieux qu’une certitude inventée.",
+    "section": "intelligence_affaires",
+    "publishedAt": "2026-09-01T06:30:00-04:00",
+    "editionDate": "2026-09-01",
+    "rank": 4,
+    "readingMinutes": 7,
+    "source": "Décision",
+    "region": "TECH",
+    "keywords": [
+      "grain",
+      "source",
+      "mart",
+      "méthode"
+    ]
+  },
+  {
+    "id": "a-05",
+    "slug": "operationnel-pas-une-copie",
+    "title": "L’opérationnel n’est pas une copie",
+    "dek": "Un ERP vivant n’est pas un export. Le traiter comme un fichier, c’est déjà se tromper de grain.",
+    "body": "On parle de Sage X3 comme d’une « base » qu’on interrogerait en passant. C’est commode. C’est faux comme méthode. L’opérationnel est le lieu où les mouvements existent. Une copie, une fenêtre, un entrepôt : ce sont des lectures, pas le plateau.\n\nLa tentation du développeur mobile est de tout aplatir : produit, lot, site, date, dans une carte. Ça se vend bien en démo. Ça casse dès qu’on change d’unité, de dépôt, de statut.\n\nLe bon réflexe n’est pas d’inventer une seconde vérité « pour l’app ». C’est de savoir ce que tu montres : un article de lecture sur le domaine, ou une donnée certifiée. Ici, on est dans le premier cas. L’app n’est pas un client ERP.\n\nQuand une équipe mélange les deux, elle finit par mettre un DirectQuery sur un indicateur exécutif, « pour que ce soit live ». Live et juste ne sont pas synonymes. Live et lisible non plus.\n\nGarde l’usine à l’usine. Le cahier commente le métier. Il ne le remplace pas.",
+    "section": "sage_x3",
+    "publishedAt": "2026-09-01T06:40:00-04:00",
+    "editionDate": "2026-09-01",
+    "rank": 5,
+    "readingMinutes": 6,
+    "source": "Décision",
+    "region": "TECH",
+    "keywords": [
+      "sage",
+      "erp",
+      "opérationnel",
+      "grain"
+    ]
+  },
+  {
+    "id": "a-06",
+    "slug": "cloner-ne-pas-inventer",
+    "title": "Cloner, ne pas inventer",
+    "dek": "Un champ déjà certifié en production n’est pas une suggestion. C’est une frontière.",
+    "body": "Nectari — parfois écrit Netari dans les briefs trop vite tapés — n’est pas un terrain d’improvisation. Quand un indicateur est déjà nommé, déjà filtré, déjà tenu par une équipe, la tâche n’est pas d’être créatif sur la formule. C’est d’être fidèle.\n\nInventer une mesure « équivalente » est le geste le plus coûteux d’un projet BI. Tu gagnes une semaine de démo. Tu perds deux ans de réconciliation.\n\nLa règle est sèche : cloner le champ certifié. Si tu ne peux pas le pointer, tu écris « je ne peux pas le vérifier ». Tu n’arrondis pas. Tu ne « fais une moyenne des pourcentages » pour que le total ait l’air d’un total.\n\nCette app n’embarque aucune formule de prod. Elle embarque l’habitude : distinguer l’observé, l’inféré, et ce qui reste à valider. C’est déjà plus rare qu’un nouveau thème de rapport.\n\nSi tu annotes un article sur Nectari, annote la question, pas un chiffre que tu n’as pas lu.",
+    "section": "nectari",
+    "publishedAt": "2026-09-01T06:50:00-04:00",
+    "editionDate": "2026-09-01",
+    "rank": 6,
+    "readingMinutes": 6,
+    "source": "Décision",
+    "region": "TECH",
+    "keywords": [
+      "nectari",
+      "netari",
+      "certifié",
+      "mesure"
+    ]
+  },
+  {
+    "id": "a-07",
+    "slug": "horloge-pas-le-metier",
+    "title": "L’horloge n’est pas le métier",
+    "dek": "Jitterbit cadence. Il ne décide pas ce qu’est une commande, un lot, une vérité.",
+    "body": "On demande trop souvent à une plateforme d’intégration d’être intelligente. Or son talent est d’être ponctuelle. Elle part, elle arrive, elle réessaie, elle journalise. C’est déjà un métier entier.\n\nQuand l’horloge se prend pour le dictionnaire, les champs se traduisent « à peu près ». Le mapping devient une opinion. Les retries multiplient une erreur polie.\n\nLa bonne conversation n’est pas « on lance un Run Now ». C’est : quel contrat d’interface, quelle idempotence, quelle fenêtre, qui lit quoi après. L’outil n’est pas la source. Il est le tempo.\n\nPour une app mobile, la leçon est directe. Ton endpoint PHP n’est pas Jitterbit. Ta file locale n’est pas un ERP. Si tu sync, tu sync des notes et des coupures — des objets petits, datés, rejouables.\n\nGarde l’horloge à l’horloge. Le sens reste dans les tables métier, et dans tes phrases.",
+    "section": "jitterbit",
+    "publishedAt": "2026-09-01T07:00:00-04:00",
+    "editionDate": "2026-09-01",
+    "rank": 7,
+    "readingMinutes": 6,
+    "source": "Décision",
+    "region": "TECH",
+    "keywords": [
+      "jitterbit",
+      "intégration",
+      "idempotence",
+      "contrat"
+    ]
+  },
+  {
+    "id": "a-08",
+    "slug": "un-ratio-ne-se-somme-pas",
+    "title": "Un ratio ne se somme pas",
+    "dek": "Power BI n’est pas coupable. La somme d’un pourcentage, si.",
+    "body": "Le geste le plus fréquent dans un modèle mal tenu : prendre une colonne déjà en %, la glisser dans Valeurs, laisser Somme. Le total a l’air d’un indicateur. C’est une addition de parts.\n\nLe mart se lit avec le grain de la table. Une ligne de fait n’est pas une ligne de tableau de bord. Une mesure d’âge, de rendement, de taux, se recalcule au niveau du filtre, ou elle se refuse.\n\nStar schema n’est pas un poster. C’est la discipline qui empêche le visuel de mentir plus vite que le SQL. Dimensions stables. Faits additifs là où l’addition a un sens. Semi-additifs nommés comme tels.\n\nCe cahier n’affiche aucun total Power BI. Il te rappelle la règle pour quand tu retourneras au modèle : pas de créativité sur le chiffre. La créativité, c’est le diagnostic — trouver où le grain a glissé.\n\nSi tu veux un souvenir utile, écris-le dans le classeur : « jamais Sommer un ratio ». Une ligne. Ça vaut un atelier.",
+    "section": "power_bi",
+    "publishedAt": "2026-09-01T07:10:00-04:00",
+    "editionDate": "2026-09-01",
+    "rank": 8,
+    "readingMinutes": 6,
+    "source": "Décision",
+    "region": "TECH",
+    "keywords": [
+      "power bi",
+      "ratio",
+      "grain",
+      "étoile"
+    ]
+  },
+  {
+    "id": "a-09",
+    "slug": "conversation-publique-hors-des-murs",
+    "title": "La conversation publique hors des murs",
+    "dek": "La politique québécoise n’a pas besoin d’un autre fil. Elle a besoin de phrases qui tiennent.",
+    "body": "On discute trop souvent Québec comme on discute une série : épisode, punch, camp. L’Assemblée, les régions, les commissions — tout ça devient un personnage. C’est efficace. C’est pauvre.\n\nLire un débat, c’est accepter la lenteur : un projet de loi a une mémoire, une opposition a des motifs qui ne tiennent pas en une capture, une région n’est pas un « sentiment ».\n\nCe texte ne tranche aucun dossier du jour. Il pose une règle de lecture. Distingue le communiqué, le reportage, l’analyse. Annote ce qui est tenu par une source, ce que tu infères, ce que tu dois vérifier.\n\nRemplacer les médias sociaux, ici, ce n’est pas « s’informer plus ». C’est s’informer moins souvent, plus complètement. Un article québécois dans l’édition, puis silence. Pas une deuxième fenêtre « au cas où ».\n\nLa cité tient si on lui laisse des paragraphes.",
+    "section": "politique_quebecoise",
+    "publishedAt": "2026-09-01T07:20:00-04:00",
+    "editionDate": "2026-09-01",
+    "rank": 9,
+    "readingMinutes": 6,
+    "source": "Cité",
+    "region": "QC",
+    "keywords": [
+      "québec",
+      "politique",
+      "assemblée",
+      "lecture"
+    ]
+  },
+  {
+    "id": "a-10",
+    "slug": "forme-longue-hip-hop",
+    "title": "La forme longue dans un genre qu’on dit court",
+    "dek": "Le hip-hop n’est pas un extrait. C’est une archive orale avec des règles de vers.",
+    "body": "On réduit le hip-hop à un refrain qui tient dans une story. C’est pratique pour les plateformes. C’est faux pour le genre. Un couplet a une architecture. Un disque a une saison. Une ville a une syntaxe.\n\nLire le hip-hop comme on lit un essai n’est pas une promotion. C’est refuser que le rythme serve uniquement à retenir le pouce. Annoter une rime interne, une ellipse, une date — c’est le même geste que d’annoter un article de politique : nommer ce qui est là.\n\nLa culture, dans ce cahier, n’est pas la pause « lifestyle » après les textes sérieux. C’est un autre sérieux. Le beat n’annule pas l’argument.\n\nSi tu découpes un texte ici, ne le réduis pas à une punchline. Garde deux phrases de plus que le marketing n’en voudrait. C’est déjà une éthique d’écoute.\n\nLe fil social vend l’extrait. Le classeur garde le couplet.",
+    "section": "hip_hop",
+    "publishedAt": "2026-09-01T07:30:00-04:00",
+    "editionDate": "2026-09-01",
+    "rank": 10,
+    "readingMinutes": 5,
+    "source": "Culture",
+    "region": "CULTURE",
+    "keywords": [
+      "hip-hop",
+      "forme",
+      "archive",
+      "écoute"
+    ]
+  },
+  {
+    "id": "a-11",
+    "slug": "cpq-regles-avant-ecran",
+    "title": "CPQ : les règles avant l’écran",
+    "dek": "Configurer un prix n’est pas un formulaire. C’est un graphe de contraintes.",
+    "body": "Le CPQ échoue quand on commence par les champs. On ajoute une option, puis une exception, puis un prix « spécial rep ». Six mois plus tard, personne ne peut expliquer pourquoi deux devis identiques divergent.\n\nProgrammer un CPQ, c’est écrire des règles testables : préconditions, exclusions, barèmes, unités. L’UI n’est que la projection d’un moteur qui devrait pouvoir tourner sans écran.\n\nComme pour un modèle BI, le grain compte. Une ligne de devis n’est pas un produit catalogue. Une remise n’est pas un sentiment commercial.\n\nDans une app de lecture, on n’exécute pas de moteur de prix. On rappelle la méthode : extraire les règles, les nommer, les versionner. Le reste est du théâtre de démonstration.\n\nSi tu annotes, annote une contrainte, pas un tarif inventé.",
+    "section": "cpq",
+    "publishedAt": "2026-08-31T09:00:00-04:00",
+    "readingMinutes": 7,
+    "source": "Atelier",
+    "region": "TECH",
+    "keywords": [
+      "cpq",
+      "règles",
+      "devis",
+      "contraintes"
+    ]
+  },
+  {
+    "id": "a-12",
+    "slug": "vocabulaire-du-domaine",
+    "title": "Le vocabulaire est le domaine",
+    "dek": "Tant que « produit », « article » et « item » veulent trois choses, le logiciel mentira poliment.",
+    "body": "On parle d’informatique de domaine comme d’une couche. C’est d’abord un dictionnaire tenu. Si l’équipe n’a pas le même mot pour le même grain, chaque écran devient une traduction.\n\nLe travail ingrat — et le seul qui tienne — : écrire ce que signifie une clé, ce qui est obligatoire, ce qui est une vue. Puis le répéter dans le code, dans l’API, dans le cahier.\n\nLes apps génériques ont l’air propres parce qu’elles n’ont pas de domaine. Elles ont des « items ». Toi, tu as des éditions, des rubriques, des coupures. C’est plus étroit. C’est mieux.\n\nRefuse les synonymes confortables. Un bookmark n’est pas une note. Une note liée n’est pas une note libre. Si tu les fusionnes pour « simplifier l’UX », tu paieras en écrans fourre-tout.\n\nLe domaine n’est pas un diagramme. C’est la phrase que tu peux dire à voix haute.",
+    "section": "domaine_informatique",
+    "publishedAt": "2026-08-30T10:00:00-04:00",
+    "readingMinutes": 6,
+    "source": "Atelier",
+    "region": "TECH",
+    "keywords": [
+      "domaine",
+      "vocabulaire",
+      "clé",
+      "modèle"
+    ]
+  },
+  {
+    "id": "a-13",
+    "slug": "lire-le-monde-sans-alerte",
+    "title": "Lire le monde sans alerte",
+    "dek": "L’international n’est pas une notification. C’est une carte trop grande pour un pouce.",
+    "body": "Une guerre, une élection, une route commerciale : le fil les réduit à une émotion renouvelable. Tu reviens. Tu n’avances pas.\n\nUne édition internationale devrait faire l’inverse. Un texte. Un contexte. Une date. Pas cinq « développements » qui répètent le même paragraphe avec un mot changé.\n\nCe cahier n’invente pas un diplomatique du jour. Il te propose une posture : choisir une région, lire jusqu’au bout, annoter une cause, pas un camp.\n\nLe monde tient mal dans une carte verticale. Il tient un peu mieux dans un article que tu peux relire demain.\n\nFerme l’édition après. Le monde continuera sans ta vigilance en rafale.",
+    "section": "nouvelles_internationales",
+    "publishedAt": "2026-08-29T08:00:00-04:00",
+    "readingMinutes": 5,
+    "source": "Monde",
+    "region": "INTL",
+    "keywords": [
+      "international",
+      "contexte",
+      "alerte"
+    ]
+  },
+  {
+    "id": "a-14",
+    "slug": "canada-hors-du-cycle",
+    "title": "Le Canada hors du cycle",
+    "dek": "Un pays n’est pas une « journée en politique ». C’est des institutions qui survivent aux fils.",
+    "body": "Les nouvelles canadiennes, en mode réseau, deviennent un sport de réaction : une déclaration, une réplique, un sondage. On oublie les délais, les cours, les agences, les provinces qui ne rentrent pas dans le cadre.\n\nLire le Canada, c’est accepter le fédéral comme une mécanique, pas comme une humeur. Un budget a des annexes. Un règlement a une gazette. C’est moins vif. C’est plus vrai.\n\nDans ce cahier, un article canadien n’essaie pas de « gagner la journée ». Il essaie de rester exact demain matin.\n\nSi tu notes, note l’institution, pas l’insulte.",
+    "section": "nouvelles_canadiennes",
+    "publishedAt": "2026-08-28T08:00:00-04:00",
+    "readingMinutes": 5,
+    "source": "Monde",
+    "region": "CA",
+    "keywords": [
+      "canada",
+      "institutions",
+      "fédéral"
+    ]
+  },
+  {
+    "id": "a-15",
+    "slug": "etats-unis-sans-la-chaine",
+    "title": "Les États-Unis sans la chaîne",
+    "dek": "Ôter le plateau télé d’un article américain, c’est déjà faire la moitié du travail.",
+    "body": "L’actualité américaine est conçue pour le duplex. Deux camps, un chronomètre, une phrase qui claque. Le texte long dérange parce qu’il réintroduit les procédures, les États, les cours, l’ordinaire administratif.\n\nUne lecture utile commence par retrancher le studio. Que reste-t-il ? Une décision, une loi, une statistique sourcée — ou seulement une humeur nationale ?\n\nCe cahier ne joue pas les correspondants. Il te demande de traiter un article US comme n’importe quel autre : grain, source, ce qui est observé.\n\nSi ça ne tient pas sans le plateau, ce n’était pas un article. C’était une émission.",
+    "section": "nouvelles_americaines",
+    "publishedAt": "2026-08-27T08:00:00-04:00",
+    "readingMinutes": 5,
+    "source": "Monde",
+    "region": "US",
+    "keywords": [
+      "états-unis",
+      "média",
+      "procédure"
+    ]
+  },
+  {
+    "id": "a-16",
+    "slug": "quebec-en-phrases-longues",
+    "title": "Le Québec en phrases longues",
+    "dek": "Les nouvelles québécoises méritent plus que le ton de la réplique.",
+    "body": "Le Québec a une presse, des régions, une langue publique qui n’est pas un décor. Le fil les aplatit : une polémique montréalaise devient « le Québec », une météo d’humeur devient une identité.\n\nLire ici, c’est allonger la phrase. Nommer la ville. Distinguer un fait municipal d’un débat national. Laisser la place à ce qui n’est pas viral.\n\nCe n’est pas du régionalisme. C’est du respect de grain : Québec n’est pas une catégorie lifestyle.\n\nDécoupe ce qui t’apprend quelque chose sur un lieu. Laisse le reste au silence.",
+    "section": "nouvelles_quebecoises",
+    "publishedAt": "2026-08-26T08:00:00-04:00",
+    "readingMinutes": 5,
+    "source": "Monde",
+    "region": "QC",
+    "keywords": [
+      "québec",
+      "régions",
+      "presse"
+    ]
+  },
+  {
+    "id": "a-17",
+    "slug": "pouvoir-sans-carte-mentale",
+    "title": "Le pouvoir sans carte mentale",
+    "dek": "La politique internationale n’est pas une galerie de visages. C’est des leviers.",
+    "body": "On reconnaît un mauvais article international à ceci : il a des noms, pas des leviers. Sanctions, alliances, routes, cours de change, traités — tout ça disparaît derrière un regard de sommet.\n\nLire, c’est redessiner la carte. Qui peut bloquer quoi. Qui dépend de qui. Quelle institution survit à un cycle électoral.\n\nEncore une fois : pas de « update » inventé ici. Une méthode. Si tu ne peux pas citer un levier, tu as lu une scène.\n\nLe classeur aime les leviers. Ils se relisent.",
+    "section": "politique_internationale",
+    "publishedAt": "2026-08-25T09:00:00-04:00",
+    "readingMinutes": 6,
+    "source": "Cité",
+    "region": "INTL",
+    "keywords": [
+      "géopolitique",
+      "leviers",
+      "institutions"
+    ]
+  },
+  {
+    "id": "a-18",
+    "slug": "compromis-federal",
+    "title": "Le compromis fédéral n’est pas une faiblesse de caractère",
+    "dek": "La politique canadienne se lit mal si on y cherche des victoires nettes.",
+    "body": "Le fédéral canadien est une machine à compromis. Le fil social y voit de l’indécision. Un lecteur un peu plus lent y voit la condition d’un pays trop large pour les slogans d’une ville.\n\nLire Ottawa, c’est lire des compétences, des transferts, des cours, des délais. C’est moins glorieux qu’une phrase de debat. C’est le vrai matériau.\n\nAnnote les compétences, pas les répliques. Tu te constitueras un classeur utilisable — rare.",
+    "section": "politique_canadienne",
+    "publishedAt": "2026-08-24T09:00:00-04:00",
+    "readingMinutes": 5,
+    "source": "Cité",
+    "region": "CA",
+    "keywords": [
+      "ottawa",
+      "fédéral",
+      "compétences"
+    ]
+  },
+  {
+    "id": "a-19",
+    "slug": "tests-avant-le-theme",
+    "title": "Les tests avant le thème",
+    "dek": "Un écran beau et non testé redevient un fil : on ne sait plus ce qui a cassé.",
+    "body": "La programmation mobile aime la démo. Navigation fluide, ombres, onboarding. Puis quelqu’un change le grain d’une note et le classeur ment.\n\nFacebook à l’échelle n’a pas survécu grâce à un dégradé. Grâce à des contrats, des flags, des tests qui échouent tôt. Tu n’as pas leur infra. Tu as le droit à la même hygiène à petite échelle : fonctions pures pour l’édition, la recherche, la file de sync.\n\nUn test d’écran complet est fragile. Un test de `toggleBookmark` ne l’est pas. C’est là qu’on place l’effort.\n\nLe thème bleu peut attendre cinq minutes. Le contrat, non.",
+    "section": "programmation",
+    "publishedAt": "2026-08-23T11:00:00-04:00",
+    "readingMinutes": 6,
+    "source": "Atelier",
+    "region": "TECH",
+    "keywords": [
+      "tests",
+      "contrat",
+      "react-native"
+    ]
+  },
+  {
+    "id": "a-20",
+    "slug": "marge-comme-methode",
+    "title": "La marge comme méthode",
+    "dek": "Annoter n’est pas collectionner. C’est décider qu’une phrase te servira plus tard.",
+    "body": "Les applications de notes ont gagné en meubles : tags, graphes, backlinks. On y passe plus de temps à classer qu’à relire. C’est encore un fil, seulement plus vaniteux.\n\nUne bonne note de lecture a trois mouvements. Ce qui est dit. Ce que j’en fais. Ce que je dois vérifier. Si tu n’as que le premier, tu as un surlignage.\n\nLa philosophie, ici, n’est pas une rubrique de citations. C’est l’habitude de ne pas croire trop vite une phrase bien écrite — y compris la tienne.\n\nLe classeur de cette app est volontairement étroit. Titre, corps, lien optionnel vers un article. Assez pour une pensée. Pas assez pour un second métier.\n\nSi tu remplis le classeur pour te sentir productif, ferme l’app. Le but était de remplacer le scroll, pas de le reloger.",
+    "section": "philosophie",
+    "publishedAt": "2026-08-22T11:00:00-04:00",
+    "readingMinutes": 6,
+    "source": "Cabinet ZLN",
+    "region": "CULTURE",
+    "keywords": [
+      "notes",
+      "annotation",
+      "méthode"
+    ]
+  },
+  {
+    "id": "a-21",
+    "slug": "modele-etoile-sans-poster",
+    "title": "Le modèle en étoile, sans le poster",
+    "dek": "Une dimension n’est pas un filtre joli. C’est une clé que tu peux défendre.",
+    "body": "On affiche des diagrammes en étoile dans les corridors. Puis, dans le fichier, on trouve une table « fourre-tout » avec vingt attributs dégénérés et un pourcentage stocké.\n\nPower BI amplifie ce qu’on lui donne. S’il est beau et faux, c’est que le modèle était déjà faux. L’outil a seulement accéléré la circulation.\n\nLa checklist tient sans magie : grain de la fait, unicité, unité, site si le métier est situlé, réconciliation contre une vue déjà tenue. Pas de « c’est presque ça ».\n\nCe texte ne certifie rien. Il te donne la liste à recopier dans une note, pour la prochaine revue de modèle.",
+    "section": "power_bi",
+    "publishedAt": "2026-08-21T11:00:00-04:00",
+    "readingMinutes": 6,
+    "source": "Décision",
+    "region": "TECH",
+    "keywords": [
+      "étoile",
+      "dimension",
+      "fait",
+      "réconciliation"
+    ]
+  },
+  {
+    "id": "a-22",
+    "slug": "ville-et-syntaxe",
+    "title": "Une ville, une syntaxe",
+    "dek": "Le hip-hop change de grammaire selon le trottoir. L’extrait global l’efface.",
+    "body": "On parle « du » hip-hop comme on parle « d’internet ». C’est une paresse utile aux playlists. Une ville a des ellipses, des tempos, des dettes à d’autres disques.\n\nÉcouter longtemps, c’est accepter de ne pas tout convertir en tendance. Un morceau de 2003 n’est pas un contenu. C’est une adresse.\n\nDans le classeur, une note de hip-hop devrait pouvoir citer une barre et une date, pas seulement une humeur. Sinon tu collectionnes des stickers.\n\nLa culture, encore une fois, n’est pas la récompense après le travail. C’est un travail d’oreille.",
+    "section": "hip_hop",
+    "publishedAt": "2026-08-20T18:00:00-04:00",
+    "readingMinutes": 5,
+    "source": "Culture",
+    "region": "CULTURE",
+    "keywords": [
+      "ville",
+      "syntaxe",
+      "écoute",
+      "archive"
+    ]
+  }
+]
