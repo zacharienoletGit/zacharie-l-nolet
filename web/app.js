@@ -11,7 +11,7 @@
   const flash = () => {};
   const store = {
     get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
-    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* stockage indisponible */ } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
   };
   /* Re-rendre un bloc sans perdre le focus clavier. */
   const keepFocus = (render) => {
@@ -438,8 +438,18 @@
   renderOps();
 
   const renderMerge = () => {
-    const tl = /^\d{2}:\d{2}$/.test($('tLocal').value) ? $('tLocal').value : '08:14';
-    const tr = /^\d{2}:\d{2}$/.test($('tRemote').value) ? $('tRemote').value : '08:20';
+    const tl = $('tLocal').value;
+    const tr = $('tRemote').value;
+    const out0 = $('mergeOut');
+    const okL = /^\d{2}:\d{2}$/.test(tl);
+    const okR = /^\d{2}:\d{2}$/.test(tr);
+    $('tLocal').setAttribute('aria-invalid', String(!okL));
+    $('tRemote').setAttribute('aria-invalid', String(!okR));
+    if (!okL || !okR) {
+      out0.className = 'verdict';
+      out0.textContent = 'Indiquez les deux heures pour voir qui gagne.';
+      return;
+    }
     const local = [{ id: 'note_demo_001', title: 'Clôture volontaire', body: 'Version appareil', updatedAt: `2026-09-01T${tl}:00-04:00` }];
     const remote = [{ id: 'note_demo_001', title: 'Clôture volontaire', body: 'Version serveur', updatedAt: `2026-09-01T${tr}:00-04:00` }];
     const [winner] = mergeNotes(local, remote);
@@ -454,14 +464,14 @@
 
   /* ---------- 04 Ratio ---------- */
   const ratioIds = [['r1a', 'r1b'], ['r2a', 'r2b'], ['r3a', 'r3b']];
-  const readNum = (id) => { const v = Number($(id).value); return Number.isFinite(v) ? v : NaN; };
+  const readNum = (id) => { const raw = $(id).value.trim(); if (raw === '') return NaN; const v = Number(raw); return Number.isFinite(v) ? v : NaN; };
   const renderRatio = () => {
     const err = $('ratioErr');
     const raw = ratioIds.map(([a, b]) => ({ onTime: readNum(a), total: readNum(b) }));
     const badRow = raw.findIndex(r => !Number.isFinite(r.onTime) || !Number.isFinite(r.total) || r.onTime < 0 || r.total <= 0 || r.onTime > r.total || r.total > 1000000);
     ratioIds.forEach(([a, b], i) => { $(a).setAttribute('aria-invalid', String(i === badRow)); $(b).setAttribute('aria-invalid', String(i === badRow)); });
     if (badRow >= 0) {
-      err.textContent = 'Une ligne est impossible : le total doit être entre 1 et 1 000 000, et au moins égal aux livraisons à temps.';
+      err.textContent = 'Une ligne est incomplète ou impossible : les deux nombres sont requis, le total doit être entre 1 et 1 000 000 et au moins égal aux livraisons à temps.';
       err.hidden = false;
       document.querySelectorAll('#ratioTable [data-rate]').forEach(c => { c.textContent = '—'; });
       $('rAvg').textContent = '—';
@@ -540,9 +550,9 @@
       : '<li class="empty">Aucune note. Écrivez-en une.</li>';
     ul.querySelectorAll('.x').forEach(b => b.addEventListener('click', () => {
       notes.splice(Number(b.dataset.i), 1);
-      store.set('zln-feuilles', notes);
+      const saved = store.set('zln-feuilles', notes);
       renderNotes();
-      $('nStatus').textContent = 'Note retirée.';
+      $('nStatus').textContent = saved ? 'Note retirée.' : 'Note retirée pour cette visite seulement : le navigateur refuse le stockage local.';
     }));
     renderMd();
   });
@@ -556,11 +566,11 @@
     if (notes.length >= 60) { showNErr('Soixante notes, c’est un classeur plein. Retirez-en avant d’en ajouter.'); return; }
     showNErr('');
     notes.push({ title: title.slice(0, 120), body: body.slice(0, 2000) });
-    store.set('zln-feuilles', notes);
+    const saved = store.set('zln-feuilles', notes);
     $('nTitle').value = '';
     $('nBody').value = '';
     renderNotes();
-    $('nStatus').textContent = 'Note enregistrée.';
+    $('nStatus').textContent = saved ? 'Note enregistrée.' : 'Note gardée pour cette visite seulement : le navigateur refuse le stockage local.';
     $('nTitle').focus();
   });
   $('nBody').addEventListener('input', () => { if (!nErr.hidden && $('nBody').value.trim()) showNErr(''); });
