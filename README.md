@@ -144,6 +144,7 @@ Le JS est partagé. La cible de design est **iPhone**.
 - `docs/UX-CLASSEUR.md` — spec coupures / notes
 - `docs/TESTING.md` — tests et perf
 - `docs/REPRODUCE.md` — prompts de rôle pour un autre développeur
+- `web/index.html` — cahier de compétences (bio, parcours, preuves exécutées, Cité). Un seul fichier, à ouvrir dans un navigateur.
 
 ## Licence
 
