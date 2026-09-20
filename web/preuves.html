@@ -57,8 +57,8 @@
       <header>
         <span class="rank">01</span>
         <h3>Une recherche qui tolère les accents</h3>
-        <p class="what"><strong>En clair :</strong> vos utilisateurs tapent « quebec » ou « ETOILE » sans accent, et trouvent quand même « Québec » et « étoile ». Pas de résultat vide pour une faute de clavier.</p>
-        <p class="what">La requête et les textes sont ramenés à une forme sans accent ni majuscule avant d’être comparés. <span class="claim">Un test automatique vérifie que « Netari » ne trouve rien (une vraie faute) et que « nectari » trouve Nectari.</span></p>
+        <p class="what"><strong>En clair :</strong> vos utilisateurs tapent « etoile » ou « ETOILE » sans accent, et trouvent quand même « étoile ». Une faute fréquente comme « Netari » peut aussi être prévue et mener à Nectari.</p>
+        <p class="what">La requête et les textes sont ramenés à une forme sans accent ni majuscule avant d’être comparés. <span class="claim">Un test automatique vérifie que « Netari », faute fréquente inscrite comme mot-clé, trouve bien Nectari.</span> Le catalogue de démonstration contient les textes techniques du projet.</p>
       </header>
       <div class="src">
         <span class="kicker">Le code qui tourne</span>
@@ -67,15 +67,15 @@
       </div>
       <div class="demo">
         <figure class="video">
-  <video id="v-demo-recherche" controls muted playsinline preload="none" poster="video/demo-recherche.jpg" width="1280" height="720" aria-label="La recherche tolère les accents et les majuscules, en 11 secondes">
+  <video id="v-demo-recherche" controls muted playsinline preload="none" poster="video/demo-recherche.jpg" width="1280" height="720" aria-label="La recherche tolère les accents et les majuscules, en 10 secondes">
     <source src="video/demo-recherche.mp4" type="video/mp4">
     <track kind="captions" src="video/demo-recherche.fr.vtt" srclang="fr" label="Français" default>
     Votre navigateur ne lit pas cette vidéo. <a href="video/demo-recherche.mp4">Télécharger le clip (MP4)</a>.
   </video>
-  <figcaption>Regardez d’abord : « quebec », « ETOILE », « Netari », « nectari ».</figcaption>
+  <figcaption>Regardez d’abord : « etoile », « ETOILE », « Netari », « ratio ».</figcaption>
 </figure>
         <span class="kicker">Essayez</span>
-        <div class="field"><label for="q">Tapez une recherche</label><input type="search" id="q" value="quebec" autocomplete="off" spellcheck="false" maxlength="80"></div>
+        <div class="field"><label for="q">Tapez une recherche</label><input type="search" id="q" value="etoile" autocomplete="off" spellcheck="false" maxlength="80"></div>
         <div class="field"><label for="qs">Rubrique</label><select id="qs"><option value="">Toutes</option></select></div>
         <p class="out" id="qn"></p>
         <ol class="list" id="qout"></ol>

@@ -1,13 +1,13 @@
 WEBVTT
 
-00:00.500 --> 00:03.000
-Recherche : l’utilisateur tape « quebec » sans accent.
+00:00.300 --> 00:02.400
+Recherche : l’utilisateur tape « etoile » sans accent.
 
-00:03.000 --> 00:05.500
-Les textes sur le Québec sont trouvés quand même.
+00:02.400 --> 00:04.600
+Le texte sur le modèle en étoile est trouvé quand même.
 
-00:05.500 --> 00:08.000
-« ETOILE » en majuscules trouve « étoile ».
+00:04.600 --> 00:06.800
+« ETOILE » en majuscules donne le même résultat.
 
-00:08.000 --> 00:11.000
-« Netari » ne trouve rien : c’est une vraie faute. « nectari » trouve Nectari.
+00:06.800 --> 00:09.500
+« Netari », faute fréquente prévue comme mot-clé, mène à Nectari.
