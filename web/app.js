@@ -298,29 +298,39 @@
     ],
   };
 
-  function configure(selected) {
+  // `changed` : l'option que l'utilisateur vient de cocher. En cas de conflit, c'est elle qui gagne.
+  function configure(selected, changed) {
     const picked = new Set(selected);
     const excluded = new Set();
     const trace = [];
-    // 1. Exclusions : on retire le conflit et on bloque l'option exclue.
+    // 1. Exclusions : le conflit se règle en retirant l'option la plus ancienne, jamais celle qu'on vient de choisir.
     for (const rule of CPQ.rules.filter(r => r.kind === 'excludes')) {
       if (picked.has(rule.a) && picked.has(rule.b)) {
-        picked.delete(rule.b);
-        trace.push({ rule, state: 'bad', note: `${rule.b} retiré : conflit` });
+        const loser = rule.a === changed ? rule.b : rule.a;
+        picked.delete(loser);
+        trace.push({ rule, state: 'bad', note: `${loser} retiré : conflit` });
       } else {
         trace.push({ rule, state: 'ok', note: 'satisfaite' });
       }
       if (picked.has(rule.a)) excluded.add(rule.b);
       if (picked.has(rule.b)) excluded.add(rule.a);
     }
-    // 2. Dépendances : on ajoute ce qui manque, sauf si c'est exclu (alors l'option tombe).
+    // 2. Dépendances : on ajoute ce qui manque. Si c'est exclu, l'option qu'on vient de choisir
+    //    fait tomber ce qui la bloque ; une option plus ancienne tombe elle-même.
     for (const rule of CPQ.rules.filter(r => r.kind === 'requires')) {
       if (!picked.has(rule.a)) { trace.push({ rule, state: 'ok', note: 'sans objet' }); continue; }
       if (picked.has(rule.b)) { trace.push({ rule, state: 'ok', note: 'satisfaite' }); continue; }
       if (excluded.has(rule.b)) {
-        picked.delete(rule.a);
-        excluded.add(rule.a);
-        trace.push({ rule, state: 'bad', note: `${rule.a} retiré : ${rule.b} est exclu` });
+        if (rule.a === changed) {
+          const blockers = CPQ.rules.filter(r => r.kind === 'excludes' && ((r.a === rule.b && picked.has(r.b)) || (r.b === rule.b && picked.has(r.a)))).map(r => (r.a === rule.b ? r.b : r.a));
+          blockers.forEach(b => { picked.delete(b); excluded.delete(rule.b); });
+          picked.add(rule.b);
+          trace.push({ rule, state: 'fire', note: `${blockers.join(', ')} retiré, ${rule.b} ajouté : ${rule.a} l'exige` });
+        } else {
+          picked.delete(rule.a);
+          excluded.add(rule.a);
+          trace.push({ rule, state: 'bad', note: `${rule.a} retiré : ${rule.b} est exclu` });
+        }
       } else {
         picked.add(rule.b);
         trace.push({ rule, state: 'fire', note: `${rule.b} ajouté automatiquement` });
@@ -453,6 +463,13 @@
     if (badRow >= 0) {
       err.textContent = 'Une ligne est impossible : le total doit être entre 1 et 1 000 000, et au moins égal aux livraisons à temps.';
       err.hidden = false;
+      document.querySelectorAll('#ratioTable [data-rate]').forEach((c, i) => { if (i === badRow) c.textContent = '—'; });
+      $('rAvg').textContent = '—';
+      $('rTrue').textContent = '—';
+      $('rGap').textContent = 'Corrigez la ligne pour voir le calcul.';
+      const v = $('rVerdict');
+      v.className = 'verdict';
+      v.textContent = 'Aucun résultat tant qu’une ligne est impossible.';
       return;
     }
     err.hidden = true;
@@ -478,8 +495,9 @@
 
   /* ---------- 05 CPQ ---------- */
   let cpqSel = new Set(['lampe']);
+  let cpqChanged = 'lampe';
   const renderCpq = () => keepFocus(() => {
-    const r = configure([...cpqSel]);
+    const r = configure([...cpqSel], cpqChanged);
     cpqSel = new Set(r.picked);
     const opts = $('cpqOpts');
     opts.innerHTML = CPQ.options.map(o => {
@@ -488,6 +506,7 @@
     }).join('');
     opts.querySelectorAll('input').forEach(cb => cb.addEventListener('change', () => {
       if (cb.checked) cpqSel.add(cb.dataset.id); else cpqSel.delete(cb.dataset.id);
+      cpqChanged = cb.checked ? cb.dataset.id : null;
       renderCpq();
     }));
     $('cpqBase').textContent = `${CPQ.base.label} · ${fmtMoney(CPQ.base.price)}`;
