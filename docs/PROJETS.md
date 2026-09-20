@@ -1,4 +1,4 @@
-# Feuille de route : projets exemples, deux par compétence
+# Feuille de route : projets exemples, deux par compétence (plus une boutique)
 
 Objectif : transformer chaque compétence affichée sur le site en **deux projets livrables**, chacun avec une preuve vérifiable (dépôt, tests, démo, chiffres). Le niveau visé est celui d’un développeur senior : périmètre fermé, définition de « fini » écrite avant de coder, sécurité et accessibilité dès le départ, mesure du résultat à la fin.
 
@@ -212,6 +212,51 @@ Estimation : en heures de travail effectif, pour une personne. Les jalons sont c
 
 ---
 
+## 9. Commerce en ligne et marketing sur les réseaux
+
+### 9.1 ★ « Boutique de t-shirts » : vendre en ligne sur le modèle des boutiques de merch de rappeurs, avec Shopify
+
+- **Référence demandée** : la boutique de marchandise du rappeur 6ix9ine. Les sites trouvés (`6ix9ine.shop`, `tatamerch.com`, `6ix9inemerch.shop`, `6ix9ine.myspreadshop.net`) sont des boutiques de fans non officielles, sur Shopify ou des plateformes d’impression à la demande ; le merch sous licence est vendu par Rockabilia et MerchBar. Ce qu’on retient du modèle : peu de produits à la fois, **sorties limitées** (« drops ») annoncées d’avance, mention « épuisé » laissée visible, précommande avec date, offres groupées (t-shirt + casquette), code de réduction lié à un réseau social, et une page d’accueil qui vend une seule chose à la fois.
+- **Ce qu’on ne fait pas** : utiliser le nom, le logo, les photos ou les paroles de 6ix9ine ou d’un autre artiste. Un nom comme « 69 » ou « 6nin » est à vérifier avant tout achat de domaine (base de données des marques de commerce de l’OPIC, recherche de domaines et de comptes sociaux) ; il se confond avec la marque du rappeur et exposerait la boutique à une fermeture par Shopify ou à une mise en demeure. Le plan ci-dessous fonctionne avec **n’importe quel nom de marque à toi**, choisi à l’étape 1.
+- **Problème** : lancer une marque de t-shirts sans stock qui dort, sans site bricolé, et avec un marketing qui amène réellement des ventes.
+- **Pour qui** : toi, comme fondateur ; et, comme projet de portfolio, toute PME qui veut vendre en ligne (le même plan se revend en mandat).
+- **Livrables** :
+  1. Boutique Shopify (forfait Basic, prix courant à vérifier sur shopify.com/ca) avec thème gratuit (Dawn ou Sense), personnalisé aux couleurs de la marque, sans application payante au départ.
+  2. Catalogue de départ : 3 modèles de t-shirts × 5 tailles × 2 couleurs, photos sur fond neutre et photos portées, fiches produit avec guide des tailles et composition.
+  3. Impression à la demande (Printful ou Printify, connectés à Shopify) pour ne rien stocker au lancement ; passage à un sérigraphe québécois quand un modèle dépasse 50 ventes par mois.
+  4. Paiements (Shopify Payments : cartes, Apple Pay, Google Pay), taxes TPS/TVQ configurées, livraison Canada avec seuil de livraison gratuite, politique de retour de 30 jours.
+  5. Pages légales complètes (confidentialité conforme à la Loi 25, conditions de vente, retours, contact réel) et la liste B de `CLAUDE.md` passée sur la boutique (404, titres, descriptions, image de partage, favicons, plan de site, texte alternatif sur chaque image).
+  6. Mesure : Shopify Analytics + pixel Meta et pixel TikTok seulement avec bannière de consentement (Shopify Customer Privacy) ; tableau de bord hebdomadaire des ventes par canal (réutiliser 5.1 : jamais une moyenne de taux).
+  7. Automatisations gratuites au départ : courriel de panier abandonné (Shopify Email), avis après livraison, code de bienvenue contre inscription à l’infolettre.
+- **Pile** : Shopify (Basic), thème Dawn ou Sense, Printful ou Printify, Shopify Payments, Shopify Email, Meta Business Suite pour Instagram et Facebook, Threads (via Instagram), X, Reddit ; Canva ou Figma pour les visuels ; Chromium (méthode de `web/video/`) pour les clips de 10 s ; feuille de suivi des contenus (Notion ou Google Sheets).
+- **Jalons** :
+  1. Marque : nom vérifié (OPIC, domaine, comptes sociaux disponibles), positionnement en une phrase, 3 visuels de t-shirt, palette, ton. (8 h)
+  2. Boutique : Shopify configuré, 3 produits, paiements, taxes, livraison, pages légales, mesure avec consentement. (12 h)
+  3. Photos et vidéos : 12 photos produit, 4 photos portées, 5 clips de 10 s (déballage, impression, porté, détail, sortie). (8 h)
+  4. Pré-lancement : 3 semaines de contenu sur les réseaux (voir 9.2), liste d’attente par infolettre, date de sortie annoncée. (le temps de 9.2)
+  5. Lancement : première sortie limitée (50 unités), code réseau, suivi des ventes par canal chaque jour pendant 14 jours. (6 h)
+  6. Bilan : fiche d’une page (coûts, ventes, marge, canal gagnant, ce que je change pour la sortie 2). (3 h)
+- **Fini quand** : boutique en ligne avec paiement réel testé (une commande à 1 $ remboursée) ; marge brute par t-shirt ≥ 40 % après impression et livraison ; Lighthouse ≥ 90 sur la page produit mobile ; liste B au complet ; 100 % des ventes attribuables à un canal (code ou lien suivi).
+- **Risques** : nom trop proche d’une marque existante (vérification à l’étape 1, avant toute dépense) ; photos de mauvaise qualité (lumière du jour, fond neutre, une seule séance bien préparée) ; frais cachés (Shopify Payments évite les frais de transaction additionnels ; aucune application payante avant 100 ventes) ; ventes sans marge (calcul de marge dans une feuille avant de fixer un prix).
+- **Preuve pour l’employeur** : la boutique en ligne, la fiche de bilan chiffrée, un clip de 10 s « de la commande à la livraison ». Ce projet prouve l’intégration de systèmes (boutique, impression, paiement, taxes, courriel, mesure), pas seulement le code.
+
+### 9.2 ★ « Plan de marketing sur les réseaux » : Instagram, Facebook, Threads, X, Reddit, sans acheter de publicité au départ
+
+- **Problème** : une boutique sans trafic ne vend rien ; la publicité payée coûte cher avant d’avoir des preuves.
+- **Pour qui** : la boutique 9.1 ; réutilisable pour tout client qui lance un produit.
+- **Principe** : un réseau principal (Instagram, où vivent les vêtements), les autres en relais adaptés au ton de chaque plateforme. Chaque contenu montre le produit réel, le processus ou une personne qui le porte ; aucun visuel généré par IA, aucun faux avis, aucune fausse rareté (si 50 unités, c’est 50).
+- **Livrables** :
+  1. Calendrier de 6 semaines (3 avant la sortie, 3 après) : 4 publications Instagram par semaine (1 photo produit, 1 coulisses, 1 vidéo courte de 10 s, 1 carrousel « comment c’est fait »), les mêmes recoupées pour Facebook, 3 messages Threads par semaine (ton conversationnel, questions à la communauté), 3 messages X par semaine (annonces courtes, coulisses, réponses), Reddit : 2 participations par semaine dans des communautés pertinentes (r/streetwear, r/Quebec, r/montreal, r/Entrepreneur, r/smallbusiness) en respectant leurs règles d’autopromotion (contribuer d’abord, un seul post de lancement, jamais de liens dans des commentaires hors sujet).
+  2. Trousse de contenu : 30 visuels au format 4:5 et 9:16, 10 clips de 10 s sous-titrés, 6 gabarits de légende, une page « À propos » avec l’histoire vraie de la marque.
+  3. Mécaniques de conversion : code de 10 % propre à chaque réseau (IG10, TH10, X10, RD10) pour mesurer d’où viennent les ventes ; lien unique par réseau (paramètres UTM) ; liste d’attente par infolettre avec accès 24 h avant la sortie ; concours de lancement (un t-shirt, règles écrites, conforme aux règles de Meta et à la loi québécoise sur les concours : avis à la Régie si prix > 100 $ et ouvert au Québec).
+  4. Tableau de bord hebdomadaire : abonnés, portée, clics, ventes par code et par UTM, coût par contenu (heures) ; règle de décision écrite : si un canal n’amène aucune vente en 6 semaines, on y réduit l’effort à 1 message par semaine.
+  5. Service client : réponses aux messages en moins de 24 h, gabarits pour tailles, livraison, retours ; page de questions fréquentes mise à jour à partir des vraies questions.
+- **Pile** : Meta Business Suite (planification IG + FB), Threads, X, Reddit ; Shopify Analytics et codes ; Google Sheets pour le calendrier et les UTM ; Chromium pour les clips ; aucun outil payant avant la sortie 2.
+- **Jalons** : (1) profils créés et cohérents (même nom, même photo, même lien), page « À propos », calendrier rempli (6 h) ; (2) trousse de contenu produite en une séance photo et une séance vidéo (10 h) ; (3) 3 semaines de pré-lancement, liste d’attente ≥ 100 courriels (6 h de gestion) ; (4) lancement + 3 semaines, tableau de bord et bilan (8 h).
+- **Fini quand** : 6 semaines tenues sans trou dans le calendrier ; chaque vente attribuée à un canal ; au moins un contenu à plus de 5 % d’engagement ; bilan écrit avec le canal à garder, celui à couper, et le coût en heures par vente.
+- **Risques** : suspension d’un compte pour autopromotion (règles de Reddit lues et respectées, un compte qui contribue avant de vendre) ; s’épuiser à produire (tout le contenu de 6 semaines est produit en deux séances) ; publicité payée trop tôt (aucun dollar avant d’avoir une page produit qui convertit ≥ 2 % du trafic organique).
+- **Preuve pour l’employeur** : le calendrier, la trousse, le tableau de bord réel et le bilan. Ce projet prouve que je sais faire vendre un produit, pas seulement le coder.
+
 ## Ordre de livraison recommandé (six mois, à temps partiel)
 
 | Mois | Projets | Pourquoi dans cet ordre |
@@ -222,5 +267,6 @@ Estimation : en heures de travail effectif, pour une personne. Les jalons sont c
 | 4 | 1.1 Pointage terrain ★ (en équipe : 8.1 ★) | Le projet mobile phare, mené en équipe avec revues et démos. |
 | 5 | 3.1 Cahier partagé ★, 8.2 Fiches et vidéos | Approfondit la synchronisation ; met en mots tout ce qui précède. |
 | 6 | Au choix selon les offres visées : 5.2, 6.2, 3.2, 4.2, 1.2, 2.2, 7.2 | À aligner sur le type d’employeur (BI, web, mobile). |
+| En parallèle, dès le mois 1 | 9.1 Boutique de t-shirts ★ et 9.2 Marketing réseaux ★ | Projet personnel qui avance à côté des autres : nom vérifié au mois 1, boutique au mois 2, pré-lancement au mois 3, première sortie au mois 4. |
 
 Chaque projet terminé rejoint le site (`web/parcours.html`, section Projets) **seulement une fois livré**, avec son dépôt, sa vidéo et ses chiffres. Rien de planifié n’est présenté comme fait.
