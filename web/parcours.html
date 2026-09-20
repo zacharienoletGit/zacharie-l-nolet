@@ -8,8 +8,7 @@
 <title>Parcours · Zacharie L. Nolet</title>
 <meta name="description" content="Formation, prix Exposat 2026, projets et compétences de Zacharie L. Nolet, développeur en Techniques de l’informatique au Cégep de Victoriaville.">
 <meta name="author" content="Zacharie L. Nolet">
-<meta name="theme-color" content="#F3EDE0" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0B1A28" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FAFAF7">
 <link rel="canonical" href="https://zacharienoletgit.github.io/zacharie-l-nolet/parcours.html">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_CA">
@@ -44,12 +43,11 @@
     <a href="engagement.html">Travailler ensemble</a>
     <a href="contact.html">Contact</a>
   </nav>
-  <button class="btn small" id="themeBtn" type="button">Lumière : Système</button>
 </div>
 <header class="page-head">
   <p class="kicker"><b>Parcours</b> · Formation, prix, projets</p>
   <h1>Ce que j’ai fait, et ce que ça prouve</h1>
-  <p class="lede">Chaque ligne renvoie à un projet, un prix ou du code que vous pouvez voir.</p>
+  <p class="lede">Chaque ligne renvoie à un projet, un prix ou du code.</p>
 </header>
 
 <main id="main">
@@ -57,7 +55,7 @@
     <div class="cols">
       <div>
         <p class="kicker mb-12">Formation et prix</p>
-        <ol class="timeline">
+        <ol class="timeline cascade">
           <li>
             <span class="when">2026 · Exposat</span>
             <h3>Prix « Badge fort, salue l’effort », 500 $</h3>
@@ -66,31 +64,31 @@
           <li>
             <span class="when">Cégep de Victoriaville</span>
             <h3>DEC en Techniques de l’informatique</h3>
-            <p>Programmation, bases de données, systèmes, projets en équipe. Le diplôme collégial qui forme les développeurs et techniciens en informatique au Québec.</p>
+            <p>Programmation, bases de données, systèmes, projets en équipe.</p>
           </li>
           <li>
             <span class="when">En continu</span>
             <h3>Systèmes de gestion et données d’entreprise</h3>
-            <p>Sage X3, Nectari, Jitterbit, Power BI, configurateurs de prix : à quoi sert chacun, et comment les faire travailler ensemble sans déformer les chiffres.</p>
+            <p>Sage X3, Nectari, Jitterbit, Power BI, configurateurs de prix : à quoi sert chacun, sans déformer les chiffres.</p>
           </li>
         </ol>
         <figure class="figure figure-award">
-          <img src="exposat-2026.jpg" alt="Affiche Exposat 2026, Techniques de l’informatique : l’équipe sur scène avec ses enveloppes, prix Badge fort, salue l’effort, 500 $" width="816" height="962" loading="lazy" class="img-fade">
+          <img src="exposat-2026.jpg" srcset="exposat-2026-480.jpg 480w, exposat-2026.jpg 816w" sizes="(max-width: 720px) 100vw, 352px" alt="Affiche Exposat 2026, Techniques de l’informatique : l’équipe sur scène avec ses enveloppes, prix Badge fort, salue l’effort, 500 $" width="816" height="962" loading="lazy" class="img-fade">
           <figcaption>Exposat 2026. L’équipe sur scène, le prix en main.</figcaption>
         </figure>
       </div>
       <div id="projets">
         <p class="kicker mb-12">Projets</p>
-        <ol class="timeline">
+        <ol class="timeline cascade">
           <li>
             <span class="when">2026</span>
             <h3>Une application iPhone de lecture, sans internet</h3>
-            <p>Dix textes par jour, des notes et des coupures gardées sur le téléphone, une synchronisation avec un petit serveur PHP quand la connexion revient, sans jamais perdre ni dupliquer une note. Écrite en React Native et TypeScript, avec 29 tests automatisés.</p>
+            <p>Notes gardées sur le téléphone, synchronisation avec un serveur PHP quand la connexion revient, sans perte ni doublon. React Native, TypeScript, 29 tests automatisés.</p>
           </li>
           <li>
             <span class="when">2026</span>
             <h3>Ce site</h3>
-            <p>Cinq pages, sans outil externe ni police téléchargée, donc rapide et sans traceur. Page d’erreur, politique de confidentialité, conditions, protection contre les attaques courantes, dépendances vérifiées. Six morceaux de mon code y tournent en direct.</p>
+            <p>Cinq pages sans outil externe, rapide et sans traceur. Sécurité, confidentialité et page d’erreur en place. Six morceaux de mon code y tournent.</p>
           </li>
         </ol>
         <p class="kicker mb-12 mt-16">Outils que j’utilise</p>
@@ -105,13 +103,13 @@
     <div class="sec-head reveal">
       <p class="kicker"><b>Décisions</b> · Ce que j’ai choisi, et pourquoi</p>
       <h2>Quatre décisions que j’ai prises seul, et que je peux défendre</h2>
-      <p class="lede">Un employeur veut savoir comment je raisonne. Voici des choix réels de mon application, tirés de sa documentation de conception.</p>
+      <p class="lede">Des choix réels de mon application, tirés de sa documentation.</p>
     </div>
-    <ul class="filets two">
-      <li><h3>Dix textes par jour, puis c’est fermé</h3><p>Pas de défilement infini. Le choix rend l’application moins « collante », mais c’est exactement le but : un outil qu’on ouvre, qu’on utilise et qu’on ferme. J’ai accepté un peu de friction pour tenir la promesse du produit.</p><span class="ref">docs/DESIGN.md du dépôt</span></li>
-      <li><h3>Sauvegarde 1,4 seconde après la dernière frappe</h3><p>Sauvegarder à chaque touche faisait saccader le clavier sur un vrai iPhone, mesuré avec les outils d’Apple. Attendre 1,4 s après la frappe règle le problème sans que l’utilisateur perde un mot.</p><span class="ref">docs/TESTING.md du dépôt</span></li>
-      <li><h3>Le téléphone est la vérité, le serveur est une copie</h3><p>Sans réseau, on continue d’écrire. Quand il revient, les opérations partent une seule fois et la version la plus récente gagne. Le contraire (le serveur commande) aurait fait perdre des notes écrites hors ligne.</p><span class="ref"><a href="preuves.html#p3">Démonstration 03</a></span></li>
-      <li><h3>Tester la logique avant de dessiner l’écran</h3><p>Chaque règle métier vit dans une fonction simple avec son test. L’écran ne calcule rien. Résultat : 29 tests qui disent tout de suite ce qui a cassé, et une application qu’on peut faire évoluer sans peur.</p><span class="ref">src/domain et __tests__ du dépôt</span></li>
+    <ul class="filets two cascade">
+      <li><h3>Dix textes par jour, puis c’est fermé</h3><p>Pas de défilement infini : un outil qu’on ouvre, qu’on utilise et qu’on ferme. Un peu de friction, assumée, pour tenir la promesse du produit.</p><span class="ref">docs/DESIGN.md du dépôt</span></li>
+      <li><h3>Sauvegarde 1,4 seconde après la dernière frappe</h3><p>Sauvegarder à chaque touche faisait saccader le clavier, mesuré sur un vrai iPhone. Attendre 1,4 s règle le problème sans perdre un mot.</p><span class="ref">docs/TESTING.md du dépôt</span></li>
+      <li><h3>Le téléphone est la vérité, le serveur est une copie</h3><p>Sans réseau, on continue d’écrire. Au retour, chaque opération part une seule fois et la version la plus récente gagne.</p><span class="ref"><a href="preuves.html#p3">Démonstration 03</a></span></li>
+      <li><h3>Tester la logique avant de dessiner l’écran</h3><p>Chaque règle vit dans une fonction simple avec son test ; l’écran ne calcule rien. 29 tests disent tout de suite ce qui a cassé.</p><span class="ref">src/domain et __tests__ du dépôt</span></li>
     </ul>
   </section>
 
@@ -120,7 +118,7 @@
       <p class="kicker"><b>Compétences</b> · Expliquées simplement</p>
       <h2>Ce que je sais faire, et où le voir</h2>
     </div>
-    <ul class="filets two">
+    <ul class="filets two cascade">
       <li><h3>Applications mobiles</h3><p>Des apps iPhone et Android qui fonctionnent hors ligne, accessibles à tous, avec une navigation qui suit les habitudes du téléphone.</p><span class="ref">Preuve : l’application de lecture ci-dessus.</span></li>
       <li><h3>Code testé</h3><p>Les règles importantes vivent dans des fonctions simples, chacune avec son test automatique. Si quelqu’un casse quelque chose, on le sait avant le client.</p><span class="ref">Preuve : <a href="preuves.html#p1">démonstrations 01 à 03</a>, 29 tests verts.</span></li>
       <li><h3>Travail hors ligne et synchronisation</h3><p>L’utilisateur continue de travailler sans réseau ; quand il revient, ses données se fusionnent avec le serveur sans doublon ni perte.</p><span class="ref">Preuve : <a href="preuves.html#p3">démonstration 03</a>.</span></li>
@@ -147,7 +145,7 @@
 </footer>
 
 <div class="notice" id="notice" hidden role="region" aria-label="Avis sur les données">
-  <p>Ce site n’utilise aucun témoin ni traceur. Il garde seulement dans votre navigateur votre choix d’affichage, vos notes d’essai, votre brouillon de courriel et le fait que vous avez vu cet avis. <a href="confidentialite.html">Détails</a></p>
+  <p>Ce site n’utilise aucun témoin ni traceur. Il garde seulement dans votre navigateur vos notes d’essai, votre brouillon de courriel et le fait que vous avez vu cet avis. <a href="confidentialite.html">Détails</a></p>
   <button class="btn small" type="button" id="noticeOk">Compris</button>
 </div>
 

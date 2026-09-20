@@ -52,21 +52,6 @@
   const today = $('today');
   if (today) today.textContent = fmtCivil(todayCivil());
 
-  const THEMES = [['system', 'Système'], ['light', 'Papier'], ['dark', 'Encre']];
-  let themeIx = Math.max(0, THEMES.findIndex(t => t[0] === store.get('zln-theme')));
-  const applyTheme = () => {
-    const [id, label] = THEMES[themeIx];
-    if (id === 'system') document.documentElement.removeAttribute('data-theme');
-    else document.documentElement.setAttribute('data-theme', id);
-    if ($('themeBtn')) $('themeBtn').textContent = 'Lumière : ' + label;
-  };
-  applyTheme();
-  if ($('themeBtn')) $('themeBtn').addEventListener('click', () => {
-    themeIx = (themeIx + 1) % THEMES.length;
-    store.set('zln-theme', THEMES[themeIx][0]);
-    applyTheme();
-  });
-
   const animateCount = (el) => {
     const to = Number(el.dataset.to);
     if (reduced || !Number.isFinite(to)) { el.textContent = to; return; }
@@ -87,10 +72,12 @@
         io.unobserve(e.target);
       }
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
-    document.querySelectorAll('.reveal, .rule.draw, .facts').forEach(el => io.observe(el));
+    document.querySelectorAll('.cascade, .rule.draw, .facts').forEach(el => io.observe(el));
   } else {
-    document.querySelectorAll('.reveal, .rule.draw').forEach(el => el.classList.add('in'));
+    document.querySelectorAll('.cascade, .rule.draw').forEach(el => el.classList.add('in'));
   }
+  document.querySelectorAll('.cascade').forEach(list => [...list.children].forEach((li, i) => li.style.setProperty('--i', Math.min(i, 8))));
+  document.querySelectorAll('.cta .btn').forEach((b, i) => b.style.setProperty('--i', i));
 
   document.querySelectorAll('img.img-fade').forEach(img => {
     const mark = () => img.classList.add('loaded');

@@ -7,7 +7,9 @@ Ces règles viennent de Zacharie L. Nolet. Elles s’appliquent à toute session
 - **Aucune marque d’IA dans les livrables.** Pas d’image générée par IA (le portrait « auréole » a été retiré du site, de `assets/brand/` et de l’icône iOS ; ne pas le réintroduire), pas de mention « généré par », « propulsé par » ni de crédit d’outil dans une page, un texte ou un visuel. Utiliser les photos qu’il fournit (`web/photo-*.jpg`, `web/exposat-2026.jpg`).
 - **Respecter ce qu’il envoie.** Photos, captures, listes, textes : les utiliser tels quels, pas les remplacer par du contenu inventé ni les « améliorer » sans qu’il le demande. Ne pas inventer de dates, d’employeurs, de témoignages ou de chiffres.
 - **Toujours coder selon les quatre listes ci-dessous**, tirées des reels Instagram qu’il a partagés (aj.on.ai, elvernlau, prms.regmi, murphmaxxing). Avant de livrer une page ou une app, passer chaque liste et corriger ce qui manque.
-- Identité visuelle du projet : encre de minuit `#0B1A28`, papier `#F3EDE0`, or en **filet** `#E0C378` / `#C4A35A`, typographie Georgia + police système, vocabulaire du cahier (Découper, Feuille, Cabinet, Édition). Voir `docs/DESIGN.md`.
+- **Site web : thème clair unique, sobre (« keep it simple »).** Fond `#FAFAF7`, texte `#111418`, un seul accent bleu marine `#14335C`, filets `#DDE1E6`, Georgia + police système. Pas de mode sombre, pas de bouton de lumière. Les visuels (image de partage, vidéo d’introduction, favicon) restent sur fond encre `#0B1A28` : ce sont des images, pas le thème.
+- **Animations autorisées sur le site (peu, mais fortes)** : fondu entre les pages (`@view-transition`), photo du hero qui se pose, nom mot par mot, filet qui se trace, compteurs, boutons du hero en décalé, cascade des lignes de liste (`.cascade`, une fois), remplissage des boutons au survol, soulignement de la navigation, léger relief des vidéos au survol, flash des résultats de démo. Rien d’autre ; tout coupé par `prefers-reduced-motion`.
+- App iPhone : encre de minuit `#0B1A28`, papier `#F3EDE0`, or en **filet** `#E0C378` / `#C4A35A`, vocabulaire du cahier (Découper, Feuille, Cabinet, Édition). Voir `docs/DESIGN.md`.
 - Langue des livrables et des commentaires : français (Québec).
 - **Le site web (`web/`) parle seulement d’informatique et d’embauche.** Pas de section politique, philosophie ou hip-hop : ces sujets restent dans le catalogue de l’app, pas sur le site. Le site est fait pour décrocher un stage, un contrat ou un mandat : chaque page mène vers `engagement.html` et `contact.html`.
 - **Écrit pour un employeur, en langage clair.** Le site doit être attirant pour un employeur maintenant et compréhensible par tout le monde : vouvoiement, phrases courtes, aucun jargon sans explication (pas de « grain », « idempotent », « last-write-wins », « mart » sans une phrase « en clair » à côté). Chaque compétence est suivie de sa preuve. Le bouton principal de chaque page mène au contact.
@@ -108,6 +110,6 @@ Pour la page web statique : pas de style ni de script en ligne (la CSP est `styl
 
 ## Comment vérifier avant de livrer
 
-- `web/` : ouvrir `index.html`, `404.html`, `confidentialite.html`, `conditions.html` ; vérifier les listes B, C, D ; aucun débordement horizontal à 400 px ; aucune erreur console ; les deux lumières (Papier, Encre).
+- `web/` : ouvrir les neuf pages ; vérifier les listes B, C, D ; aucun débordement horizontal à 400 px ; aucune erreur console ; photos ≤ 105 Ko avec variante 480 px (`srcset`).
 - App : `npm test` doit rester vert ; `npm audit` sans vulnérabilité haute ou critique.
 - Relire la liste A une dernière fois sur une capture d’écran : si une page pourrait être celle de n’importe qui, elle n’est pas finie.

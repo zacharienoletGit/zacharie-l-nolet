@@ -6,16 +6,15 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Zacharie L. Nolet</title>
-<meta name="description" content="Zacharie L. Nolet, développeur en Techniques de l’informatique au Cégep de Victoriaville. Applications mobiles, sites web, API, tableaux de bord. Disponible maintenant pour un stage, un contrat ou un mandat.">
+<meta name="description" content="Zacharie L. Nolet, développeur en Techniques de l’informatique au Cégep de Victoriaville. Applications, sites web, API, tableaux de bord. Disponible maintenant pour un stage, un contrat ou un mandat.">
 <meta name="author" content="Zacharie L. Nolet">
-<meta name="theme-color" content="#F3EDE0" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0B1A28" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FAFAF7">
 <link rel="canonical" href="https://zacharienoletgit.github.io/zacharie-l-nolet/">
 <meta property="og:type" content="profile">
 <meta property="og:locale" content="fr_CA">
 <meta property="og:site_name" content="Zacharie L. Nolet">
 <meta property="og:title" content="Zacharie L. Nolet">
-<meta property="og:description" content="Zacharie L. Nolet, développeur en Techniques de l’informatique au Cégep de Victoriaville. Applications mobiles, sites web, API, tableaux de bord. Disponible maintenant pour un stage, un contrat ou un mandat.">
+<meta property="og:description" content="Zacharie L. Nolet, développeur en Techniques de l’informatique au Cégep de Victoriaville. Applications, sites web, API, tableaux de bord. Disponible maintenant pour un stage, un contrat ou un mandat.">
 <meta property="og:url" content="https://zacharienoletgit.github.io/zacharie-l-nolet/">
 <meta property="og:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
 <meta property="og:image:width" content="1200">
@@ -23,7 +22,7 @@
 <meta property="og:image:alt" content="Zacharie L. Nolet, portrait et nom sur fond d’encre">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Zacharie L. Nolet">
-<meta name="twitter:description" content="Zacharie L. Nolet, développeur en Techniques de l’informatique au Cégep de Victoriaville. Applications mobiles, sites web, API, tableaux de bord. Disponible maintenant pour un stage, un contrat ou un mandat.">
+<meta name="twitter:description" content="Zacharie L. Nolet, développeur en Techniques de l’informatique au Cégep de Victoriaville. Applications, sites web, API, tableaux de bord. Disponible maintenant pour un stage, un contrat ou un mandat.">
 <meta name="twitter:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
@@ -44,19 +43,18 @@
     <a href="engagement.html">Travailler ensemble</a>
     <a href="contact.html">Contact</a>
   </nav>
-  <button class="btn small" id="themeBtn" type="button">Lumière : Système</button>
 </div>
 
 <header class="masthead" id="top">
   <p class="kicker masthead-kicker"><span>Développeur · Cégep de Victoriaville</span><span>Disponible maintenant · stage, contrat ou mandat</span></p>
   <div class="hero">
     <figure class="hero-photo">
-      <img src="photo-canal.jpg" alt="Zacharie L. Nolet, polo marine et lunettes de soleil, appuyé au parapet d’un canal bordé d’arbres" width="886" height="886" fetchpriority="high" class="img-fade">
+      <img src="photo-canal.jpg" srcset="photo-canal-480.jpg 480w, photo-canal.jpg 900w" sizes="(max-width: 640px) 112px, 240px" alt="Zacharie L. Nolet, polo marine et lunettes de soleil, appuyé au parapet d’un canal bordé d’arbres" width="900" height="900" fetchpriority="high" class="img-fade">
     </figure>
     <div>
       <h1 class="name"><span class="w0">Zacharie</span> <span class="w1">L.</span> <span class="w2">Nolet</span></h1>
     </div>
-    <p class="dek">Je développe des applications mobiles, des sites web, des API et des tableaux de bord. Mon code est testé, mes sites sont sécurisés, et tout ce que j’affirme sur cette page peut être essayé en direct. Étudiant en Techniques de l’informatique au Cégep de Victoriaville, je cherche un stage, un contrat ou un mandat et je peux commencer rapidement.</p>
+    <p class="dek">Je développe des applications, des sites web et des tableaux de bord qui marchent : code testé, sécurité vérifiée, tout est essayable en direct sur ce site. Disponible maintenant pour un stage, un contrat ou un mandat.</p>
     <div class="cta row" id="firstCta">
       <a class="btn primary" href="contact.html">Me contacter</a>
       <a class="btn" href="preuves.html">Voir mon travail en direct</a>
@@ -74,90 +72,47 @@
 
 <main id="main">
   <section id="video">
-    <div class="sec-head reveal">
+    <div class="sec-head">
       <p class="kicker"><b>En 11 secondes</b> · Vidéo</p>
-      <h2>Ce que je fais, en une respiration</h2>
-      <p class="lede">Une courte vidéo sans son, sous-titrée. Les quatre autres, sur la page Preuves, montrent mon code en train de tourner.</p>
+      <h2>Ce que je fais</h2>
     </div>
-    <figure class="video video-wide">
-  <video id="v-intro" controls muted playsinline preload="none" poster="video/intro.jpg" width="1280" height="720" aria-label="Présentation de Zacharie L. Nolet en 11 secondes" data-autoplay loop>
-    <source src="video/intro.mp4" type="video/mp4">
-    <track kind="captions" src="video/intro.fr.vtt" srclang="fr" label="Français" default>
-    Votre navigateur ne lit pas cette vidéo. <a href="video/intro.mp4">Télécharger le clip (MP4)</a>.
-  </video>
-  <figcaption>Vidéo muette, sous-titres en français. Elle démarre seule si votre appareil l’autorise ; le bouton la met en pause.</figcaption>
-</figure>
+    ${video('intro', 'Présentation de Zacharie L. Nolet en 11 secondes', 'Vidéo muette, sous-titrée. Elle démarre seule quand elle est visible ; le bouton la met en pause.', { auto: true, cls: 'video-wide' })}
   </section>
 
-  <section id="offre">
-    <div class="sec-head reveal">
-      <p class="kicker"><b>Ce que je peux faire pour vous</b> · Dès maintenant</p>
-      <h2>Quatre choses que je livre, avec la preuve à côté</h2>
-      <p class="lede">Pas de liste de mots-clés : ce que vous obtenez concrètement, et où vérifier que je sais le faire.</p>
+  <section id="preuves-apercu">
+    <div class="sec-head">
+      <p class="kicker"><b>Mon travail en direct</b> · Le code affiché est le code qui tourne</p>
+      <h2>Trois choses à essayer tout de suite</h2>
     </div>
-    <ul class="filets two">
-      <li>
-        <h3>Une application pour iPhone et Android</h3>
-        <p>Une app qui fonctionne même sans connexion internet, qui garde les données de l’utilisateur en sécurité et qui reste lisible pour tout le monde, y compris avec un gros texte ou un lecteur d’écran.</p>
-        <span class="ref">Preuve : j’ai construit une application iPhone complète, avec 29 tests automatisés. <a href="parcours.html#projets">Voir le projet.</a></span>
-      </li>
-      <li>
-        <h3>Un site web ou une API</h3>
-        <p>Un site rapide, sécurisé, sans dépendance inutile, avec tout ce qu’un vrai site doit avoir : page d’erreur, politique de confidentialité, protection contre les attaques courantes. Ou une API en PHP qui échange des données proprement avec vos autres logiciels.</p>
-        <span class="ref">Preuve : ce site lui-même, et l’API de 8 routes du même projet.</span>
-      </li>
-      <li>
-        <h3>Des tableaux de bord justes</h3>
-        <p>Des rapports Power BI qui donnent le bon chiffre, branchés sur vos systèmes de gestion (Sage X3, Nectari, Jitterbit). Je connais le piège classique de la « moyenne qui ment » et je le montre en direct.</p>
-        <span class="ref">Preuve : <a href="preuves.html#p4">démonstration 04</a>, à essayer avec vos propres nombres.</span>
-      </li>
-      <li>
-        <h3>Un configurateur de prix ou de produit</h3>
-        <p>Des règles claires (« cette option exige celle-là », « ces deux-là sont incompatibles », « remise à partir de deux options ») qui calculent le prix à votre place, sans erreur de saisie.</p>
-        <span class="ref">Preuve : <a href="preuves.html#p5">démonstration 05</a>, cochez des options et regardez le prix se calculer.</span>
-      </li>
-    </ul>
+    <ol class="steps cascade">
+      <li><div><h3><a href="preuves.html#p1">Une recherche qui tolère les accents</a></h3><p>Tapez « quebec » : Québec est trouvé.</p></div></li>
+      <li><div><h3><a href="preuves.html#p3">Travailler sans internet, puis synchroniser sans rien perdre</a></h3><p>Trois clics, une seule opération ; la version la plus récente gagne.</p></div></li>
+      <li><div><h3><a href="preuves.html#p4">Une moyenne qui ment, et la bonne façon de calculer</a></h3><p>Changez un volume : l’écart apparaît sous vos yeux.</p></div></li>
+    </ol>
+    <div class="row mt-24"><a class="btn primary" href="preuves.html">Voir les six démonstrations</a></div>
   </section>
 
   <section id="pourquoi">
-    <div class="sec-head reveal">
-      <p class="kicker"><b>Pourquoi m’engager</b> · Trois raisons simples</p>
+    <div class="sec-head">
+      <p class="kicker"><b>Pourquoi m’engager</b> · Trois raisons</p>
       <h2>Ce qui me distingue</h2>
     </div>
-    <div class="cols cols-bio">
-      <ol class="steps">
-        <li><div><h3>Mon travail a déjà été récompensé</h3><p>En 2026, mon équipe a reçu le prix « Badge fort, salue l’effort » à l’Exposat du Cégep, en Techniques de l’informatique. <a href="parcours.html">Voir le parcours.</a></p></div></li>
-        <li><div><h3>Je livre du code testé et sécurisé</h3><p>Chaque règle importante a son test automatique. Avant de mettre en ligne, je passe une liste de vérification : sécurité, mobile, confidentialité, dépendances à jour. <a href="engagement.html#methode">Voir ma méthode.</a></p></div></li>
-        <li><div><h3>Je montre, je ne promets pas</h3><p>Six morceaux de mon code tournent sur ce site, sous vos yeux. Vous pouvez changer les données et voir le résultat tout de suite. <a href="preuves.html">Essayer.</a></p></div></li>
-      </ol>
-      <figure class="figure">
-        <img src="photo-nuit.jpg" alt="Zacharie L. Nolet en veston noir, le soir, dans une rue éclairée" width="886" height="886" loading="lazy" class="img-fade">
-        <figcaption>Zacharie L. Nolet, Victoriaville.</figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <section id="bio">
-    <div class="sec-head reveal">
-      <p class="kicker"><b>En bref</b> · Qui je suis</p>
-      <h2>Un développeur qui aime les choses qui marchent</h2>
-    </div>
-    <div class="prose">
-      <p>Je m’appelle Zacharie L. Nolet. J’étudie en Techniques de l’informatique au Cégep de Victoriaville. J’aime construire des outils simples qui font une chose et la font bien : une application de lecture qui fonctionne sans internet, un petit serveur qui ne perd jamais une note, un tableau de bord qui dit la vérité.</p>
-      <p>Ma façon de travailler tient en une phrase : je règle d’abord la logique et je la teste, ensuite je dessine l’écran. Ça donne des logiciels qui cassent moins et qu’on peut faire évoluer sans peur.</p>
-      <p>Je m’intéresse particulièrement aux systèmes de gestion des entreprises (Sage X3, Nectari, Jitterbit, Power BI) et à la façon de faire parler leurs données sans les déformer.</p>
-    </div>
+    <ul class="filets two cascade">
+      <li><h3>Travail déjà récompensé</h3><p>Prix « Badge fort, salue l’effort » à l’Exposat 2026, en Techniques de l’informatique.</p><span class="ref"><a href="parcours.html">Voir le parcours</a></span></li>
+      <li><h3>Code testé et sécurisé</h3><p>29 tests automatiques, dépendances sans faille connue, liste de vérification avant chaque mise en ligne.</p><span class="ref"><a href="engagement.html#methode">Voir la méthode</a></span></li>
+      <li><h3>Je montre, je ne promets pas</h3><p>Six morceaux de mon code tournent sur ce site ; vous changez les données, vous voyez le résultat.</p><span class="ref"><a href="preuves.html">Essayer</a></span></li>
+      <li><h3>Prêt à commencer</h3><p>Application iPhone ou Android, site web ou API, tableau de bord Power BI, configurateur de prix.</p><span class="ref"><a href="engagement.html">Formats et livrables</a></span></li>
+    </ul>
   </section>
 
   <section id="engager">
-    <div class="sec-head reveal">
+    <div class="sec-head">
       <p class="kicker"><b>Parlons-en</b> · Stage, contrat ou mandat</p>
       <h2>Un courriel, et je vous réponds moi-même</h2>
-      <p class="lede">Décrivez-moi votre besoin en quelques lignes. Je vous dis ce que je peux livrer, en combien de temps, et comment.</p>
     </div>
     <div class="row">
       <a class="btn primary" href="contact.html">Me contacter</a>
-      <a class="btn" href="engagement.html">Voir les formats de collaboration</a>
+      <a class="btn" href="engagement.html">Travailler ensemble</a>
     </div>
   </section>
 </main>
@@ -175,7 +130,7 @@
 </footer>
 
 <div class="notice" id="notice" hidden role="region" aria-label="Avis sur les données">
-  <p>Ce site n’utilise aucun témoin ni traceur. Il garde seulement dans votre navigateur votre choix d’affichage, vos notes d’essai, votre brouillon de courriel et le fait que vous avez vu cet avis. <a href="confidentialite.html">Détails</a></p>
+  <p>Ce site n’utilise aucun témoin ni traceur. Il garde seulement dans votre navigateur vos notes d’essai, votre brouillon de courriel et le fait que vous avez vu cet avis. <a href="confidentialite.html">Détails</a></p>
   <button class="btn small" type="button" id="noticeOk">Compris</button>
 </div>
 
