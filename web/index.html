@@ -3,302 +3,34 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Zacharie L. Nolet</title>
-<meta name="description" content="Cahier de compétences de Zacharie L. Nolet : bio, parcours, preuves exécutées sur la page, et lecture de la cité.">
-<style>
-  :root {
-    --bg: #F3EDE0;
-    --surface: #FBF7EE;
-    --raised: #E7DCC8;
-    --code-bg: #EDE4D0;
-    --text: #0B1A28;
-    --muted: #3D5366;
-    --accent: #8A6D2A;
-    --gold: #C4A35A;
-    --gold-bright: #E0C378;
-    --rule: rgba(18, 38, 58, 0.18);
-    --rule-strong: rgba(18, 38, 58, 0.4);
-    --chip: rgba(18, 38, 58, 0.06);
-    --flash: rgba(196, 163, 90, 0.38);
-    --danger: #8C2F2F;
-    --ok: #2F6B4A;
-    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
-    --ui: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-    color-scheme: light;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #0B1A28;
-      --surface: #12263A;
-      --raised: #1C3A52;
-      --code-bg: #0E2030;
-      --text: #F3EDE0;
-      --muted: #8AA0B5;
-      --accent: #E0C378;
-      --gold: #E0C378;
-      --gold-bright: #F0D890;
-      --rule: rgba(224, 195, 120, 0.28);
-      --rule-strong: rgba(224, 195, 120, 0.55);
-      --chip: rgba(243, 237, 224, 0.08);
-      --flash: rgba(224, 195, 120, 0.3);
-      --danger: #E08A8A;
-      --ok: #8FC7A5;
-      color-scheme: dark;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #0B1A28;
-    --surface: #12263A;
-    --raised: #1C3A52;
-    --code-bg: #0E2030;
-    --text: #F3EDE0;
-    --muted: #8AA0B5;
-    --accent: #E0C378;
-    --gold: #E0C378;
-    --gold-bright: #F0D890;
-    --rule: rgba(224, 195, 120, 0.28);
-    --rule-strong: rgba(224, 195, 120, 0.55);
-    --chip: rgba(243, 237, 224, 0.08);
-    --flash: rgba(224, 195, 120, 0.3);
-    --danger: #E08A8A;
-    --ok: #8FC7A5;
-    color-scheme: dark;
-  }
-
-  * { box-sizing: border-box; }
-  section, .proof, #etapes, #leviers, #grille { scroll-margin-top: 72px; }
-  html { scroll-behavior: smooth; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font: 400 18px/1.6 var(--serif);
-    padding-inline: clamp(16px, 4vw, 40px);
-    padding-block: 0 4rem;
-    -webkit-font-smoothing: antialiased;
-  }
-  img { max-width: 100%; }
-  [hidden] { display: none !important; }
-  h1, h2, h3, h4 { font-family: var(--serif); font-weight: 700; margin: 0; text-wrap: balance; line-height: 1.15; }
-  p { margin: 0; }
-  a { color: var(--accent); text-underline-offset: 3px; }
-  button { font: inherit; color: inherit; }
-  :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
-
-  .skip {
-    position: absolute; left: -999px; top: 8px; background: var(--surface); padding: 8px 12px; z-index: 20;
-  }
-  .skip:focus { left: 16px; }
-
-  .kicker {
-    font: 600 11px/1.4 var(--ui);
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .kicker b { color: var(--accent); font-weight: 600; }
-
-  .rule { height: 1px; background: var(--gold); transform-origin: left center; }
-  .rule.thick { height: 2px; }
-  .js .rule.draw { transform: scaleX(0); }
-  .js .rule.draw.in { transform: scaleX(1); transition: transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1); }
-
-  .js .reveal { opacity: 0.55; transform: translateY(14px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
-  .js .reveal.in { opacity: 1; transform: none; }
-
-  /* ---------- Masthead ---------- */
-  .topbar {
-    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
-    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-    margin-inline: calc(-1 * clamp(16px, 4vw, 40px));
-    padding: 10px clamp(16px, 4vw, 40px);
-    background: color-mix(in srgb, var(--bg) 86%, transparent);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--rule);
-  }
-  @supports not (background: color-mix(in srgb, red 50%, blue)) { .topbar { background: var(--bg); } }
-  .topbar nav { display: flex; gap: 4px 16px; flex-wrap: wrap; }
-  .topbar nav a { font: 500 13px/1 var(--ui); color: var(--muted); text-decoration: none; padding: 8px 0; }
-  .topbar nav a:hover { color: var(--accent); }
-  .btn {
-    font: 500 14px/1 var(--ui); min-height: 44px; padding: 0 16px;
-    border: 1px solid var(--rule-strong); border-radius: 6px; background: var(--chip); color: var(--text);
-    cursor: pointer; transition: transform 0.12s ease, border-color 0.2s ease, background 0.2s ease;
-  }
-  .btn:hover { border-color: var(--accent); }
-  .btn:active { transform: scale(0.97); }
-  .btn.primary { border-color: var(--accent); color: var(--accent); }
-  .btn.small { min-height: 36px; padding: 0 12px; font-size: 13px; }
-  .btn[aria-pressed="true"] { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-  .btn:disabled { opacity: 0.5; cursor: default; }
-
-  .masthead { max-width: 64rem; margin: 0 auto; padding-block: clamp(2.5rem, 7vw, 5rem) 2rem; }
-  .hero { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(20px, 4vw, 44px); align-items: center; }
-  .seal { position: relative; width: 148px; height: 148px; flex: none; }
-  .seal::before {
-    content: ""; position: absolute; inset: -7px; border-radius: 50%;
-    background: conic-gradient(from 0deg, transparent 0 55%, var(--gold-bright) 78%, transparent 100%);
-    animation: spin 16s linear infinite;
-  }
-  .seal::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 1px solid var(--gold); }
-  .seal img { position: relative; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; background: #0B1A28; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .name { font-size: clamp(2.4rem, 7vw, 4.6rem); letter-spacing: -0.01em; line-height: 1.02; }
-  .name span { display: inline-block; animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: calc(var(--i) * 110ms); }
-  @keyframes rise { from { opacity: 0; transform: translateY(0.35em); } to { opacity: 1; transform: none; } }
-  .dek { font-size: clamp(1.05rem, 2vw, 1.3rem); color: var(--muted); max-width: 34em; margin-top: 0.9rem; animation: rise 0.9s 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-  .masthead .kicker { margin-bottom: 1.6rem; display: flex; gap: 8px 20px; flex-wrap: wrap; }
-  .hero-rule { margin-top: 2rem; }
-  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0 24px; margin-top: 1.4rem; }
-  .fact { border-left: 1px solid var(--rule); padding: 4px 0 4px 14px; }
-  .fact strong { display: block; font-size: 2rem; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--accent); }
-  .fact span { font: 400 13px/1.4 var(--ui); color: var(--muted); }
-  @media (max-width: 640px) {
-    .hero { grid-template-columns: 1fr; }
-    .seal { width: 112px; height: 112px; }
-  }
-
-  /* ---------- Sections ---------- */
-  main { max-width: 64rem; margin: 0 auto; }
-  section { padding-block: clamp(2.5rem, 6vw, 4.5rem); border-top: 1px solid var(--rule); }
-  .sec-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin-bottom: 2rem; }
-  .sec-head h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
-  .sec-head .lede { color: var(--muted); max-width: 40em; font-size: 1.05rem; }
-  .prose { max-width: 40em; }
-  .prose p + p { margin-top: 1em; }
-  .prose em { font-style: italic; }
-  .sc { font-variant: small-caps; letter-spacing: 0.04em; }
-
-  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem 3rem; }
-
-  /* Parcours */
-  .timeline { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--rule); }
-  .timeline li { position: relative; padding: 0 0 1.6rem 1.4rem; }
-  .timeline li::before { content: ""; position: absolute; left: -4px; top: 0.55em; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
-  .timeline .when { font: 500 12px/1.4 var(--ui); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-  .timeline h3 { font-size: 1.15rem; margin-top: 2px; }
-  .timeline p { color: var(--muted); font-size: 0.98rem; margin-top: 4px; }
-  .todo { border-bottom: 1px dashed var(--accent); color: var(--accent); cursor: help; }
-
-  /* Compétences (filets) */
-  .skills { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
-  .skills li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; align-items: baseline; }
-  .skills .lbl { font-size: 1rem; }
-  .skills .proof-ref { font: 400 12px/1.4 var(--ui); color: var(--muted); grid-column: 1 / -1; }
-  .skills .lvl { font: 500 12px/1 var(--ui); color: var(--muted); font-variant-numeric: tabular-nums; }
-  .skills .track { grid-column: 1 / -1; height: 2px; background: var(--rule); position: relative; overflow: hidden; }
-  .skills .track i { position: absolute; inset: 0; background: var(--gold); transform-origin: left center; transform: scaleX(var(--w)); }
-  .js .skills .track i { transform: scaleX(0); transition: transform 1s cubic-bezier(0.2, 0.7, 0.2, 1); }
-  .js .in .skills .track i, .js .skills.in .track i { transform: scaleX(var(--w)); }
-  .note { font: 400 13px/1.5 var(--ui); color: var(--muted); margin-top: 12px; }
-
-  /* Preuves */
-  .proof { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.4rem 2.5rem; padding-block: 2.4rem; border-top: 1px solid var(--rule); }
-  .proof:first-of-type { border-top: 0; padding-top: 0; }
-  .proof header { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 16px; align-items: baseline; }
-  .proof .rank { font: 700 1.6rem/1 var(--serif); color: var(--gold); font-variant-numeric: tabular-nums; grid-row: 1 / span 3; }
-  .proof h3 { font-size: 1.35rem; }
-  .proof .what { color: var(--muted); max-width: 44em; }
-  .proof .claim { font-style: italic; }
-  .src { margin: 0; }
-  .src .kicker, .demo .kicker { display: block; margin-bottom: 8px; }
-  .src pre {
-    margin: 0; padding: 14px 16px; background: var(--code-bg); border-left: 2px solid var(--gold);
-    font: 400 12.5px/1.55 var(--mono); overflow-x: auto; color: var(--text); tab-size: 2;
-    max-height: 26rem; overflow-y: auto;
-  }
-  .src .ref { font: 400 12px/1.5 var(--ui); color: var(--muted); margin-top: 8px; }
-  .demo { display: flex; flex-direction: column; gap: 12px; }
-  .field { display: grid; gap: 6px; }
-  .field label, .lbl-ui { font: 500 12px/1.4 var(--ui); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-  input[type="text"], input[type="search"], input[type="date"], input[type="number"], input[type="time"], select, textarea {
-    font: 400 16px/1.4 var(--ui); color: var(--text); background: var(--surface);
-    border: 1px solid var(--rule-strong); border-radius: 6px; padding: 10px 12px; min-height: 44px; width: 100%;
-  }
-  textarea { font-family: var(--mono); font-size: 13px; }
-  input:focus, select:focus, textarea:focus { border-color: var(--accent); outline: none; }
-  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-  .out { font: 400 14px/1.5 var(--ui); }
-  .out ol, .out ul { margin: 0; padding-left: 1.2em; }
-  .out li + li { margin-top: 4px; }
-  .out .id { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-  .list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--rule); }
-  .list li { display: grid; grid-template-columns: 2.2em minmax(0, 1fr) auto; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--rule); font: 400 14px/1.4 var(--ui); align-items: baseline; }
-  .list .n { font: 700 14px/1 var(--serif); color: var(--gold); font-variant-numeric: tabular-nums; }
-  .list .t { font-family: var(--serif); font-size: 15px; }
-  .list .s { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
-  .empty { color: var(--muted); font-style: italic; padding: 10px 0; }
-  .flash { animation: flash 0.9s ease-out; }
-  @keyframes flash { from { background: var(--flash); } to { background: transparent; } }
-  .mono { font-family: var(--mono); font-size: 12.5px; }
-  .verdict { padding: 10px 14px; border-left: 2px solid var(--gold); background: var(--chip); font: 400 14px/1.5 var(--ui); }
-  .verdict.bad { border-color: var(--danger); }
-  .verdict.good { border-color: var(--ok); }
-  .verdict strong { font-family: var(--serif); font-size: 16px; }
-  table { border-collapse: collapse; width: 100%; font: 400 14px/1.4 var(--ui); font-variant-numeric: tabular-nums; }
-  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
-  th { font: 500 11px/1.3 var(--ui); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-  td.num, th.num { text-align: right; }
-  td input[type="number"] { min-height: 36px; padding: 6px 8px; width: 6.5em; font-variant-numeric: tabular-nums; text-align: right; }
-  .table-wrap { overflow-x: auto; }
-  .kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; font: 400 14px/1.5 var(--ui); align-items: baseline; }
-  .kv dt { color: var(--muted); }
-  .kv dd { margin: 0; font-variant-numeric: tabular-nums; }
-  .kv dd.big { font: 700 1.5rem/1.1 var(--serif); color: var(--accent); }
-  .rules { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font: 400 13.5px/1.45 var(--ui); }
-  .rules li { display: grid; grid-template-columns: 10px minmax(0, 1fr); gap: 10px; align-items: start; }
-  .rules li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; background: var(--rule-strong); }
-  .rules li.ok::before { background: var(--ok); }
-  .rules li.fire::before { background: var(--gold); }
-  .rules li.bad::before { background: var(--danger); }
-  .opts { display: grid; gap: 8px; }
-  .opt { display: flex; align-items: center; gap: 10px; font: 400 15px/1.3 var(--ui); min-height: 32px; }
-  .opt input { width: 18px; height: 18px; accent-color: var(--accent); }
-  .opt .price { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .opt.off { opacity: 0.5; }
-  @media (max-width: 860px) { .proof { grid-template-columns: minmax(0, 1fr); } }
-  .src, .demo, .proof header { min-width: 0; }
-  @media (max-width: 560px) { .quiz li { grid-template-columns: minmax(0, 1fr); } }
-
-  /* Cité */
-  .quiz { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
-  .quiz li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 10px 0; border-bottom: 1px solid var(--rule); align-items: center; }
-  .quiz .q { font-size: 1rem; }
-  .quiz .choices { display: flex; gap: 6px; flex-wrap: wrap; }
-  .quiz .why { grid-column: 1 / -1; font: 400 13px/1.5 var(--ui); color: var(--muted); }
-  .quiz .why.right { color: var(--ok); }
-  .quiz .why.wrong { color: var(--danger); }
-  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-  .steps li { display: grid; grid-template-columns: 2.2em minmax(0, 1fr); gap: 10px; align-items: center; }
-  .steps .n { font: 700 1.1rem/1 var(--serif); color: var(--gold); font-variant-numeric: tabular-nums; text-align: right; }
-  .steps .chip { text-align: left; min-height: 44px; padding: 8px 14px; border: 1px solid var(--rule-strong); border-radius: 6px; background: var(--chip); cursor: pointer; font: 400 15px/1.3 var(--ui); transition: transform 0.12s ease, border-color 0.2s ease; width: 100%; }
-  .steps .chip:hover { border-color: var(--accent); }
-  .steps .chip.placed { border-color: var(--ok); background: transparent; cursor: default; }
-  .steps .chip.shake { animation: shake 0.4s ease; border-color: var(--danger); }
-  @keyframes shake { 0%, 100% { transform: none; } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-  .leviers { display: grid; gap: 6px; }
-  .grille { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-  .grille .col { border-top: 2px solid var(--gold); padding-top: 8px; min-height: 8rem; }
-  .grille .col h4 { font-size: 1rem; margin-bottom: 8px; }
-  .grille ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-  .grille li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; font: 400 14px/1.4 var(--ui); align-items: start; }
-  .grille .x { border: 0; background: none; color: var(--muted); cursor: pointer; padding: 0 4px; font: 400 16px/1 var(--ui); min-height: 24px; }
-  .grille .x:hover { color: var(--danger); }
-  @media (max-width: 720px) { .grille { grid-template-columns: 1fr; } }
-  .add { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: end; }
-  @media (max-width: 560px) { .add { grid-template-columns: 1fr; } }
-
-  footer { max-width: 64rem; margin: 0 auto; border-top: 1px solid var(--rule); padding-top: 1.6rem; font: 400 13px/1.6 var(--ui); color: var(--muted); display: grid; gap: 6px; }
-
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; transition: none !important; }
-    html { scroll-behavior: auto; }
-    .js .reveal { opacity: 1; transform: none; }
-    .js .rule.draw { transform: none; }
-    .js .skills .track i { transform: scaleX(var(--w)); }
-  }
-</style>
+<meta name="description" content="Zacharie L. Nolet, Techniques de l’informatique au Cégep de Victoriaville : bio, parcours, six techniques exécutées sur la page, et lecture de la politique québécoise, canadienne et internationale.">
+<meta name="author" content="Zacharie L. Nolet">
+<meta name="theme-color" content="#F3EDE0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B1A28" media="(prefers-color-scheme: dark)">
+<!-- Une fois le site hébergé, remplace la base des URL absolues (SITE_URL) dans sitemap.xml, robots.txt et ci-dessous. -->
+<link rel="canonical" href="https://zacharienoletgit.github.io/zacharie-l-nolet/">
+<meta property="og:type" content="profile">
+<meta property="og:locale" content="fr_CA">
+<meta property="og:site_name" content="Zacharie L. Nolet">
+<meta property="og:title" content="Zacharie L. Nolet">
+<meta property="og:description" content="Développeur, intelligence d’affaires, lecteur de la cité. Six techniques exécutées sur la page.">
+<meta property="og:url" content="https://zacharienoletgit.github.io/zacharie-l-nolet/">
+<meta property="og:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zacharie L. Nolet, portrait et nom sur fond d’encre">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Zacharie L. Nolet">
+<meta name="twitter:description" content="Développeur, intelligence d’affaires, lecteur de la cité. Six techniques exécutées sur la page.">
+<meta name="twitter:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <a class="skip" href="#preuves">Aller aux preuves</a>
@@ -310,17 +42,24 @@
     <a href="#competences">Compétences</a>
     <a href="#preuves">Preuves</a>
     <a href="#cite">Cité</a>
+    <a href="#contact">Contact</a>
   </nav>
   <button class="btn small" id="themeBtn" type="button" aria-label="Changer la lumière">Lumière : Système</button>
 </div>
 
 <header class="masthead">
-  <p class="kicker"><span>Cahier de compétences</span><span>Édition du <time id="today">aujourd’hui</time></span><span>Rien n’est affirmé sans être exécuté</span></p>
+  <p class="kicker masthead-kicker"><span>Cahier de compétences</span><span>Édition du <time id="today">aujourd’hui</time></span><span>Rien n’est affirmé sans être exécuté</span></p>
   <div class="hero">
-    <div class="seal"><img src="portrait.jpg" alt="Sceau de la marque Zacharie L. Nolet : portrait auréolé d’or" width="148" height="148"></div>
+    <figure class="hero-photo">
+      <img src="photo-canal.jpg" alt="Zacharie L. Nolet, polo marine et lunettes de soleil, appuyé au parapet d’un canal bordé d’arbres" width="886" height="886" fetchpriority="high" class="img-fade">
+    </figure>
     <div>
-      <h1 class="name"><span style="--i:0">Zacharie</span> <span style="--i:1">L.</span> <span style="--i:2">Nolet</span></h1>
-      <p class="dek">Développeur d’outils qui refusent le fil, analyste d’intelligence d’affaires attaché au grain, lecteur de la cité par ses leviers. Cette page ne liste pas des techniques : elle les fait tourner.</p>
+      <h1 class="name"><span class="w0">Zacharie</span> <span class="w1">L.</span> <span class="w2">Nolet</span></h1>
+      <p class="dek">Techniques de l’informatique au Cégep de Victoriaville. Développeur d’outils qui refusent le fil, analyste d’intelligence d’affaires attaché au grain, lecteur de la cité par ses leviers. Cette page ne liste pas des techniques : elle les fait tourner.</p>
+      <div class="cta row">
+        <a class="btn primary" id="ctaMail" href="#contact">M’écrire</a>
+        <a class="btn" href="#preuves">Voir les six preuves</a>
+      </div>
     </div>
   </div>
   <div class="rule thick draw hero-rule"></div>
@@ -339,17 +78,18 @@
       <p class="kicker"><b>Bio</b> · Qui écrit</p>
       <h2>Un cahier, pas un fil</h2>
     </div>
-    <div class="cols">
+    <div class="cols cols-bio">
       <div class="prose reveal">
-        <p>Je m’appelle Zacharie L. Nolet. J’étudie au Cégep de Victoriaville et je construis des logiciels avec une règle simple : <em>le grain avant l’abstraction</em>. Un écran ne calcule pas un rang. Une règle métier vit dans une fonction pure, avec son test, avant de vivre dans un thème.</p>
+        <p>Je m’appelle Zacharie L. Nolet. J’étudie en Techniques de l’informatique au Cégep de Victoriaville et je construis des logiciels avec une règle simple : <em>le grain avant l’abstraction</em>. Un écran ne calcule pas un rang. Une règle métier vit dans une fonction pure, avec son test, avant de vivre dans un thème.</p>
         <p>Mon projet de référence est un cahier de lecture iPhone qui remplace les médias sociaux sans les imiter. Dix textes par jour, une clôture volontaire, un classeur hors-ligne dont la synchronisation est une file d’opérations idempotentes. Pas de fil infini, pas de « j’aime », pas de « pour toi ».</p>
         <p>Côté décision, je travaille avec des systèmes qui existent déjà en production : Sage X3 est l’opérationnel, Nectari clone le champ certifié, Jitterbit cadence l’intégration, Power BI lit le mart. Je n’invente pas un KPI ; je refuse de sommer un ratio.</p>
-      </div>
-      <div class="prose reveal">
         <p>Côté cité, je lis la politique québécoise, canadienne et internationale comme on lit un débat : lentement, par compétences, par leviers, par institutions qui survivent à un cycle électoral. Un article qui a des noms mais pas de leviers est une scène, pas une analyse.</p>
         <p>Le reste est méthode : la marge comme lieu de décision, la philosophie comme manière de choisir ce qui mérite une heure, le hip-hop comme archive orale avec des règles de vers.</p>
-        <p class="note">La palette (encre de minuit, filet d’or), la typographie Georgia et le vocabulaire (Découper, Feuille, Cabinet) sont ceux du projet. Cette page est écrite sans framework, sans police externe, sans traceur.</p>
       </div>
+      <figure class="figure reveal">
+        <img src="photo-nuit.jpg" alt="Zacharie L. Nolet en veston noir, le soir, dans une rue éclairée" width="886" height="886" loading="lazy" class="img-fade">
+        <figcaption>Le soir, après la fermeture de l’édition.</figcaption>
+      </figure>
     </div>
   </section>
 
@@ -358,26 +98,30 @@
     <div class="sec-head reveal">
       <p class="kicker"><b>CV</b> · Parcours</p>
       <h2>Ce qui a été fait, daté</h2>
-      <p class="lede">Les entrées en pointillé or sont à compléter avec les dates et les noms exacts. Le reste est tiré du dépôt.</p>
     </div>
     <div class="cols">
       <div class="reveal">
-        <p class="kicker" style="margin-bottom:12px">Formation</p>
+        <p class="kicker mb-12">Formation et distinction</p>
         <ol class="timeline">
           <li>
-            <span class="when"><span class="todo" title="À compléter">années</span></span>
-            <h3>Cégep de Victoriaville</h3>
-            <p><span class="todo" title="À compléter">Programme d’études</span>. Informatique, intelligence d’affaires, lecture de la cité.</p>
+            <span class="when">2026 · Exposat</span>
+            <h3>Prix « Badge fort, salue l’effort », 500 $</h3>
+            <p>Exposat 2026, Techniques de l’informatique. Remis à l’équipe Philippe-Vu Beaulieu, Zacharie Nolet, Félix Dupras-Simard, Frédérick Bethermat et Rachid Touil.</p>
+          </li>
+          <li>
+            <span class="when">Cégep de Victoriaville</span>
+            <h3>DEC, Techniques de l’informatique</h3>
+            <p>Programmation, bases de données, systèmes, projets en équipe. Intérêt marqué pour l’intelligence d’affaires et les systèmes de gestion.</p>
           </li>
           <li>
             <span class="when">En continu</span>
-            <h3>Auto-formation en systèmes de gestion</h3>
-            <p>Sage X3, Nectari, Jitterbit, Power BI, CPQ : périmètre, vocabulaire partagé, modèle en étoile.</p>
+            <h3>Systèmes de gestion et décision</h3>
+            <p>Sage X3, Nectari, Jitterbit, Power BI, CPQ : périmètre de chacun, vocabulaire partagé, modèle en étoile.</p>
           </li>
         </ol>
       </div>
       <div class="reveal">
-        <p class="kicker" style="margin-bottom:12px">Expérience et projets</p>
+        <p class="kicker mb-12">Projets</p>
         <ol class="timeline">
           <li>
             <span class="when">2026</span>
@@ -385,12 +129,15 @@
             <p>React Native 0.87 bare, TypeScript, Context + AsyncStorage, file de sync, backend PHP 8 à fichiers JSON, 8 suites Jest. Flux RSS de dix médias composés en une édition d’étagères diverses.</p>
           </li>
           <li>
-            <span class="when"><span class="todo" title="À compléter">années</span></span>
-            <h3><span class="todo" title="À compléter">Poste · Organisation</span></h3>
-            <p><span class="todo" title="À compléter">Deux phrases sur le mandat et le résultat.</span></p>
+            <span class="when">2026</span>
+            <h3>Ce cahier de compétences</h3>
+            <p>Page statique sans framework, sans police externe, sans traceur. Six fonctions du dépôt portées et exécutées sur la page. Page 404, politique de confidentialité, conditions, plan de site, en-têtes de sécurité.</p>
           </li>
         </ol>
-        <p class="note">Contact : <span class="todo" title="À compléter">courriel</span> · <span class="todo" title="À compléter">ville</span></p>
+        <figure class="figure figure-award">
+          <img src="exposat-2026.jpg" alt="Affiche Exposat 2026, Techniques de l’informatique : l’équipe sur scène avec ses enveloppes, prix Badge fort, salue l’effort, 500 $" width="816" height="962" loading="lazy" class="img-fade">
+          <figcaption>Exposat 2026. Cinq noms, une enveloppe, une scène.</figcaption>
+        </figure>
       </div>
     </div>
   </section>
@@ -404,25 +151,25 @@
     </div>
     <div class="cols">
       <div class="reveal">
-        <p class="kicker" style="margin-bottom:12px">Atelier</p>
+        <p class="kicker mb-12">Atelier</p>
         <ul class="skills">
-          <li><span class="lbl">TypeScript · React Native</span><span class="lvl">85</span><span class="track"><i style="--w:.85"></i></span><span class="proof-ref">src/features, src/components · 4 onglets, navigation native, Dynamic Type</span></li>
-          <li><span class="lbl">Fonctions pures et tests (Jest)</span><span class="lvl">80</span><span class="track"><i style="--w:.8"></i></span><span class="proof-ref">src/domain · édition, classeur, recherche, file de sync · <a href="#preuves">preuves 01 à 03</a></span></li>
-          <li><span class="lbl">Architecture local-first et sync</span><span class="lvl">80</span><span class="track"><i style="--w:.8"></i></span><span class="proof-ref">file idempotente, last-write-wins sur updatedAt · <a href="#p3">preuve 03</a></span></li>
-          <li><span class="lbl">PHP 8 · API JSON</span><span class="lvl">70</span><span class="track"><i style="--w:.7"></i></span><span class="proof-ref">backend/php · 8 routes, fichiers JSON avec flock, upsert idempotent</span></li>
-          <li><span class="lbl">Intelligence d’affaires · Power BI</span><span class="lvl">70</span><span class="track"><i style="--w:.7"></i></span><span class="proof-ref">le mart, pas la source · <a href="#p4">preuve 04</a></span></li>
-          <li><span class="lbl">Sage X3 · Nectari · Jitterbit</span><span class="lvl">60</span><span class="track"><i style="--w:.6"></i></span><span class="proof-ref">périmètres distincts : opérationnel, champ certifié, horloge d’intégration</span></li>
-          <li><span class="lbl">CPQ · règles de configuration</span><span class="lvl">55</span><span class="track"><i style="--w:.55"></i></span><span class="proof-ref">un graphe de contraintes, pas un formulaire · <a href="#p5">preuve 05</a></span></li>
+          <li><span class="lbl">TypeScript · React Native</span><span class="lvl">85</span><span class="track"><i data-w="0.85"></i></span><span class="proof-ref">src/features, src/components · 4 onglets, navigation native, Dynamic Type</span></li>
+          <li><span class="lbl">Fonctions pures et tests (Jest)</span><span class="lvl">80</span><span class="track"><i data-w="0.8"></i></span><span class="proof-ref">src/domain · édition, classeur, recherche, file de sync · <a href="#preuves">preuves 01 à 03</a></span></li>
+          <li><span class="lbl">Architecture local-first et sync</span><span class="lvl">80</span><span class="track"><i data-w="0.8"></i></span><span class="proof-ref">file idempotente, last-write-wins sur updatedAt · <a href="#p3">preuve 03</a></span></li>
+          <li><span class="lbl">PHP 8 · API JSON</span><span class="lvl">70</span><span class="track"><i data-w="0.7"></i></span><span class="proof-ref">backend/php · 8 routes, fichiers JSON avec flock, upsert idempotent</span></li>
+          <li><span class="lbl">Intelligence d’affaires · Power BI</span><span class="lvl">70</span><span class="track"><i data-w="0.7"></i></span><span class="proof-ref">le mart, pas la source · <a href="#p4">preuve 04</a></span></li>
+          <li><span class="lbl">Sage X3 · Nectari · Jitterbit</span><span class="lvl">60</span><span class="track"><i data-w="0.6"></i></span><span class="proof-ref">périmètres distincts : opérationnel, champ certifié, horloge d’intégration</span></li>
+          <li><span class="lbl">CPQ · règles de configuration</span><span class="lvl">55</span><span class="track"><i data-w="0.55"></i></span><span class="proof-ref">un graphe de contraintes, pas un formulaire · <a href="#p5">preuve 05</a></span></li>
         </ul>
       </div>
       <div class="reveal">
-        <p class="kicker" style="margin-bottom:12px">Cité</p>
+        <p class="kicker mb-12">Cité</p>
         <ul class="skills">
-          <li><span class="lbl">Partage des compétences (1867, art. 91 à 95)</span><span class="lvl">80</span><span class="track"><i style="--w:.8"></i></span><span class="proof-ref"><a href="#cite">tri fédéral / provincial / partagé</a></span></li>
-          <li><span class="lbl">Procédure parlementaire québécoise</span><span class="lvl">75</span><span class="track"><i style="--w:.75"></i></span><span class="proof-ref"><a href="#etapes">le chemin d’un projet de loi</a></span></li>
-          <li><span class="lbl">Lecture par leviers (international)</span><span class="lvl">75</span><span class="track"><i style="--w:.75"></i></span><span class="proof-ref"><a href="#leviers">sanctions, traités, cours, cycles</a></span></li>
-          <li><span class="lbl">Communiqué · reportage · analyse</span><span class="lvl">80</span><span class="track"><i style="--w:.8"></i></span><span class="proof-ref"><a href="#grille">grille tenu / inféré / à vérifier</a></span></li>
-          <li><span class="lbl">Rédaction longue en français</span><span class="lvl">85</span><span class="track"><i style="--w:.85"></i></span><span class="proof-ref">22 essais du catalogue, docs de conception du dépôt</span></li>
+          <li><span class="lbl">Partage des compétences (1867, art. 91 à 95)</span><span class="lvl">80</span><span class="track"><i data-w="0.8"></i></span><span class="proof-ref"><a href="#cite">tri fédéral / provincial / partagé</a></span></li>
+          <li><span class="lbl">Procédure parlementaire québécoise</span><span class="lvl">75</span><span class="track"><i data-w="0.75"></i></span><span class="proof-ref"><a href="#etapes">le chemin d’un projet de loi</a></span></li>
+          <li><span class="lbl">Lecture par leviers (international)</span><span class="lvl">75</span><span class="track"><i data-w="0.75"></i></span><span class="proof-ref"><a href="#leviers">sanctions, traités, cours, cycles</a></span></li>
+          <li><span class="lbl">Communiqué · reportage · analyse</span><span class="lvl">80</span><span class="track"><i data-w="0.8"></i></span><span class="proof-ref"><a href="#grille">grille tenu / inféré / à vérifier</a></span></li>
+          <li><span class="lbl">Rédaction longue en français</span><span class="lvl">85</span><span class="track"><i data-w="0.85"></i></span><span class="proof-ref">22 essais du catalogue, docs de conception du dépôt</span></li>
         </ul>
       </div>
     </div>
@@ -450,9 +197,9 @@
       </div>
       <div class="demo">
         <span class="kicker">Exécution</span>
-        <div class="field"><label for="q">Requête</label><input type="search" id="q" value="quebec" autocomplete="off" spellcheck="false"></div>
+        <div class="field"><label for="q">Requête</label><input type="search" id="q" value="quebec" autocomplete="off" spellcheck="false" maxlength="80"></div>
         <div class="field"><label for="qs">Rubrique</label><select id="qs"><option value="">Toutes</option></select></div>
-        <p class="out" id="qn"></p>
+        <p class="out" id="qn" aria-live="polite"></p>
         <ol class="list" id="qout"></ol>
       </div>
     </article>
@@ -472,11 +219,11 @@
       <div class="demo">
         <span class="kicker">Exécution</span>
         <div class="row">
-          <div class="field" style="flex:1 1 180px"><label for="ed">Date civile</label><input type="date" id="ed"></div>
+          <div class="field grow"><label for="ed">Date civile</label><input type="date" id="ed"></div>
           <button class="btn" type="button" id="edPrev">Veille</button>
           <button class="btn" type="button" id="edNext">Lendemain</button>
         </div>
-        <p class="out" id="edhash"></p>
+        <p class="out" id="edhash" aria-live="polite"></p>
         <ol class="list" id="edout"></ol>
       </div>
     </article>
@@ -501,14 +248,14 @@
           <button class="btn" type="button" id="opNote">Annoter a-01</button>
           <button class="btn small" type="button" id="opClear">Vider</button>
         </div>
-        <p class="out" id="qcount"></p>
+        <p class="out" id="qcount" aria-live="polite"></p>
         <ul class="list" id="qops"></ul>
-        <span class="kicker" style="margin-top:8px">Exécution · fusion</span>
+        <span class="kicker mt-8">Exécution · fusion</span>
         <div class="row">
-          <div class="field" style="flex:1 1 140px"><label for="tLocal">Note locale, modifiée à</label><input type="time" id="tLocal" value="08:14" step="60"></div>
-          <div class="field" style="flex:1 1 140px"><label for="tRemote">Même note, serveur, à</label><input type="time" id="tRemote" value="08:20" step="60"></div>
+          <div class="field grow-sm"><label for="tLocal">Note locale, modifiée à</label><input type="time" id="tLocal" value="08:14" step="60"></div>
+          <div class="field grow-sm"><label for="tRemote">Même note, serveur, à</label><input type="time" id="tRemote" value="08:20" step="60"></div>
         </div>
-        <div class="verdict" id="mergeOut"></div>
+        <div class="verdict" id="mergeOut" aria-live="polite"></div>
       </div>
     </article>
 
@@ -528,20 +275,21 @@
         <span class="kicker">Exécution</span>
         <div class="table-wrap">
           <table id="ratioTable">
-            <thead><tr><th>Région</th><th class="num">À temps</th><th class="num">Total</th><th class="num">Taux</th></tr></thead>
+            <thead><tr><th scope="col">Région</th><th class="num" scope="col">À temps</th><th class="num" scope="col">Total</th><th class="num" scope="col">Taux</th></tr></thead>
             <tbody>
-              <tr><td>Centre-du-Québec</td><td class="num"><input type="number" id="r1a" value="95" min="0"></td><td class="num"><input type="number" id="r1b" value="100" min="1"></td><td class="num" data-rate>95,0 %</td></tr>
-              <tr><td>Montréal</td><td class="num"><input type="number" id="r2a" value="1700" min="0"></td><td class="num"><input type="number" id="r2b" value="2000" min="1"></td><td class="num" data-rate>85,0 %</td></tr>
-              <tr><td>Estrie</td><td class="num"><input type="number" id="r3a" value="45" min="0"></td><td class="num"><input type="number" id="r3b" value="50" min="1"></td><td class="num" data-rate>90,0 %</td></tr>
+              <tr><td>Centre-du-Québec</td><td class="num"><input type="number" id="r1a" value="95" min="0" max="1000000" aria-label="Centre-du-Québec, livraisons à temps"></td><td class="num"><input type="number" id="r1b" value="100" min="1" max="1000000" aria-label="Centre-du-Québec, livraisons totales"></td><td class="num" data-rate>95,0 %</td></tr>
+              <tr><td>Montréal</td><td class="num"><input type="number" id="r2a" value="1700" min="0" max="1000000" aria-label="Montréal, livraisons à temps"></td><td class="num"><input type="number" id="r2b" value="2000" min="1" max="1000000" aria-label="Montréal, livraisons totales"></td><td class="num" data-rate>85,0 %</td></tr>
+              <tr><td>Estrie</td><td class="num"><input type="number" id="r3a" value="45" min="0" max="1000000" aria-label="Estrie, livraisons à temps"></td><td class="num"><input type="number" id="r3b" value="50" min="1" max="1000000" aria-label="Estrie, livraisons totales"></td><td class="num" data-rate>90,0 %</td></tr>
             </tbody>
           </table>
         </div>
+        <p class="error" id="ratioErr" hidden></p>
         <dl class="kv">
           <dt>Moyenne des taux (faux)</dt><dd id="rAvg" class="big"></dd>
           <dt>Taux global (juste)</dt><dd id="rTrue" class="big"></dd>
           <dt>Écart</dt><dd id="rGap"></dd>
         </dl>
-        <div class="verdict" id="rVerdict"></div>
+        <div class="verdict" id="rVerdict" aria-live="polite"></div>
       </div>
     </article>
 
@@ -564,7 +312,7 @@
           <dt>Base</dt><dd id="cpqBase"></dd>
           <dt>Options</dt><dd id="cpqOptions"></dd>
           <dt>Remise</dt><dd id="cpqDisc"></dd>
-          <dt>Prix</dt><dd id="cpqTotal" class="big"></dd>
+          <dt>Prix</dt><dd id="cpqTotal" class="big" aria-live="polite"></dd>
         </dl>
         <span class="lbl-ui">Trace des règles</span>
         <ul class="rules" id="cpqRules"></ul>
@@ -586,7 +334,7 @@
       <div class="demo">
         <span class="kicker">Exécution</span>
         <textarea id="mdOut" rows="14" readonly aria-label="Markdown généré"></textarea>
-        <div class="row"><button class="btn" type="button" id="mdCopy">Copier</button><span class="out" id="mdMsg"></span></div>
+        <div class="row"><button class="btn" type="button" id="mdCopy">Copier</button><span class="out" id="mdMsg" role="status"></span></div>
       </div>
     </article>
   </section>
@@ -599,615 +347,93 @@
       <p class="lede">Trois exercices que je m’impose avant d’avoir une opinion : savoir qui a compétence, savoir où en est le texte, savoir quels leviers l’article nomme.</p>
     </div>
 
-    <div class="cols" style="gap:3rem">
+    <div class="cols cols-wide">
       <div class="reveal">
-        <p class="kicker" style="margin-bottom:6px">Qui a compétence ?</p>
-        <h3 style="font-size:1.3rem">Fédéral, provincial ou partagé</h3>
-        <p class="note" style="margin-top:6px;margin-bottom:12px">Loi constitutionnelle de 1867. Réponds, puis lis l’article cité. Le score se calcule à la fin.</p>
+        <p class="kicker mb-6">Qui a compétence ?</p>
+        <h3 class="h3-sm">Fédéral, provincial ou partagé</h3>
+        <p class="note mt-6 mb-12">Loi constitutionnelle de 1867. Réponds, puis lis l’article cité. Le score se calcule à la fin.</p>
         <ul class="quiz" id="quiz"></ul>
-        <div class="row" style="margin-top:12px"><div class="verdict" id="quizScore" style="flex:1">Aucune réponse encore.</div><button class="btn small" type="button" id="quizReset">Recommencer</button></div>
+        <div class="row mt-12"><div class="verdict grow" id="quizScore" aria-live="polite">Aucune réponse encore.</div><button class="btn small" type="button" id="quizReset">Recommencer</button></div>
       </div>
 
-      <div style="display:grid;gap:3rem;align-content:start">
+      <div class="stack">
         <div class="reveal" id="etapes">
-          <p class="kicker" style="margin-bottom:6px">Où en est le texte ?</p>
-          <h3 style="font-size:1.3rem">Le chemin d’un projet de loi à l’Assemblée nationale</h3>
-          <p class="note" style="margin-top:6px;margin-bottom:12px">Clique les étapes dans l’ordre. Une erreur secoue la mauvaise étape.</p>
+          <p class="kicker mb-6">Où en est le texte ?</p>
+          <h3 class="h3-sm">Le chemin d’un projet de loi à l’Assemblée nationale</h3>
+          <p class="note mt-6 mb-12">Clique les étapes dans l’ordre. Une erreur secoue la mauvaise étape.</p>
           <ol class="steps" id="steps"></ol>
-          <div class="row" style="margin-top:12px"><div class="verdict" id="stepsOut" style="flex:1">Six étapes à placer.</div><button class="btn small" type="button" id="stepsReset">Mélanger</button></div>
+          <div class="row mt-12"><div class="verdict grow" id="stepsOut" aria-live="polite">Six étapes à placer.</div><button class="btn small" type="button" id="stepsReset">Mélanger</button></div>
         </div>
 
         <div class="reveal" id="leviers">
-          <p class="kicker" style="margin-bottom:6px">Quels leviers ?</p>
-          <h3 style="font-size:1.3rem">Un article international a-t-il des leviers ?</h3>
-          <p class="note" style="margin-top:6px;margin-bottom:12px">Coche ce que le texte que tu viens de lire nomme réellement. Un article qui n’a que des visages est une scène.</p>
+          <p class="kicker mb-6">Quels leviers ?</p>
+          <h3 class="h3-sm">Un article international a-t-il des leviers ?</h3>
+          <p class="note mt-6 mb-12">Coche ce que le texte que tu viens de lire nomme réellement. Un article qui n’a que des visages est une scène.</p>
           <div class="leviers" id="levList"></div>
-          <div class="verdict" id="leviersOut" style="margin-top:12px"></div>
+          <div class="verdict mt-12" id="leviersOut" aria-live="polite"></div>
         </div>
       </div>
     </div>
 
-    <div class="reveal" id="grille" style="margin-top:3.5rem">
-      <p class="kicker" style="margin-bottom:6px">Communiqué, reportage, analyse</p>
-      <h3 style="font-size:1.3rem">Grille de lecture : tenu, inféré, à vérifier</h3>
-      <p class="note" style="margin-top:6px;margin-bottom:14px">La règle de l’essai sur la politique québécoise : distingue ce qu’une source tient, ce que tu infères, ce que tu dois vérifier. Les lignes ci-dessous sont des exemples ; remplace-les. Elles restent dans ton navigateur seulement et alimentent la preuve 06.</p>
-      <div class="add">
-        <div class="field"><label for="gText">Phrase</label><input type="text" id="gText" placeholder="Ex. : le projet de loi a été présenté le 12 septembre" autocomplete="off"></div>
+    <div class="reveal grille-wrap" id="grille">
+      <p class="kicker mb-6">Communiqué, reportage, analyse</p>
+      <h3 class="h3-sm">Grille de lecture : tenu, inféré, à vérifier</h3>
+      <p class="note mt-6 mb-14">La règle de l’essai sur la politique québécoise : distingue ce qu’une source tient, ce que tu infères, ce que tu dois vérifier. Les lignes ci-dessous sont des exemples ; remplace-les. Elles restent dans ton navigateur seulement et alimentent la preuve 06.</p>
+      <form class="add" id="gForm" novalidate>
+        <div class="field"><label for="gText">Phrase</label><input type="text" id="gText" placeholder="Ex. : le projet de loi a été présenté le 12 septembre" autocomplete="off" maxlength="240" aria-describedby="gErr"></div>
         <div class="field"><label for="gKind">Statut</label><select id="gKind"><option value="tenu">Tenu par une source</option><option value="infere">Inféré</option><option value="verifier">À vérifier</option></select></div>
-        <button class="btn primary" type="button" id="gAdd">Annoter</button>
-      </div>
-      <div class="grille" style="margin-top:16px">
+        <button class="btn primary" type="submit" id="gAdd">Annoter</button>
+        <p class="error add-err" id="gErr" hidden></p>
+      </form>
+      <div class="grille mt-16">
         <div class="col"><h4>Tenu par une source</h4><ul id="g-tenu"></ul></div>
         <div class="col"><h4>Inféré</h4><ul id="g-infere"></ul></div>
         <div class="col"><h4>À vérifier</h4><ul id="g-verifier"></ul></div>
       </div>
     </div>
   </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section id="contact">
+    <div class="sec-head reveal">
+      <p class="kicker"><b>Contact</b> · Une adresse, pas un formulaire</p>
+      <h2>M’écrire</h2>
+      <p class="lede">Un courriel suffit. Je réponds moi-même, en français ou en anglais.</p>
+    </div>
+    <div class="cols">
+      <div class="reveal contact-card">
+        <dl class="kv kv-contact">
+          <dt>Courriel</dt><dd><a id="mailLink" href="#contact">adresse à venir</a></dd>
+          <dt>Lieu</dt><dd>Victoriaville, Centre-du-Québec, Canada</dd>
+          <dt>Code</dt><dd><a href="https://github.com/zacharienoletGit/zacharie-l-nolet" rel="noopener">github.com/zacharienoletGit/zacharie-l-nolet</a></dd>
+        </dl>
+        <div class="row mt-16"><a class="btn primary" id="mailBtn" href="#contact">Ouvrir mon courriel</a><button class="btn" type="button" id="mailCopy">Copier l’adresse</button><span class="out" id="mailMsg" role="status"></span></div>
+        <p class="note mt-12">Ton adresse ne sert qu’à te répondre. Rien n’est collecté sur cette page : voir la <a href="confidentialite.html">politique de confidentialité</a>.</p>
+      </div>
+      <figure class="figure reveal">
+        <img src="photo-canal-2.jpg" alt="Zacharie L. Nolet debout devant un canal, mains dans les poches, polo marine" width="886" height="886" loading="lazy" class="img-fade">
+        <figcaption>Disponible pour un stage, un mandat ou une conversation sur le grain.</figcaption>
+      </figure>
+    </div>
+  </section>
 </main>
 
 <footer>
   <span>Zacharie L. Nolet · Cahier de compétences · Encre de minuit, filet d’or, Georgia.</span>
-  <span>Page statique, un seul fichier, aucun script externe, aucune police chargée du réseau. Les démonstrations portent les fonctions du dépôt <span class="mono">zacharie-l-nolet</span>.</span>
+  <span>Page statique sans framework, sans police externe, sans traceur. Les démonstrations portent les fonctions du dépôt <span class="mono">zacharie-l-nolet</span>.</span>
+  <nav class="footer-nav" aria-label="Pages légales"><a href="confidentialite.html">Confidentialité</a><a href="conditions.html">Conditions d’utilisation</a><a href="sitemap.xml">Plan du site</a><a href="#top" id="toTop">Haut de page</a></nav>
 </footer>
 
-<script>
-(function () {
-  'use strict';
-  document.documentElement.classList.add('js');
-  const $ = (id) => document.getElementById(id);
-  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+<div class="notice" id="notice" hidden role="region" aria-label="Avis sur les données">
+  <p>Ce site n’utilise aucun témoin ni traceur. Il garde seulement ta lumière et ta grille de lecture dans ton navigateur. <a href="confidentialite.html">Détails</a></p>
+  <button class="btn small" type="button" id="noticeOk">Compris</button>
+</div>
 
-  /* ---------- Données du dépôt ---------- */
-  const CATALOG = [{"id":"a-01","slug":"ledition-contre-le-fil","title":"L’édition contre le fil","dek":"Un cahier de dix textes n’est pas un réseau social. C’est une clôture volontaire.","section":"philosophie","source":"Cabinet ZLN","region":"CULTURE","min":6,"rank":1,"keywords":["édition","attention","lecture","réseaux"]},{"id":"a-02","slug":"local-first-memoire","title":"Local-first, ou la mémoire qui t’appartient","dek":"Un carnet hors-ligne n’est pas un repli. C’est une architecture.","section":"informatique","source":"Atelier","region":"TECH","min":7,"rank":2,"keywords":["local-first","sync","architecture","notes"]},{"id":"a-03","slug":"grain-avant-abstraction","title":"Le grain avant l’abstraction","dek":"Un écran de trop, une table de trop : le code commence par ce que tu comptes.","section":"programmation","source":"Atelier","region":"TECH","min":8,"rank":3,"keywords":["grain","modèle","react-native","contrat"]},{"id":"a-04","slug":"la-source-nest-pas-le-rapport","title":"La source n’est pas le rapport","dek":"Un tableau de bord qui se prend pour l’usine ment deux fois : au métier, et à lui-même.","section":"intelligence_affaires","source":"Décision","region":"TECH","min":7,"rank":4,"keywords":["grain","source","mart","méthode"]},{"id":"a-05","slug":"operationnel-pas-une-copie","title":"L’opérationnel n’est pas une copie","dek":"Un ERP vivant n’est pas un export. Le traiter comme un fichier, c’est déjà se tromper de grain.","section":"sage_x3","source":"Décision","region":"TECH","min":6,"rank":5,"keywords":["sage","erp","opérationnel","grain"]},{"id":"a-06","slug":"cloner-ne-pas-inventer","title":"Cloner, ne pas inventer","dek":"Un champ déjà certifié en production n’est pas une suggestion. C’est une frontière.","section":"nectari","source":"Décision","region":"TECH","min":6,"rank":6,"keywords":["nectari","netari","certifié","mesure"]},{"id":"a-07","slug":"horloge-pas-le-metier","title":"L’horloge n’est pas le métier","dek":"Jitterbit cadence. Il ne décide pas ce qu’est une commande, un lot, une vérité.","section":"jitterbit","source":"Décision","region":"TECH","min":6,"rank":7,"keywords":["jitterbit","intégration","idempotence","contrat"]},{"id":"a-08","slug":"un-ratio-ne-se-somme-pas","title":"Un ratio ne se somme pas","dek":"Power BI n’est pas coupable. La somme d’un pourcentage, si.","section":"power_bi","source":"Décision","region":"TECH","min":6,"rank":8,"keywords":["power bi","ratio","grain","étoile"]},{"id":"a-09","slug":"conversation-publique-hors-des-murs","title":"La conversation publique hors des murs","dek":"La politique québécoise n’a pas besoin d’un autre fil. Elle a besoin de phrases qui tiennent.","section":"politique_quebecoise","source":"Cité","region":"QC","min":6,"rank":9,"keywords":["québec","politique","assemblée","lecture"]},{"id":"a-10","slug":"forme-longue-hip-hop","title":"La forme longue dans un genre qu’on dit court","dek":"Le hip-hop n’est pas un extrait. C’est une archive orale avec des règles de vers.","section":"hip_hop","source":"Culture","region":"CULTURE","min":5,"rank":10,"keywords":["hip-hop","forme","archive","écoute"]},{"id":"a-11","slug":"cpq-regles-avant-ecran","title":"CPQ : les règles avant l’écran","dek":"Configurer un prix n’est pas un formulaire. C’est un graphe de contraintes.","section":"cpq","source":"Atelier","region":"TECH","min":7,"keywords":["cpq","règles","devis","contraintes"]},{"id":"a-12","slug":"vocabulaire-du-domaine","title":"Le vocabulaire est le domaine","dek":"Tant que « produit », « article » et « item » veulent trois choses, le logiciel mentira poliment.","section":"domaine_informatique","source":"Atelier","region":"TECH","min":6,"keywords":["domaine","vocabulaire","clé","modèle"]},{"id":"a-13","slug":"lire-le-monde-sans-alerte","title":"Lire le monde sans alerte","dek":"L’international n’est pas une notification. C’est une carte trop grande pour un pouce.","section":"nouvelles_internationales","source":"Monde","region":"INTL","min":5,"keywords":["international","contexte","alerte"]},{"id":"a-14","slug":"canada-hors-du-cycle","title":"Le Canada hors du cycle","dek":"Un pays n’est pas une « journée en politique ». C’est des institutions qui survivent aux fils.","section":"nouvelles_canadiennes","source":"Monde","region":"CA","min":5,"keywords":["canada","institutions","fédéral"]},{"id":"a-15","slug":"etats-unis-sans-la-chaine","title":"Les États-Unis sans la chaîne","dek":"Ôter le plateau télé d’un article américain, c’est déjà faire la moitié du travail.","section":"nouvelles_americaines","source":"Monde","region":"US","min":5,"keywords":["états-unis","média","procédure"]},{"id":"a-16","slug":"quebec-en-phrases-longues","title":"Le Québec en phrases longues","dek":"Les nouvelles québécoises méritent plus que le ton de la réplique.","section":"nouvelles_quebecoises","source":"Monde","region":"QC","min":5,"keywords":["québec","régions","presse"]},{"id":"a-17","slug":"pouvoir-sans-carte-mentale","title":"Le pouvoir sans carte mentale","dek":"La politique internationale n’est pas une galerie de visages. C’est des leviers.","section":"politique_internationale","source":"Cité","region":"INTL","min":6,"keywords":["géopolitique","leviers","institutions"]},{"id":"a-18","slug":"compromis-federal","title":"Le compromis fédéral n’est pas une faiblesse de caractère","dek":"La politique canadienne se lit mal si on y cherche des victoires nettes.","section":"politique_canadienne","source":"Cité","region":"CA","min":5,"keywords":["ottawa","fédéral","compétences"]},{"id":"a-19","slug":"tests-avant-le-theme","title":"Les tests avant le thème","dek":"Un écran beau et non testé redevient un fil : on ne sait plus ce qui a cassé.","section":"programmation","source":"Atelier","region":"TECH","min":6,"keywords":["tests","contrat","react-native"]},{"id":"a-20","slug":"marge-comme-methode","title":"La marge comme méthode","dek":"Annoter n’est pas collectionner. C’est décider qu’une phrase te servira plus tard.","section":"philosophie","source":"Cabinet ZLN","region":"CULTURE","min":6,"keywords":["notes","annotation","méthode"]},{"id":"a-21","slug":"modele-etoile-sans-poster","title":"Le modèle en étoile, sans le poster","dek":"Une dimension n’est pas un filtre joli. C’est une clé que tu peux défendre.","section":"power_bi","source":"Décision","region":"TECH","min":6,"keywords":["étoile","dimension","fait","réconciliation"]},{"id":"a-22","slug":"ville-et-syntaxe","title":"Une ville, une syntaxe","dek":"Le hip-hop change de grammaire selon le trottoir. L’extrait global l’efface.","section":"hip_hop","source":"Culture","region":"CULTURE","min":5,"keywords":["ville","syntaxe","écoute","archive"]}];
-  const SECTIONS = {
-    informatique: 'Informatique', programmation: 'Programmation', intelligence_affaires: "Intelligence d'affaires",
-    domaine_informatique: "Domaine de l'informatique", sage_x3: 'Sage X3', nectari: 'Nectari', jitterbit: 'Jitterbit',
-    cpq: 'CPQ', power_bi: 'Power BI', nouvelles_internationales: 'Nouvelles internationales',
-    nouvelles_canadiennes: 'Nouvelles canadiennes', nouvelles_americaines: 'Nouvelles américaines',
-    nouvelles_quebecoises: 'Nouvelles québécoises', politique_internationale: 'Politique internationale',
-    politique_quebecoise: 'Politique québécoise', politique_canadienne: 'Politique canadienne',
-    philosophie: 'Philosophie', hip_hop: 'Hip-hop',
-  };
-  const EDITION_SIZE = 10;
+<div class="sticky-cta" id="stickyCta" hidden>
+  <a class="btn primary" id="stickyMail" href="#contact">M’écrire</a>
+  <a class="btn" href="#preuves">Preuves</a>
+</div>
 
-  /* ---------- Fonctions portées de src/domain (affichées telles quelles) ---------- */
-  function normalizeQuery(query) {
-    return query
-      .normalize('NFD')
-      .replace(/[̀-ͯ]/g, '')
-      .toLowerCase()
-      .trim();
-  }
-
-  function filterArticles(articles, query, section) {
-    const q = normalizeQuery(query);
-    return articles.filter(article => {
-      if (section && article.section !== section) {
-        return false;
-      }
-      if (!q) {
-        return true;
-      }
-      const hay = normalizeQuery(
-        [
-          article.title,
-          article.dek,
-          article.source,
-          article.slug,
-          SECTIONS[article.section],
-          ...article.keywords,
-        ].join(' '),
-      );
-      return hay.includes(q);
-    });
-  }
-
-  function hash32(input) {
-    let h = 2166136261;
-    for (let i = 0; i < input.length; i += 1) {
-      h ^= input.charCodeAt(i);
-      h = Math.imul(h, 16777619);
-    }
-    return h >>> 0;
-  }
-
-  function fallbackEdition(articles, date) {
-    const scored = [...articles]
-      .map(article => ({
-        article,
-        score: hash32(`${date}:${article.id}`),
-      }))
-      .sort((a, b) => a.score - b.score || a.article.id.localeCompare(b.article.id));
-
-    return scored.slice(0, EDITION_SIZE).map(s => s.article);
-  }
-
-  function entityKey(op) {
-    const payload = op.payload;
-    return payload.id ?? payload.articleId ?? op.id;
-  }
-
-  function enqueue(ops, op) {
-    const withoutDup = ops.filter(
-      existing =>
-        !(
-          existing.entity === op.entity &&
-          entityKey(existing) === entityKey(op) &&
-          existing.action === op.action
-        ),
-    );
-    return [...withoutDup, op];
-  }
-
-  function mergeNotes(local, remote) {
-    const map = new Map();
-    for (const note of local) {
-      map.set(note.id, note);
-    }
-    for (const incoming of remote) {
-      const current = map.get(incoming.id);
-      if (!current || incoming.updatedAt >= current.updatedAt) {
-        map.set(incoming.id, incoming);
-      }
-    }
-    return [...map.values()].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
-  }
-
-  function makeOp(entity, action, payload, updatedAt) {
-    const key = entity === 'note' ? payload.id : payload.articleId;
-    return { id: `${entity}:${action}:${key}:${updatedAt}`, entity, action, payload, updatedAt };
-  }
-
-  function rateOfSums(rows) {
-    const onTime = rows.reduce((sum, r) => sum + r.onTime, 0);
-    const total = rows.reduce((sum, r) => sum + r.total, 0);
-    return total === 0 ? 0 : onTime / total;
-  }
-
-  function averageOfRates(rows) {
-    const rates = rows.map(r => (r.total === 0 ? 0 : r.onTime / r.total));
-    return rates.reduce((sum, r) => sum + r, 0) / rates.length;
-  }
-
-  const CPQ = {
-    base: { label: 'Pupitre de lecture, chêne', price: 240 },
-    options: [
-      { id: 'tiroir', label: 'Tiroir', price: 45 },
-      { id: 'lampe', label: 'Lampe intégrée', price: 60 },
-      { id: 'plateau', label: 'Plateau incliné', price: 80 },
-      { id: 'noyer', label: 'Finition noyer', price: 120 },
-    ],
-    rules: [
-      { id: 'r1', kind: 'requires', a: 'lampe', b: 'tiroir', text: 'La lampe exige le tiroir (le câblage y passe).' },
-      { id: 'r2', kind: 'excludes', a: 'plateau', b: 'tiroir', text: 'Le plateau incliné exclut le tiroir (même volume).' },
-      { id: 'r3', kind: 'discount', min: 2, pct: 10, text: 'Deux options ou plus : remise de 10 % sur les options.' },
-    ],
-  };
-
-  function configure(selected) {
-    const picked = new Set(selected);
-    const trace = [];
-    const disabled = new Set();
-    for (const rule of CPQ.rules) {
-      if (rule.kind === 'requires') {
-        if (picked.has(rule.a) && !picked.has(rule.b)) {
-          picked.add(rule.b);
-          trace.push({ rule, state: 'fire', note: `${rule.b} ajouté automatiquement` });
-        } else {
-          trace.push({ rule, state: 'ok', note: 'satisfaite' });
-        }
-      }
-      if (rule.kind === 'excludes') {
-        if (picked.has(rule.a) && picked.has(rule.b)) {
-          picked.delete(rule.b);
-          trace.push({ rule, state: 'bad', note: `${rule.b} retiré : conflit` });
-        } else {
-          trace.push({ rule, state: 'ok', note: 'satisfaite' });
-        }
-        if (picked.has(rule.a)) disabled.add(rule.b);
-        if (picked.has(rule.b)) disabled.add(rule.a);
-      }
-    }
-    const options = CPQ.options.filter(o => picked.has(o.id));
-    const optionsTotal = options.reduce((sum, o) => sum + o.price, 0);
-    let discount = 0;
-    for (const rule of CPQ.rules) {
-      if (rule.kind === 'discount') {
-        if (options.length >= rule.min) {
-          discount = Math.round(optionsTotal * rule.pct) / 100;
-          trace.push({ rule, state: 'fire', note: `${options.length} options : −${discount} $` });
-        } else {
-          trace.push({ rule, state: 'ok', note: `${options.length} option(s) : pas de remise` });
-        }
-      }
-    }
-    return { picked, disabled, options, optionsTotal, discount, total: CPQ.base.price + optionsTotal - discount, trace };
-  }
-
-  function renderGrilleMarkdown(lines, exportedAt) {
-    const groups = { tenu: 'Tenu par une source', infere: 'Inféré', verifier: 'À vérifier' };
-    const out = [
-      '# Grille de lecture — Zacharie L. Nolet',
-      '',
-      `Exportée le ${exportedAt}.`,
-      '',
-      'Mémoire locale. Rien n’est un fil social.',
-      '',
-    ];
-    for (const key of Object.keys(groups)) {
-      const items = lines.filter(l => l.kind === key);
-      out.push(`## ${groups[key]}`, '');
-      out.push(...(items.length ? items.map(l => `- ${l.text}`) : ['_Rien._']), '');
-    }
-    return `${out.join('\n').trim()}\n`;
-  }
-
-  /* ---------- Affichage des sources (le code montré est le code exécuté) ---------- */
-  const show = (id, fns) => { $(id).textContent = fns.map(f => f.toString().replace(/\n {2}/g, '\n')).join('\n\n'); };
-  show('src1', [normalizeQuery, filterArticles]);
-  show('src2', [hash32, fallbackEdition]);
-  show('src3', [enqueue, entityKey, mergeNotes]);
-  show('src4', [rateOfSums, averageOfRates]);
-  show('src5', [configure]);
-  show('src6', [renderGrilleMarkdown]);
-
-  /* ---------- Utilitaires ---------- */
-  const flash = (el) => { el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); };
-  const fmtPct = (x) => (x * 100).toLocaleString('fr-CA', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' %';
-  const fmtMoney = (x) => x.toLocaleString('fr-CA', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' $';
-  const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const store = {
-    get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
-    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* stockage indisponible */ } },
-  };
-  const todayCivil = () => {
-    const d = new Date();
-    const p = (n) => String(n).padStart(2, '0');
-    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
-  };
-  const shiftCivil = (civil, days) => {
-    const [y, m, d] = civil.split('-').map(Number);
-    const dt = new Date(Date.UTC(y, m - 1, d + days));
-    return dt.toISOString().slice(0, 10);
-  };
-  const fmtCivil = (civil) => {
-    const [y, m, d] = civil.split('-').map(Number);
-    return new Date(y, m - 1, d).toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  };
-
-  /* ---------- Masthead ---------- */
-  const today = $('today');
-  today.textContent = fmtCivil(todayCivil());
-  today.setAttribute('datetime', todayCivil());
-
-  /* ---------- Lumière (thème) ---------- */
-  const THEMES = [['system', 'Système'], ['light', 'Papier'], ['dark', 'Encre']];
-  let themeIx = Math.max(0, THEMES.findIndex(t => t[0] === store.get('zln-theme')));
-  const applyTheme = () => {
-    const [id, label] = THEMES[themeIx];
-    if (id === 'system') document.documentElement.removeAttribute('data-theme');
-    else document.documentElement.setAttribute('data-theme', id);
-    $('themeBtn').textContent = 'Lumière : ' + label;
-  };
-  applyTheme();
-  $('themeBtn').addEventListener('click', () => {
-    themeIx = (themeIx + 1) % THEMES.length;
-    store.set('zln-theme', THEMES[themeIx][0]);
-    applyTheme();
-  });
-
-  /* ---------- Révélations et compteurs ---------- */
-  const animateCount = (el) => {
-    const to = Number(el.dataset.to);
-    if (reduced || !Number.isFinite(to)) { el.textContent = to; return; }
-    const start = performance.now();
-    const dur = 900;
-    const tick = (now) => {
-      const t = Math.min(1, (now - start) / dur);
-      const eased = 1 - Math.pow(1 - t, 3);
-      el.textContent = Math.round(to * eased);
-      if (t < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  };
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        if (!e.isIntersecting) continue;
-        e.target.classList.add('in');
-        e.target.querySelectorAll('.skills').forEach(s => s.classList.add('in'));
-        e.target.querySelectorAll('.count').forEach(animateCount);
-        if (e.target.classList.contains('count')) animateCount(e.target);
-        io.unobserve(e.target);
-      }
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
-    document.querySelectorAll('.reveal, .rule.draw, .facts').forEach(el => io.observe(el));
-  } else {
-    document.querySelectorAll('.reveal, .rule.draw, .skills').forEach(el => el.classList.add('in'));
-  }
-
-  /* ---------- 01 Recherche ---------- */
-  const qs = $('qs');
-  for (const [id, label] of Object.entries(SECTIONS)) {
-    const o = document.createElement('option'); o.value = id; o.textContent = label; qs.appendChild(o);
-  }
-  const renderSearch = () => {
-    const q = $('q').value;
-    const hits = filterArticles(CATALOG, q, qs.value || undefined);
-    const norm = normalizeQuery(q);
-    $('qn').innerHTML = `Requête normalisée : <span class="mono">« ${esc(norm)} »</span> · ${hits.length} texte${hits.length > 1 ? 's' : ''} sur ${CATALOG.length}`;
-    const out = $('qout');
-    out.innerHTML = hits.length
-      ? hits.map((a, i) => `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${esc(a.title)}</span><span class="s">${esc(SECTIONS[a.section])}</span></li>`).join('')
-      : '<li class="empty" style="display:block">Rien. « Netari » ne trouve pas Nectari : la recherche corrige les accents, pas les fautes.</li>';
-    flash(out);
-  };
-  $('q').addEventListener('input', renderSearch);
-  qs.addEventListener('change', renderSearch);
-  renderSearch();
-
-  /* ---------- 02 Édition ---------- */
-  const ed = $('ed');
-  ed.value = todayCivil();
-  const renderEdition = () => {
-    const date = ed.value || todayCivil();
-    const picked = fallbackEdition(CATALOG, date);
-    $('edhash').innerHTML = `Édition du ${esc(fmtCivil(date))} · exemple : <span class="mono">hash32("${esc(date)}:a-01") = ${hash32(`${date}:a-01`)}</span>`;
-    const out = $('edout');
-    out.innerHTML = picked.map((a, i) => `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${esc(a.title)}</span><span class="s">${esc(a.id)} · ${hash32(`${date}:${a.id}`)}</span></li>`).join('');
-    flash(out);
-  };
-  ed.addEventListener('change', renderEdition);
-  $('edPrev').addEventListener('click', () => { ed.value = shiftCivil(ed.value || todayCivil(), -1); renderEdition(); });
-  $('edNext').addEventListener('click', () => { ed.value = shiftCivil(ed.value || todayCivil(), 1); renderEdition(); });
-  renderEdition();
-
-  /* ---------- 03 File de sync ---------- */
-  let ops = [];
-  let clock = 0;
-  const stamp = () => { clock += 1; return `2026-09-01T08:${String(10 + clock).padStart(2, '0')}:00-04:00`; };
-  const renderOps = () => {
-    $('qcount').textContent = ops.length === 0
-      ? 'File vide. Chaque bouton crée une opération ; la même clé remplace au lieu de s’ajouter.'
-      : `${ops.length} opération${ops.length > 1 ? 's' : ''} en file, dédupliquée${ops.length > 1 ? 's' : ''} par entité, clé et action.`;
-    const out = $('qops');
-    out.innerHTML = ops.length
-      ? ops.map((op, i) => `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t mono" style="font-family:var(--mono);font-size:12.5px">${esc(op.id)}</span><span class="s">${esc(op.entity)} · ${esc(op.action)}</span></li>`).join('')
-      : '';
-    flash(out);
-  };
-  $('opCut').addEventListener('click', () => { ops = enqueue(ops, makeOp('bookmark', 'upsert', { articleId: 'a-01', savedAt: stamp() }, stamp())); renderOps(); });
-  $('opCut2').addEventListener('click', () => { ops = enqueue(ops, makeOp('bookmark', 'upsert', { articleId: 'a-05', savedAt: stamp() }, stamp())); renderOps(); });
-  $('opNote').addEventListener('click', () => { ops = enqueue(ops, makeOp('note', 'upsert', { id: 'note_demo_001', articleId: 'a-01', title: 'Clôture volontaire', body: '…' }, stamp())); renderOps(); });
-  $('opClear').addEventListener('click', () => { ops = []; renderOps(); });
-  renderOps();
-
-  const renderMerge = () => {
-    const tl = $('tLocal').value || '08:14';
-    const tr = $('tRemote').value || '08:20';
-    const local = [{ id: 'note_demo_001', title: 'Clôture volontaire', body: 'Version appareil', updatedAt: `2026-09-01T${tl}:00-04:00` }];
-    const remote = [{ id: 'note_demo_001', title: 'Clôture volontaire', body: 'Version serveur', updatedAt: `2026-09-01T${tr}:00-04:00` }];
-    const [winner] = mergeNotes(local, remote);
-    const out = $('mergeOut');
-    const localWins = winner.body === 'Version appareil';
-    out.className = 'verdict ' + (localWins ? 'good' : '');
-    out.innerHTML = `<strong>${localWins ? 'L’appareil gagne' : 'Le serveur gagne'}</strong> · <span class="mono">updatedAt = ${esc(winner.updatedAt)}</span><br>${localWins ? 'La note locale est plus récente : la synchronisation ne l’écrase pas.' : 'Le serveur porte une écriture plus récente (ou égale) : il remplace la copie locale.'} Un seul objet sort de la fusion, jamais deux.`;
-    flash(out);
-  };
-  $('tLocal').addEventListener('input', renderMerge);
-  $('tRemote').addEventListener('input', renderMerge);
-  renderMerge();
-
-  /* ---------- 04 Ratio ---------- */
-  const ratioIds = [['r1a', 'r1b'], ['r2a', 'r2b'], ['r3a', 'r3b']];
-  const renderRatio = () => {
-    const rows = ratioIds.map(([a, b]) => ({ onTime: Math.max(0, Number($(a).value) || 0), total: Math.max(0, Number($(b).value) || 0) }));
-    const cells = document.querySelectorAll('#ratioTable [data-rate]');
-    rows.forEach((r, i) => { cells[i].textContent = r.total ? fmtPct(r.onTime / r.total) : '—'; });
-    const avg = averageOfRates(rows);
-    const tru = rateOfSums(rows);
-    $('rAvg').textContent = fmtPct(avg);
-    $('rTrue').textContent = fmtPct(tru);
-    const gap = (avg - tru) * 100;
-    $('rGap').textContent = (gap >= 0 ? '+' : '−') + Math.abs(gap).toLocaleString('fr-CA', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' point' + (Math.abs(gap) >= 2 ? 's' : '') + ' de la moyenne sur le vrai taux';
-    const v = $('rVerdict');
-    const big = Math.abs(gap) >= 1;
-    v.className = 'verdict ' + (big ? 'bad' : 'good');
-    v.innerHTML = big
-      ? `<strong>Le tableau de bord mentirait de ${Math.abs(gap).toLocaleString('fr-CA', { maximumFractionDigits: 1 })} point${Math.abs(gap) >= 2 ? 's' : ''}.</strong> Montréal pèse ${rows[1].total.toLocaleString('fr-CA')} livraisons ; la moyenne des taux lui donne le même poids qu’une région de ${rows[2].total.toLocaleString('fr-CA')}. Le grain est la livraison, pas la région.`
-      : `<strong>Les volumes sont proches : l’écart est faible.</strong> Il réapparaît dès qu’une région pèse plus que les autres. La bonne mesure reste la somme des numérateurs sur la somme des dénominateurs.`;
-    flash(v);
-  };
-  ratioIds.flat().forEach(id => $(id).addEventListener('input', renderRatio));
-  renderRatio();
-
-  /* ---------- 05 CPQ ---------- */
-  let cpqSel = new Set(['lampe']);
-  const renderCpq = () => {
-    const r = configure([...cpqSel]);
-    cpqSel = new Set(r.picked);
-    const opts = $('cpqOpts');
-    opts.innerHTML = CPQ.options.map(o => {
-      const off = r.disabled.has(o.id) && !r.picked.has(o.id);
-      return `<label class="opt ${off ? 'off' : ''}"><input type="checkbox" id="cpq-${o.id}" data-id="${o.id}" ${r.picked.has(o.id) ? 'checked' : ''} ${off ? 'disabled' : ''}><span>${esc(o.label)}</span><span class="price">+ ${fmtMoney(o.price)}</span></label>`;
-    }).join('');
-    opts.querySelectorAll('input').forEach(cb => cb.addEventListener('change', () => {
-      if (cb.checked) cpqSel.add(cb.dataset.id); else cpqSel.delete(cb.dataset.id);
-      renderCpq();
-    }));
-    $('cpqBase').textContent = `${CPQ.base.label} · ${fmtMoney(CPQ.base.price)}`;
-    $('cpqOptions').textContent = r.options.length ? `${r.options.map(o => o.label).join(', ')} · ${fmtMoney(r.optionsTotal)}` : 'aucune';
-    $('cpqDisc').textContent = r.discount ? `− ${fmtMoney(r.discount)}` : 'aucune';
-    const total = $('cpqTotal');
-    total.textContent = fmtMoney(r.total);
-    flash(total);
-    $('cpqRules').innerHTML = r.trace.map(t => `<li class="${t.state}"><span>${esc(t.rule.text)} <span style="color:var(--muted)">· ${esc(t.note)}</span></span></li>`).join('');
-  };
-  renderCpq();
-
-  /* ---------- Cité : grille + 06 Markdown ---------- */
-  const SEED = [
-    { kind: 'tenu', text: 'Le projet de loi a été présenté à l’Assemblée nationale (Journal des débats).' },
-    { kind: 'infere', text: 'L’opposition prépare des amendements pour l’étude détaillée en commission.' },
-    { kind: 'verifier', text: 'Le délai entre l’adoption du principe et l’étude détaillée dépasse la moyenne des dernières sessions.' },
-  ];
-  let grille = Array.isArray(store.get('zln-grille')) ? store.get('zln-grille') : SEED.slice();
-  const renderMd = () => {
-    const md = renderGrilleMarkdown(grille, new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }));
-    const ta = $('mdOut');
-    ta.value = md;
-    flash(ta);
-  };
-  const renderGrille = () => {
-    for (const kind of ['tenu', 'infere', 'verifier']) {
-      const ul = $('g-' + kind);
-      const items = grille.map((l, i) => ({ l, i })).filter(x => x.l.kind === kind);
-      ul.innerHTML = items.length
-        ? items.map(x => `<li><span>${esc(x.l.text)}</span><button class="x" type="button" data-i="${x.i}" aria-label="Retirer">×</button></li>`).join('')
-        : '<li class="empty" style="display:block">Rien.</li>';
-    }
-    document.querySelectorAll('#grille .x').forEach(b => b.addEventListener('click', () => {
-      grille.splice(Number(b.dataset.i), 1);
-      store.set('zln-grille', grille);
-      renderGrille();
-    }));
-    renderMd();
-  };
-  $('gAdd').addEventListener('click', () => {
-    const text = $('gText').value.trim();
-    if (!text) { $('gText').focus(); return; }
-    grille.push({ kind: $('gKind').value, text });
-    store.set('zln-grille', grille);
-    $('gText').value = '';
-    renderGrille();
-  });
-  $('gText').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('gAdd').click(); } });
-  renderGrille();
-  $('mdCopy').addEventListener('click', async () => {
-    const msg = $('mdMsg');
-    try {
-      await navigator.clipboard.writeText($('mdOut').value);
-      msg.textContent = 'Copié dans le presse-papiers.';
-    } catch (e) {
-      $('mdOut').select();
-      msg.textContent = 'Sélectionné : copie avec le clavier.';
-    }
-    setTimeout(() => { msg.textContent = ''; }, 2500);
-  });
-
-  /* ---------- Cité : compétences 1867 ---------- */
-  const COMPETENCES = [
-    { q: 'Défense et milice', a: 'fed', ref: 'art. 91(7)' },
-    { q: 'Monnaie et banques', a: 'fed', ref: 'art. 91(14) et 91(15)' },
-    { q: 'Droit criminel', a: 'fed', ref: 'art. 91(27) ; les provinces administrent la justice (92(14))' },
-    { q: 'Assurance-emploi', a: 'fed', ref: 'art. 91(2A), ajouté en 1940' },
-    { q: 'Hôpitaux et santé', a: 'prov', ref: 'art. 92(7) ; Ottawa finance par le Transfert canadien en matière de santé' },
-    { q: 'Éducation', a: 'prov', ref: 'art. 93' },
-    { q: 'Municipalités', a: 'prov', ref: 'art. 92(8) : créatures des provinces' },
-    { q: 'Propriété et droits civils', a: 'prov', ref: 'art. 92(13) ; le Code civil du Québec vit ici' },
-    { q: 'Ressources naturelles non renouvelables', a: 'prov', ref: 'art. 92A, ajouté en 1982' },
-    { q: 'Télécommunications', a: 'fed', ref: 'art. 92(10)a) et jurisprudence : ouvrages qui dépassent la province' },
-    { q: 'Immigration', a: 'part', ref: 'art. 95 ; Accord Canada-Québec de 1991' },
-    { q: 'Agriculture', a: 'part', ref: 'art. 95' },
-    { q: 'Pensions de vieillesse', a: 'part', ref: 'art. 94A, prépondérance provinciale (d’où le RRQ)' },
-    { q: 'Environnement', a: 'part', ref: 'aucun article ne le nomme : jurisprudence, dont le Renvoi sur la tarification de la pollution par les GES (2021)' },
-  ];
-  const LABELS = { fed: 'Fédéral', prov: 'Provincial', part: 'Partagé' };
-  let answers = {};
-  const renderQuiz = () => {
-    const ul = $('quiz');
-    ul.innerHTML = COMPETENCES.map((c, i) => {
-      const given = answers[i];
-      const why = given
-        ? `<span class="why ${given === c.a ? 'right' : 'wrong'}">${given === c.a ? 'Juste' : 'Non : ' + LABELS[c.a]} · ${esc(c.ref)}</span>`
-        : '';
-      return `<li><span class="q">${esc(c.q)}</span><span class="choices">${Object.entries(LABELS).map(([k, l]) => `<button class="btn small" type="button" data-i="${i}" data-k="${k}" aria-pressed="${given === k}" ${given ? 'disabled' : ''}>${l}</button>`).join('')}</span>${why}</li>`;
-    }).join('');
-    ul.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
-      answers[Number(b.dataset.i)] = b.dataset.k;
-      renderQuiz();
-    }));
-    const done = Object.keys(answers).length;
-    const right = Object.entries(answers).filter(([i, k]) => COMPETENCES[i].a === k).length;
-    const s = $('quizScore');
-    if (!done) { s.className = 'verdict'; s.textContent = 'Aucune réponse encore.'; return; }
-    s.className = 'verdict ' + (done === COMPETENCES.length ? (right >= 11 ? 'good' : 'bad') : '');
-    s.innerHTML = `<strong>${right} sur ${done}</strong>${done < COMPETENCES.length ? ` · ${COMPETENCES.length - done} à répondre` : (right >= 11 ? ' · Tu peux lire Ottawa sans chercher des victoires nettes.' : ' · Relis les articles cités : le fédéral est une machine à compromis, pas un organigramme.')}`;
-    if (done) flash(s);
-  };
-  $('quizReset').addEventListener('click', () => { answers = {}; renderQuiz(); });
-  renderQuiz();
-
-  /* ---------- Cité : étapes d’un projet de loi ---------- */
-  const STEPS = [
-    'Présentation du projet de loi',
-    'Adoption du principe',
-    'Étude détaillée en commission parlementaire',
-    'Prise en considération du rapport de la commission',
-    'Adoption du projet de loi',
-    'Sanction par le lieutenant-gouverneur',
-  ];
-  let order = [];
-  let placed = 0;
-  const shuffle = (arr) => {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i -= 1) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
-    return a.some((v, i) => v !== i) ? a : shuffle(arr);
-  };
-  const renderSteps = () => {
-    const ol = $('steps');
-    ol.innerHTML = order.map((ix, pos) => {
-      const isPlaced = ix < placed;
-      return `<li><span class="n">${isPlaced ? String(ix + 1) : '·'}</span><button class="chip ${isPlaced ? 'placed' : ''}" type="button" data-ix="${ix}" ${isPlaced ? 'disabled' : ''}>${esc(STEPS[ix])}</button></li>`;
-    }).join('');
-    ol.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
-      const ix = Number(b.dataset.ix);
-      if (ix === placed) {
-        placed += 1;
-        order = [...order.filter(i => i < placed).sort((a, c) => a - c), ...order.filter(i => i >= placed)];
-        renderSteps();
-      } else {
-        b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
-        const out = $('stepsOut');
-        out.className = 'verdict bad';
-        out.textContent = `Pas encore : l’étape ${placed + 1} vient avant.`;
-      }
-    }));
-    const out = $('stepsOut');
-    if (placed === STEPS.length) { out.className = 'verdict good'; out.innerHTML = '<strong>Six sur six.</strong> Entre le principe et l’étude détaillée, il y a souvent des consultations en commission ; c’est là que les mémoires entrent.'; flash(out); }
-    else if (placed === 0) { out.className = 'verdict'; out.textContent = 'Six étapes à placer.'; }
-    else { out.className = 'verdict'; out.textContent = `${placed} sur 6 placée${placed > 1 ? 's' : ''}.`; }
-  };
-  const resetSteps = () => { placed = 0; order = shuffle(STEPS.map((_, i) => i)); renderSteps(); };
-  $('stepsReset').addEventListener('click', resetSteps);
-  resetSteps();
-
-  /* ---------- Cité : leviers ---------- */
-  const LEVIERS = [
-    ['Sanctions ou embargos', 'qui peut bloquer quoi'],
-    ['Alliances et blocs', 'qui dépend de qui'],
-    ['Routes commerciales ou énergétiques', 'ce qui transite, et par où'],
-    ['Cours de change ou dette', 'ce que coûte la décision'],
-    ['Traités et clauses', 'ce qui est signé, et ce qui ne l’est pas'],
-    ['Cours et tribunaux', 'qui peut invalider'],
-    ['Cycle électoral', 'quelle institution survit au prochain vote'],
-  ];
-  const lev = $('levList');
-  lev.innerHTML = LEVIERS.map((l, i) => `<label class="opt"><input type="checkbox" id="lev-${i}"><span>${esc(l[0])} <span style="color:var(--muted)">· ${esc(l[1])}</span></span></label>`).join('');
-  const renderLeviers = () => {
-    const n = lev.querySelectorAll('input:checked').length;
-    const out = $('leviersOut');
-    out.className = 'verdict ' + (n === 0 ? 'bad' : n >= 3 ? 'good' : '');
-    out.innerHTML = n === 0
-      ? '<strong>Tu as lu une scène.</strong> Des noms, un sommet, un regard. Rien à relire dans un classeur.'
-      : n < 3
-        ? `<strong>Un début de carte.</strong> ${n} levier${n > 1 ? 's' : ''} nommé${n > 1 ? 's' : ''}. Cherche qui peut bloquer quoi avant de te faire une opinion.`
-        : `<strong>Une carte.</strong> ${n} leviers : ça se relit, ça se découpe, ça survit au cycle de nouvelles.`;
-    flash(out);
-  };
-  lev.querySelectorAll('input').forEach(cb => cb.addEventListener('change', renderLeviers));
-  renderLeviers();
-})();
-</script>
+<script src="app.js"></script>
 </body>
 </html>

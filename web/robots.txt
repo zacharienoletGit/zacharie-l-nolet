@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /404.html
+
+Sitemap: https://zacharienoletgit.github.io/zacharie-l-nolet/sitemap.xml
