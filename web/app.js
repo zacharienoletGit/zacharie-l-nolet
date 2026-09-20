@@ -463,7 +463,7 @@
     if (badRow >= 0) {
       err.textContent = 'Une ligne est impossible : le total doit être entre 1 et 1 000 000, et au moins égal aux livraisons à temps.';
       err.hidden = false;
-      document.querySelectorAll('#ratioTable [data-rate]').forEach((c, i) => { if (i === badRow) c.textContent = '—'; });
+      document.querySelectorAll('#ratioTable [data-rate]').forEach(c => { c.textContent = '—'; });
       $('rAvg').textContent = '—';
       $('rTrue').textContent = '—';
       $('rGap').textContent = 'Corrigez la ligne pour voir le calcul.';
