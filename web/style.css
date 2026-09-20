@@ -31,7 +31,6 @@ body:not(.home) .topbar .brand { view-transition-name: brand; }
 ::view-transition-old(brand), ::view-transition-new(brand) { height: 100%; width: auto; object-fit: contain; animation-duration: 0.55s; }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
 body {
   margin: 0;
   background: var(--bg);
@@ -315,7 +314,6 @@ footer { max-width: 64rem; margin: 0 auto; border-top: 1px solid var(--rule); pa
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
-  html { scroll-behavior: auto; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
 
