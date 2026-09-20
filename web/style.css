@@ -232,7 +232,7 @@ input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="
 .list li.empty { display: block; }
 .list .n { font: 700 14px/1 var(--serif); color: var(--gold); font-variant-numeric: tabular-nums; }
 .list .t { font-family: var(--serif); font-size: 15px; }
-.list .t-mono { font-family: var(--mono); font-size: 12.5px; }
+.list .t-mono { font-family: var(--mono); font-size: 12.5px; overflow-wrap: anywhere; word-break: break-all; }
 .list .s { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
 .list .x { border: 0; background: none; color: var(--muted); cursor: pointer; padding: 0 6px; font: 400 18px/1 var(--ui); min-height: 28px; }
 .list .x:hover { color: var(--danger); }
