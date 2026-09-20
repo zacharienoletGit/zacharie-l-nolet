@@ -15,6 +15,10 @@ Ces règles viennent de Zacharie L. Nolet. Elles s’appliquent à toute session
 - **Écrit pour un employeur, en langage clair.** Le site doit être attirant pour un employeur maintenant et compréhensible par tout le monde : vouvoiement, phrases courtes, aucun jargon sans explication (pas de « grain », « idempotent », « last-write-wins », « mart » sans une phrase « en clair » à côté). Chaque compétence est suivie de sa preuve. Le bouton principal de chaque page mène au contact.
 - **Plusieurs pages, sans build.** `index.html`, `parcours.html`, `preuves.html`, `engagement.html`, `contact.html`, `cv.html`, plus `404.html`, `confidentialite.html`, `conditions.html`. Un seul `style.css`, un seul `app.js` (les démos ne tournent que si leurs éléments existent). L’adresse de contact est écrite dans le HTML et dans la constante `CONTACT_EMAIL` de `app.js` : changer les deux ensemble.
 
+## Projets à venir
+
+- La feuille de route est `docs/PROJETS.md` (deux projets par compétence, jalons, critères de « fini »). Un projet n’apparaît sur le site que **livré** (dépôt, vidéo, chiffres) ; rien de planifié n’est présenté comme fait. Quand un projet est livré, l’ajouter à `web/parcours.html` (section Projets) et au CV, puis regénérer le PDF.
+
 ## Vidéo (le site en contient : `web/video/`)
 
 - Les clips sont de **vrais enregistrements** du site fait avec Chromium (script `record.mjs` du carnet de session, à refaire si les démos changent), jamais des animations décoratives ni des images de banque. Durée cible : 9 à 12 s.

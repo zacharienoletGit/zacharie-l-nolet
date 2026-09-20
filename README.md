@@ -146,6 +146,7 @@ Le JS est partagé. La cible de design est **iPhone**.
 - `docs/REPRODUCE.md` — prompts de rôle pour un autre développeur
 - `web/` — site d’embauche (accueil avec vidéo, parcours, preuves exécutées avec clips vidéo, travailler ensemble, contact, CV imprimable + PDF). Site statique complet : 404, confidentialité, conditions, `robots.txt`, `sitemap.xml`, favicons, image Open Graph, en-têtes de sécurité (`_headers`). Déployé sur GitHub Pages par `.github/workflows/pages.yml` (activer Settings → Pages → Source : GitHub Actions).
 - `CLAUDE.md` — règles permanentes de code du dépôt (site réel, sécurité, légal, identité).
+- `docs/PROJETS.md` — feuille de route : seize projets exemples, deux par compétence, avec jalons, critères de « fini » et ordre de livraison sur six mois.
 
 ## Licence
 
