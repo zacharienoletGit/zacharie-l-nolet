@@ -40,7 +40,7 @@
       await navigator.clipboard.writeText(getText());
       msg.textContent = done;
     } catch (e) {
-      msg.textContent = 'Le presse-papiers est bloqué ici : sélectionne le texte et copie-le au clavier.';
+      msg.textContent = 'Le presse-papiers est bloqué ici : sélectionnez le texte et copiez-le au clavier.';
     } finally {
       btn.removeAttribute('aria-busy');
       btn.disabled = false;
@@ -144,8 +144,8 @@
       const name = fields.name.value.trim();
       const msg = fields.msg.value.trim();
       let first = null;
-      if (!name) { setErr('name', 'Dis-moi qui tu es : un nom suffit.'); first = first || fields.name; } else setErr('name', '');
-      if (msg.length < 20) { setErr('msg', 'Décris le mandat en une ou deux phrases (au moins 20 caractères).'); first = first || fields.msg; } else setErr('msg', '');
+      if (!name) { setErr('name', 'Indiquez votre nom.'); first = first || fields.name; } else setErr('name', '');
+      if (msg.length < 20) { setErr('msg', 'Décrivez votre besoin en une ou deux phrases (au moins 20 caractères).'); first = first || fields.msg; } else setErr('msg', '');
       if (first) { first.focus(); return; }
       const org = fields.org.value.trim();
       const kind = fields.kind.options[fields.kind.selectedIndex].text;
@@ -386,7 +386,7 @@
     $('qn').innerHTML = `Requête normalisée : <span class="mono">« ${esc(normalizeQuery(q))} »</span> · ${hits.length} texte${hits.length > 1 ? 's' : ''} sur ${CATALOG.length}`;
     $('qout').innerHTML = hits.length
       ? hits.map((a, i) => `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${esc(a.title)}</span><span class="s">${esc(SECTIONS[a.section])}</span></li>`).join('')
-      : '<li class="empty">Rien. « Netari » ne trouve pas Nectari : la recherche corrige les accents, pas les fautes.</li>';
+      : '<li class="empty">Aucun résultat. « Netari » ne trouve pas Nectari : la recherche corrige les accents, pas les fautes.</li>';
   };
   $('q').addEventListener('input', renderSearch);
   qs.addEventListener('change', renderSearch);
@@ -419,8 +419,8 @@
   };
   const renderOps = () => {
     $('qcount').textContent = ops.length === 0
-      ? 'File vide. Chaque bouton crée une opération ; la même clé remplace au lieu de s’ajouter.'
-      : `${ops.length} opération${ops.length > 1 ? 's' : ''} en file, dédupliquée${ops.length > 1 ? 's' : ''} par entité, clé et action.`;
+      ? 'File vide. Chaque bouton crée une opération ; refaire le même geste remplace l’opération au lieu de l’ajouter.'
+      : `${ops.length} opération${ops.length > 1 ? 's' : ''} en attente, sans doublon.`;
     const out = $('qops');
     out.innerHTML = ops.map((op, i) => `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t t-mono">${esc(op.id)}</span><span class="s">${esc(op.entity)} · ${esc(op.action)}</span></li>`).join('');
     flash(out);
@@ -440,7 +440,7 @@
     const out = $('mergeOut');
     const localWins = winner.body === 'Version appareil';
     out.className = 'verdict ' + (localWins ? 'good' : '');
-    out.innerHTML = `<strong>${localWins ? 'L’appareil gagne' : 'Le serveur gagne'}</strong> · <span class="mono">updatedAt = ${esc(winner.updatedAt)}</span><br>${localWins ? 'La note locale est plus récente : la synchronisation ne l’écrase pas.' : 'Le serveur porte une écriture plus récente (ou égale) : il remplace la copie locale.'} Un seul objet sort de la fusion, jamais deux.`;
+    out.innerHTML = `<strong>${localWins ? 'Le téléphone gagne' : 'Le serveur gagne'}</strong> · <span class="mono">updatedAt = ${esc(winner.updatedAt)}</span><br>${localWins ? 'La note du téléphone est plus récente : la synchronisation ne l’écrase pas.' : 'La version du serveur est plus récente (ou identique) : elle remplace celle du téléphone.'} Une seule version reste, jamais deux.`;
   };
   $('tLocal').addEventListener('input', renderMerge);
   $('tRemote').addEventListener('input', renderMerge);
@@ -474,8 +474,8 @@
     const big = Math.abs(gap) >= 1;
     v.className = 'verdict ' + (big ? 'bad' : 'good');
     v.innerHTML = big
-      ? `<strong>Le tableau de bord mentirait de ${gapTxt} point${Math.abs(gap) >= 2 ? 's' : ''}.</strong> Montréal pèse ${rows[1].total.toLocaleString('fr-CA')} livraisons ; la moyenne des taux lui donne le même poids qu’une région de ${rows[2].total.toLocaleString('fr-CA')}. Le grain est la livraison, pas la région.`
-      : `<strong>Les volumes sont proches : l’écart est faible.</strong> Il réapparaît dès qu’une région pèse plus que les autres. La bonne mesure reste la somme des numérateurs sur la somme des dénominateurs.`;
+      ? `<strong>Le tableau de bord mentirait de ${gapTxt} point${Math.abs(gap) >= 2 ? 's' : ''}.</strong> Montréal pèse ${rows[1].total.toLocaleString('fr-CA')} livraisons ; la moyenne des taux lui donne le même poids qu’une région de ${rows[2].total.toLocaleString('fr-CA')}. Il faut compter les livraisons, pas les régions.`
+      : `<strong>Les volumes sont proches : l’écart est faible.</strong> Il réapparaît dès qu’une région pèse plus que les autres. La bonne mesure reste : total des livraisons à temps divisé par total des livraisons.`;
   };
   ratioIds.flat().forEach(id => $(id).addEventListener('input', renderRatio));
   renderRatio();
@@ -521,13 +521,13 @@
   const renderNotes = () => keepFocus(() => {
     const ul = $('nList');
     ul.innerHTML = notes.length
-      ? notes.map((n, i) => `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${esc(n.title.trim() || 'Sans titre')}</span><button class="x" type="button" id="nx-${i}" data-i="${i}" aria-label="Retirer la feuille ${esc(n.title.trim() || 'sans titre')}">×</button></li>`).join('')
-      : '<li class="empty">Aucune feuille. Écris-en une.</li>';
+      ? notes.map((n, i) => `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${esc(n.title.trim() || 'Sans titre')}</span><button class="x" type="button" id="nx-${i}" data-i="${i}" aria-label="Retirer la note ${esc(n.title.trim() || 'sans titre')}">×</button></li>`).join('')
+      : '<li class="empty">Aucune note. Écrivez-en une.</li>';
     ul.querySelectorAll('.x').forEach(b => b.addEventListener('click', () => {
       notes.splice(Number(b.dataset.i), 1);
       store.set('zln-feuilles', notes);
       renderNotes();
-      $('nStatus').textContent = 'Feuille retirée.';
+      $('nStatus').textContent = 'Note retirée.';
     }));
     renderMd();
   });
@@ -537,15 +537,15 @@
     e.preventDefault();
     const title = $('nTitle').value.trim();
     const body = $('nBody').value.trim();
-    if (!body) { showNErr('Une feuille vide ne s’enregistre pas : écris au moins une ligne.'); $('nBody').focus(); return; }
-    if (notes.length >= 60) { showNErr('Soixante feuilles, c’est un classeur plein. Retire des feuilles avant d’en ajouter.'); return; }
+    if (!body) { showNErr('Une note vide ne s’enregistre pas : écrivez au moins une ligne.'); $('nBody').focus(); return; }
+    if (notes.length >= 60) { showNErr('Soixante notes, c’est un classeur plein. Retirez-en avant d’en ajouter.'); return; }
     showNErr('');
     notes.push({ title: title.slice(0, 120), body: body.slice(0, 2000) });
     store.set('zln-feuilles', notes);
     $('nTitle').value = '';
     $('nBody').value = '';
     renderNotes();
-    $('nStatus').textContent = 'Enregistré dans le classeur.';
+    $('nStatus').textContent = 'Note enregistrée.';
     $('nTitle').focus();
   });
   $('nBody').addEventListener('input', () => { if (!nErr.hidden && $('nBody').value.trim()) showNErr(''); });
