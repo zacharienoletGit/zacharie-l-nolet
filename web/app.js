@@ -1,13 +1,14 @@
 (function () {
   'use strict';
   document.documentElement.classList.add('js');
+  if (document.getElementById('firstCta')) document.body.classList.add('home');
   const $ = (id) => document.getElementById(id);
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const CONTACT_EMAIL = '2012487@etudiant.cegepvicto.ca';
 
   /* ---------- Utilitaires ---------- */
   const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const flash = (el) => { if (!el || reduced) return; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); };
+  const flash = () => {};
   const store = {
     get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* stockage indisponible */ } },
@@ -67,23 +68,15 @@
     const io = new IntersectionObserver((entries) => {
       for (const e of entries) {
         if (!e.isIntersecting) continue;
-        e.target.classList.add('in');
-        e.target.querySelectorAll('.count').forEach(animateCount);
+        /* Sixième temps de l’ouverture : les compteurs partent quand les chiffres se sont posés. */
+        const wait = document.body.classList.contains('home') && performance.now() < 4000 ? 1550 : 0;
+        setTimeout(() => e.target.querySelectorAll('.count').forEach(animateCount), wait);
         io.unobserve(e.target);
       }
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
-    document.querySelectorAll('.cascade, .rule.draw, .facts').forEach(el => io.observe(el));
-  } else {
-    document.querySelectorAll('.cascade, .rule.draw').forEach(el => el.classList.add('in'));
+    document.querySelectorAll('.facts').forEach(el => io.observe(el));
   }
-  document.querySelectorAll('.cascade').forEach(list => [...list.children].forEach((li, i) => li.style.setProperty('--i', Math.min(i, 8))));
-  document.querySelectorAll('.cta .btn').forEach((b, i) => b.style.setProperty('--i', i));
 
-  document.querySelectorAll('img.img-fade').forEach(img => {
-    const mark = () => img.classList.add('loaded');
-    if (img.complete && img.naturalWidth > 0) mark();
-    else { img.addEventListener('load', mark, { once: true }); img.addEventListener('error', mark, { once: true }); }
-  });
 
   const notice = $('notice');
   if (notice) {
