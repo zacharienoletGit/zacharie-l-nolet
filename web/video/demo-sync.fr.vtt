@@ -1,0 +1,13 @@
+WEBVTT
+
+00:00.500 --> 00:03.500
+Hors ligne, chaque geste devient une opération en attente.
+
+00:03.500 --> 00:06.500
+Refaire le même geste ne crée pas de doublon : la file reste à une opération.
+
+00:06.500 --> 00:09.000
+Une autre note : une deuxième opération, pas plus.
+
+00:09.000 --> 00:12.500
+À la synchronisation, la version la plus récente gagne, téléphone ou serveur.

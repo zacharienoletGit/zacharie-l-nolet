@@ -117,6 +117,20 @@
     update();
   }
 
+  /* ---------- Vidéo d’introduction : démarre muette quand elle est visible, s’arrête sinon ---------- */
+  document.querySelectorAll('video[data-autoplay]').forEach(v => {
+    if (reduced || !('IntersectionObserver' in window)) return;
+    let userPaused = false;
+    v.addEventListener('pause', () => { if (!v.ended && v.dataset.auto !== 'off') userPaused = true; });
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting && !userPaused) { v.dataset.auto = 'on'; const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+        else if (!e.isIntersecting && !v.paused) { v.dataset.auto = 'off'; v.pause(); v.dataset.auto = 'on'; }
+      }
+    }, { threshold: 0.5 });
+    io.observe(v);
+  });
+
   if ($('mailCopy')) $('mailCopy').addEventListener('click', copyWith($('mailCopy'), $('mailMsg'), () => CONTACT_EMAIL, 'Adresse copiée.'));
   if ($('toTop')) $('toTop').addEventListener('click', (e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' }); });
 
@@ -488,7 +502,7 @@
     const opts = $('cpqOpts');
     opts.innerHTML = CPQ.options.map(o => {
       const off = r.excluded.has(o.id) && !r.picked.has(o.id);
-      return `<label class="opt ${off ? 'off' : ''}"><input type="checkbox" id="cpq-${o.id}" data-id="${o.id}" ${r.picked.has(o.id) ? 'checked' : ''} ${off ? 'disabled' : ''}><span>${esc(o.label)}</span><span class="price">+ ${fmtMoney(o.price)}</span></label>`;
+      return `<label class="opt ${off ? 'off' : ''}" title="${off ? 'Incompatible avec la sélection actuelle : la cocher retire ce qui la bloque' : ''}"><input type="checkbox" id="cpq-${o.id}" data-id="${o.id}" ${r.picked.has(o.id) ? 'checked' : ''}><span>${esc(o.label)}</span><span class="price">+ ${fmtMoney(o.price)}</span></label>`;
     }).join('');
     opts.querySelectorAll('input').forEach(cb => cb.addEventListener('change', () => {
       if (cb.checked) cpqSel.add(cb.dataset.id); else cpqSel.delete(cb.dataset.id);

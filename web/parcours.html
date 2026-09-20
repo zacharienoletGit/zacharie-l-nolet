@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Parcours · Zacharie L. Nolet</title>
 <meta name="description" content="Formation, prix Exposat 2026, projets et compétences de Zacharie L. Nolet, développeur en Techniques de l’informatique au Cégep de Victoriaville.">
@@ -30,6 +30,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="style.css">
+
 </head>
 <body>
 <a class="skip" href="#main">Aller au contenu</a>
@@ -100,6 +101,20 @@
     </div>
   </section>
 
+  <section id="decisions">
+    <div class="sec-head reveal">
+      <p class="kicker"><b>Décisions</b> · Ce que j’ai choisi, et pourquoi</p>
+      <h2>Quatre décisions que j’ai prises seul, et que je peux défendre</h2>
+      <p class="lede">Un employeur veut savoir comment je raisonne. Voici des choix réels de mon application, tirés de sa documentation de conception.</p>
+    </div>
+    <ul class="filets two">
+      <li><h3>Dix textes par jour, puis c’est fermé</h3><p>Pas de défilement infini. Le choix rend l’application moins « collante », mais c’est exactement le but : un outil qu’on ouvre, qu’on utilise et qu’on ferme. J’ai accepté un peu de friction pour tenir la promesse du produit.</p><span class="ref">docs/DESIGN.md du dépôt</span></li>
+      <li><h3>Sauvegarde 1,4 seconde après la dernière frappe</h3><p>Sauvegarder à chaque touche faisait saccader le clavier sur un vrai iPhone, mesuré avec les outils d’Apple. Attendre 1,4 s après la frappe règle le problème sans que l’utilisateur perde un mot.</p><span class="ref">docs/TESTING.md du dépôt</span></li>
+      <li><h3>Le téléphone est la vérité, le serveur est une copie</h3><p>Sans réseau, on continue d’écrire. Quand il revient, les opérations partent une seule fois et la version la plus récente gagne. Le contraire (le serveur commande) aurait fait perdre des notes écrites hors ligne.</p><span class="ref"><a href="preuves.html#p3">Démonstration 03</a></span></li>
+      <li><h3>Tester la logique avant de dessiner l’écran</h3><p>Chaque règle métier vit dans une fonction simple avec son test. L’écran ne calcule rien. Résultat : 29 tests qui disent tout de suite ce qui a cassé, et une application qu’on peut faire évoluer sans peur.</p><span class="ref">src/domain et __tests__ du dépôt</span></li>
+    </ul>
+  </section>
+
   <section id="competences">
     <div class="sec-head reveal">
       <p class="kicker"><b>Compétences</b> · Expliquées simplement</p>
@@ -115,7 +130,7 @@
       <li><h3>Sites web sécurisés</h3><p>Tout ce qu’un vrai site doit avoir avant d’être mis en ligne : sécurité, mobile, confidentialité, image de partage, page d’erreur.</p><span class="ref">Preuve : ce site, et <a href="engagement.html#methode">ma liste de vérification</a>.</span></li>
       <li><h3>Travail en équipe</h3><p>Projets de session menés en groupe, dépôt Git partagé, code lisible par les autres.</p><span class="ref">Preuve : le prix Exposat 2026, reçu en équipe de cinq.</span></li>
     </ul>
-    <div class="row mt-24"><a class="btn primary" href="contact.html">Me contacter</a><a class="btn" href="engagement.html">Formats de collaboration</a></div>
+    <div class="row mt-24"><a class="btn primary" href="contact.html">Me contacter</a><a class="btn" href="Zacharie-L-Nolet-CV.pdf" download>Mon CV en PDF</a><a class="btn" href="engagement.html">Formats de collaboration</a></div>
   </section>
 </main>
 

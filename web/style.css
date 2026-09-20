@@ -332,3 +332,10 @@ footer { max-width: 64rem; margin: 0 auto; border-top: 1px solid var(--rule); pa
   .js .rule.draw { transform: none; }
   .js .img-fade:not(.loaded) { opacity: 1; }
 }
+
+/* ---------- Vidéo ---------- */
+.video { margin: 0; display: grid; gap: 10px; }
+.video video { width: 100%; height: auto; aspect-ratio: 16 / 9; display: block; background: #0B1A28; border: 1px solid var(--rule); }
+.video figcaption { font: 400 13px/1.5 var(--ui); color: var(--muted); }
+.video-wide { max-width: 56rem; }
+.demo .video { margin-bottom: 6px; }

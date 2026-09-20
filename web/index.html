@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Zacharie L. Nolet</title>
 <meta name="description" content="Zacharie L. Nolet, développeur en Techniques de l’informatique au Cégep de Victoriaville. Applications mobiles, sites web, API, tableaux de bord. Disponible maintenant pour un stage, un contrat ou un mandat.">
@@ -30,6 +30,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Zacharie L. Nolet","jobTitle":"Développeur","description":"Développeur en Techniques de l’informatique au Cégep de Victoriaville. Applications mobiles, sites web, API, tableaux de bord.","url":"https://zacharienoletgit.github.io/zacharie-l-nolet/","image":"https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg","email":"mailto:2012487@etudiant.cegepvicto.ca","address":{"@type":"PostalAddress","addressLocality":"Victoriaville","addressRegion":"QC","addressCountry":"CA"},"alumniOf":{"@type":"CollegeOrUniversity","name":"Cégep de Victoriaville"},"award":"Prix « Badge fort, salue l’effort », Exposat 2026","sameAs":["https://github.com/zacharienoletGit"],"knowsAbout":["React Native","TypeScript","PHP","Power BI","Sage X3","Nectari","Jitterbit","CPQ"]}</script>
 </head>
 <body>
 <a class="skip" href="#main">Aller au contenu</a>
@@ -59,6 +60,7 @@
     <div class="cta row" id="firstCta">
       <a class="btn primary" href="contact.html">Me contacter</a>
       <a class="btn" href="preuves.html">Voir mon travail en direct</a>
+      <a class="btn" href="Zacharie-L-Nolet-CV.pdf" download>Mon CV en PDF</a>
     </div>
   </div>
   <div class="rule thick draw hero-rule"></div>
@@ -71,6 +73,22 @@
 </header>
 
 <main id="main">
+  <section id="video">
+    <div class="sec-head reveal">
+      <p class="kicker"><b>En 11 secondes</b> · Vidéo</p>
+      <h2>Ce que je fais, en une respiration</h2>
+      <p class="lede">Une courte vidéo sans son, sous-titrée. Les quatre autres, sur la page Preuves, montrent mon code en train de tourner.</p>
+    </div>
+    <figure class="video video-wide">
+  <video id="v-intro" controls muted playsinline preload="none" poster="video/intro.jpg" width="1280" height="720" aria-label="Présentation de Zacharie L. Nolet en 11 secondes" data-autoplay loop>
+    <source src="video/intro.mp4" type="video/mp4">
+    <track kind="captions" src="video/intro.fr.vtt" srclang="fr" label="Français" default>
+    Votre navigateur ne lit pas cette vidéo. <a href="video/intro.mp4">Télécharger le clip (MP4)</a>.
+  </video>
+  <figcaption>Vidéo muette, sous-titres en français. Elle démarre seule si votre appareil l’autorise ; le bouton la met en pause.</figcaption>
+</figure>
+  </section>
+
   <section id="offre">
     <div class="sec-head reveal">
       <p class="kicker"><b>Ce que je peux faire pour vous</b> · Dès maintenant</p>

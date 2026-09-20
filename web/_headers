@@ -1,7 +1,7 @@
 # En-têtes de sécurité (format Netlify / Cloudflare Pages).
 # GitHub Pages ne lit pas ce fichier : la balise <meta http-equiv="Content-Security-Policy"> des pages fait alors le travail.
 /*
-  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; media-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
@@ -14,4 +14,6 @@
 /*.jpg
   Cache-Control: public, max-age=31536000, immutable
 /*.png
+  Cache-Control: public, max-age=31536000, immutable
+/video/*
   Cache-Control: public, max-age=31536000, immutable

@@ -11,7 +11,20 @@ Ces règles viennent de Zacharie L. Nolet. Elles s’appliquent à toute session
 - Langue des livrables et des commentaires : français (Québec).
 - **Le site web (`web/`) parle seulement d’informatique et d’embauche.** Pas de section politique, philosophie ou hip-hop : ces sujets restent dans le catalogue de l’app, pas sur le site. Le site est fait pour décrocher un stage, un contrat ou un mandat : chaque page mène vers `engagement.html` et `contact.html`.
 - **Écrit pour un employeur, en langage clair.** Le site doit être attirant pour un employeur maintenant et compréhensible par tout le monde : vouvoiement, phrases courtes, aucun jargon sans explication (pas de « grain », « idempotent », « last-write-wins », « mart » sans une phrase « en clair » à côté). Chaque compétence est suivie de sa preuve. Le bouton principal de chaque page mène au contact.
-- **Plusieurs pages, sans build.** `index.html`, `parcours.html`, `preuves.html`, `engagement.html`, `contact.html`, plus `404.html`, `confidentialite.html`, `conditions.html`. Un seul `style.css`, un seul `app.js` (les démos ne tournent que si leurs éléments existent). L’adresse de contact est écrite dans le HTML et dans la constante `CONTACT_EMAIL` de `app.js` : changer les deux ensemble.
+- **Plusieurs pages, sans build.** `index.html`, `parcours.html`, `preuves.html`, `engagement.html`, `contact.html`, `cv.html`, plus `404.html`, `confidentialite.html`, `conditions.html`. Un seul `style.css`, un seul `app.js` (les démos ne tournent que si leurs éléments existent). L’adresse de contact est écrite dans le HTML et dans la constante `CONTACT_EMAIL` de `app.js` : changer les deux ensemble.
+
+## Vidéo (le site en contient : `web/video/`)
+
+- Les clips sont de **vrais enregistrements** du site fait avec Chromium (script `record.mjs` du carnet de session, à refaire si les démos changent), jamais des animations décoratives ni des images de banque. Durée cible : 9 à 12 s.
+- Format : **MP4 H.264** (yuv420p, `-crf 26`, `+faststart`), 1280 × 720, moins de 1,5 Mo par clip. Le WebM VP9 a été essayé et pesait plus lourd sur ces captures d’écran : on ne le sert pas.
+- Chaque clip a une **affiche** (`.jpg`), des **sous-titres** WebVTT en français (`.fr.vtt`, piste `captions` par défaut) et une légende sous la vidéo. Jamais de sous-titres incrustés dans l’image.
+- Balise : `controls muted playsinline preload="none" poster width height aria-label`. Seule la vidéo d’introduction démarre seule, muette, quand elle est visible, et s’arrête hors écran ou si `prefers-reduced-motion` est actif ; les clips de démonstration se lancent au clic.
+- Aucun son, donc aucune transcription audio nécessaire ; le texte de la page dit déjà ce que montre chaque clip.
+- CSP : `media-src 'self'`. Cache long sur `/video/*` (`_headers`).
+
+## CV
+
+- `web/cv.html` (une page, feuille `cv.css`, impression Letter) et `web/Zacharie-L-Nolet-CV.pdf` généré avec Chromium (`page.pdf`, média print). Regénérer le PDF à chaque changement du CV. Le PDF doit tenir sur **une** page.
 
 ## A. Ne jamais avoir l’air « vibecodé » (reel aj.on.ai, « 30 reasons your site looks vibecoded »)
 

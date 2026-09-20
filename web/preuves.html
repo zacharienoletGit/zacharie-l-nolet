@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Mon travail en direct · Zacharie L. Nolet</title>
 <meta name="description" content="Six morceaux du code de Zacharie L. Nolet qui tournent dans votre navigateur : recherche, synchronisation hors ligne, calculs de tableau de bord, configurateur de prix, export de données.">
@@ -30,6 +30,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="style.css">
+
 </head>
 <body>
 <a class="skip" href="#main">Aller au contenu</a>
@@ -67,6 +68,14 @@
         <p class="ref">Tiré tel quel de l’application iPhone (src/domain/search.ts) et de son test</p>
       </div>
       <div class="demo">
+        <figure class="video">
+  <video id="v-demo-recherche" controls muted playsinline preload="none" poster="video/demo-recherche.jpg" width="1280" height="720" aria-label="La recherche tolère les accents et les majuscules, en 11 secondes">
+    <source src="video/demo-recherche.mp4" type="video/mp4">
+    <track kind="captions" src="video/demo-recherche.fr.vtt" srclang="fr" label="Français" default>
+    Votre navigateur ne lit pas cette vidéo. <a href="video/demo-recherche.mp4">Télécharger le clip (MP4)</a>.
+  </video>
+  <figcaption>Regardez d’abord : « quebec », « ETOILE », « Netari », « nectari ».</figcaption>
+</figure>
         <span class="kicker">Essayez</span>
         <div class="field"><label for="q">Tapez une recherche</label><input type="search" id="q" value="quebec" autocomplete="off" spellcheck="false" maxlength="80"></div>
         <div class="field"><label for="qs">Rubrique</label><select id="qs"><option value="">Toutes</option></select></div>
@@ -88,6 +97,7 @@
         <p class="ref">Tiré tel quel de l’application iPhone (src/domain/edition.ts) et de son test</p>
       </div>
       <div class="demo">
+        
         <span class="kicker">Essayez</span>
         <div class="row">
           <div class="field grow"><label for="ed">Date</label><input type="date" id="ed"></div>
@@ -112,6 +122,14 @@
         <p class="ref">Tiré tel quel de l’application iPhone (src/domain/syncQueue.ts) et de son test</p>
       </div>
       <div class="demo">
+        <figure class="video">
+  <video id="v-demo-sync" controls muted playsinline preload="none" poster="video/demo-sync.jpg" width="1280" height="720" aria-label="Travailler hors ligne puis synchroniser, en 9 secondes">
+    <source src="video/demo-sync.mp4" type="video/mp4">
+    <track kind="captions" src="video/demo-sync.fr.vtt" srclang="fr" label="Français" default>
+    Votre navigateur ne lit pas cette vidéo. <a href="video/demo-sync.mp4">Télécharger le clip (MP4)</a>.
+  </video>
+  <figcaption>Regardez d’abord : trois clics, une seule opération ; puis la version la plus récente gagne.</figcaption>
+</figure>
         <span class="kicker">Essayez</span>
         <div class="row">
           <button class="btn primary" type="button" id="opCut">Découper a-01</button>
@@ -143,6 +161,14 @@
         <p class="ref">Écrit pour ce site, d’après mon essai « Un ratio ne se somme pas »</p>
       </div>
       <div class="demo">
+        <figure class="video">
+  <video id="v-demo-ratio" controls muted playsinline preload="none" poster="video/demo-ratio.jpg" width="1280" height="720" aria-label="La moyenne qui ment, en 10 secondes">
+    <source src="video/demo-ratio.mp4" type="video/mp4">
+    <track kind="captions" src="video/demo-ratio.fr.vtt" srclang="fr" label="Français" default>
+    Votre navigateur ne lit pas cette vidéo. <a href="video/demo-ratio.mp4">Télécharger le clip (MP4)</a>.
+  </video>
+  <figcaption>Regardez d’abord : Montréal passe à 20 000 livraisons et l’écart apparaît.</figcaption>
+</figure>
         <span class="kicker">Essayez</span>
         <div class="table-wrap" tabindex="0">
           <table id="ratioTable">
@@ -177,6 +203,14 @@
         <p class="ref">Écrit pour ce site, d’après mon essai « CPQ : les règles avant l’écran »</p>
       </div>
       <div class="demo">
+        <figure class="video">
+  <video id="v-demo-cpq" controls muted playsinline preload="none" poster="video/demo-cpq.jpg" width="1280" height="720" aria-label="Le prix calculé par des règles, en 9 secondes">
+    <source src="video/demo-cpq.mp4" type="video/mp4">
+    <track kind="captions" src="video/demo-cpq.fr.vtt" srclang="fr" label="Français" default>
+    Votre navigateur ne lit pas cette vidéo. <a href="video/demo-cpq.mp4">Télécharger le clip (MP4)</a>.
+  </video>
+  <figcaption>Regardez d’abord : le plateau incliné fait tomber la lampe, la trace l’explique.</figcaption>
+</figure>
         <span class="kicker">Essayez</span>
         <div class="opts" id="cpqOpts"></div>
         <dl class="kv">
@@ -203,6 +237,7 @@
         <p class="ref">Écrit pour ce site, d’après le module d’export de l’application (src/domain/classeurMarkdown.ts)</p>
       </div>
       <div class="demo">
+        
         <span class="kicker">Essayez</span>
         <form id="nForm" novalidate>
           <div class="field"><label for="nTitle">Titre</label><input type="text" id="nTitle" maxlength="120" autocomplete="off" placeholder="Ex. : Points à vérifier"></div>
