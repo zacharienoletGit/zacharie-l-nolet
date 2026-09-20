@@ -4,9 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Confidentialité · Zacharie L. Nolet</title>
-<meta name="description" content="Politique de confidentialité du cahier de compétences de Zacharie L. Nolet : aucune collecte, aucun témoin, aucun tiers.">
+<meta name="description" content="Politique de confidentialité du site de Zacharie L. Nolet : aucune collecte par le site, aucun témoin, aucun script tiers, hébergement GitHub Pages.">
 <link rel="canonical" href="https://zacharienoletgit.github.io/zacharie-l-nolet/confidentialite.html">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_CA">
+<meta property="og:site_name" content="Zacharie L. Nolet">
+<meta property="og:title" content="Confidentialité · Zacharie L. Nolet">
+<meta property="og:description" content="Politique de confidentialité du site de Zacharie L. Nolet : aucune collecte par le site, aucun témoin, aucun script tiers, hébergement GitHub Pages.">
+<meta property="og:url" content="https://zacharienoletgit.github.io/zacharie-l-nolet/confidentialite.html">
+<meta property="og:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Confidentialité · Zacharie L. Nolet">
+<meta name="twitter:description" content="Politique de confidentialité du site de Zacharie L. Nolet : aucune collecte par le site, aucun témoin, aucun script tiers, hébergement GitHub Pages.">
+<meta name="twitter:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
@@ -15,18 +27,19 @@
 <body>
 <main class="page">
   <p class="kicker"><b>Confidentialité</b> · Ce que ce site fait de tes données</p>
-  <h1>Rien n’est collecté. Voici pourquoi c’est vrai.</h1>
-  <p class="updated">Dernière mise à jour : 20 septembre 2026. Responsable : Zacharie L. Nolet.</p>
+  <h1>Le site ne collecte rien. Voici exactement ce qui existe.</h1>
+  <p class="updated">Dernière mise à jour : 20 septembre 2026. Responsable : Zacharie L. Nolet, <a href="mailto:2012487@etudiant.cegepvicto.ca">2012487@etudiant.cegepvicto.ca</a>.</p>
 
   <div class="prose">
     <h2>Ce que le site collecte</h2>
-    <p>Aucune donnée personnelle. Il n’y a ni compte, ni formulaire envoyé à un serveur, ni infolettre. Le seul formulaire de la page (la grille de lecture) s’exécute dans ton navigateur et n’envoie rien.</p>
+    <p>Aucune donnée personnelle par lui-même. Il n’y a ni compte, ni infolettre, ni formulaire envoyé à un serveur. Le formulaire de la page Contact prépare un courriel dans ton propre logiciel de courriel ; les feuilles de la page Preuves s’exécutent dans ton navigateur. Rien de ce que tu tapes ne part vers un serveur depuis ces pages.</p>
 
     <h2>Ce qui reste dans ton navigateur</h2>
-    <p>Le site garde trois valeurs dans le stockage local de ton navigateur (<em>localStorage</em>), jamais transmises :</p>
+    <p>Le site garde quatre valeurs dans le stockage local de ton navigateur (<em>localStorage</em>), jamais transmises :</p>
     <ul>
       <li><strong>zln-theme</strong> : ta lumière (Système, Papier ou Encre).</li>
-      <li><strong>zln-grille</strong> : les lignes que tu ajoutes à la grille de lecture.</li>
+      <li><strong>zln-feuilles</strong> : les feuilles d’essai de la preuve 06, y compris les deux exemples fournis au départ.</li>
+      <li><strong>zln-brouillon</strong> : le brouillon du formulaire de contact, effacé quand le courriel est préparé.</li>
       <li><strong>zln-notice</strong> : le fait que tu as fermé l’avis en bas de page.</li>
     </ul>
     <p>Pour tout effacer : dans les réglages de ton navigateur, supprime les données de ce site. Rien n’en subsiste ailleurs.</p>
@@ -34,26 +47,23 @@
     <h2>Témoins (cookies)</h2>
     <p>Aucun. Ni de session, ni de suivi, ni publicitaire.</p>
 
-    <h2>Tiers</h2>
-    <p>Aucun service tiers ne s’exécute sur cette page : pas d’outil d’analyse d’audience, pas de police de caractères chargée depuis un serveur externe, pas de réseau de diffusion de contenu, pas de bouton de partage. La politique de sécurité de contenu (CSP) du site interdit techniquement toute connexion sortante.</p>
-    <p>L’hébergeur du site peut tenir des journaux techniques (adresse IP, date, page demandée) pour faire fonctionner et protéger son service. Ces journaux relèvent de sa propre politique ; je n’y accède pas et ne les croise avec rien.</p>
+    <h2>Hébergeur et tiers</h2>
+    <p>Le site est hébergé par GitHub Pages (GitHub, Inc.), qui le sert par son propre réseau de diffusion. Comme tout hébergeur, GitHub peut tenir des journaux techniques (adresse IP, date, page demandée) pour faire fonctionner et protéger son service, selon sa propre politique de confidentialité. Je n’accède pas à ces journaux et ne les croise avec rien.</p>
+    <p>Aucun autre tiers n’intervient : pas d’outil d’analyse d’audience, pas de police de caractères chargée d’un serveur externe, pas de bouton de partage, pas de publicité. La politique de sécurité de contenu (CSP) du site interdit techniquement toute connexion sortante depuis les pages.</p>
 
     <h2>Intelligence artificielle</h2>
     <p>Aucune fonction d’intelligence artificielle ne s’exécute sur ce site et aucune donnée n’est transmise à un service d’IA.</p>
 
     <h2>Si tu m’écris</h2>
-    <p>Ton courriel me parvient directement. Ton adresse et ton message servent à te répondre, rien d’autre. Je ne les partage pas et je les supprime sur demande.</p>
+    <p>Ton courriel me parvient directement. Ton adresse et ton message servent à te répondre et à mener l’échange que tu as engagé, rien d’autre. Je ne les partage avec personne. Je les conserve le temps de cet échange et je les supprime sur demande.</p>
 
     <h2>Tes droits</h2>
-    <p>Conformément à la Loi sur la protection des renseignements personnels dans le secteur privé (Québec, incluant les modifications de la Loi 25), tu peux demander l’accès à tout renseignement te concernant que je détiendrais, sa rectification ou sa suppression. Comme le site ne collecte rien, cela ne concerne que les courriels que tu m’aurais envoyés. Écris-moi à l’adresse indiquée sur la page d’accueil.</p>
+    <p>Conformément à la Loi sur la protection des renseignements personnels dans le secteur privé (Québec, telle que modifiée par la Loi 25), tu peux demander l’accès à tout renseignement te concernant que je détiendrais, sa rectification, sa suppression, ou retirer ton consentement à son utilisation. Comme le site ne collecte rien, cela ne concerne que les courriels que tu m’aurais envoyés. Écris-moi à <a href="mailto:2012487@etudiant.cegepvicto.ca">2012487@etudiant.cegepvicto.ca</a> ; je réponds dans les trente jours. Si tu estimes que ta demande n’a pas été traitée correctement, tu peux t’adresser à la Commission d’accès à l’information du Québec.</p>
 
     <h2>Modifications</h2>
     <p>Si le site change de façon à collecter quoi que ce soit, cette page sera mise à jour avant, avec la date en tête.</p>
   </div>
-  <div class="row back">
-    <a class="btn primary" href="./">Retour au cahier</a>
-    <a class="btn" href="conditions.html">Conditions d’utilisation</a>
-  </div>
+  <div class="row back"><a class="btn primary" href="./">Retour à l’accueil</a><a class="btn" href="conditions.html">Conditions d’utilisation</a></div>
 </main>
 </body>
 </html>

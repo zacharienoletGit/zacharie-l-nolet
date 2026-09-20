@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Preuves · Zacharie L. Nolet</title>
+<meta name="description" content="Six techniques exécutées dans le navigateur : recherche sans accents, édition déterministe, file de synchronisation, ratio Power BI, règles CPQ, export Markdown. Le code affiché est le code qui tourne.">
+<meta name="author" content="Zacharie L. Nolet">
+<meta name="theme-color" content="#F3EDE0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B1A28" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zacharienoletgit.github.io/zacharie-l-nolet/preuves.html">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_CA">
+<meta property="og:site_name" content="Zacharie L. Nolet">
+<meta property="og:title" content="Preuves · Zacharie L. Nolet">
+<meta property="og:description" content="Six techniques exécutées dans le navigateur : recherche sans accents, édition déterministe, file de synchronisation, ratio Power BI, règles CPQ, export Markdown. Le code affiché est le code qui tourne.">
+<meta property="og:url" content="https://zacharienoletgit.github.io/zacharie-l-nolet/preuves.html">
+<meta property="og:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zacharie L. Nolet, portrait et nom sur fond d’encre">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Preuves · Zacharie L. Nolet">
+<meta name="twitter:description" content="Six techniques exécutées dans le navigateur : recherche sans accents, édition déterministe, file de synchronisation, ratio Power BI, règles CPQ, export Markdown. Le code affiché est le code qui tourne.">
+<meta name="twitter:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Aller au contenu</a>
+
+<div class="topbar">
+  <nav aria-label="Pages">
+    <a class="brand" href="./">Z. L. Nolet</a>
+    <a href="./">Accueil</a>
+    <a href="parcours.html">Parcours</a>
+    <a href="preuves.html" aria-current="page">Preuves</a>
+    <a href="engagement.html">M’engager</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <button class="btn small" id="themeBtn" type="button">Lumière : Système</button>
+</div>
+<header class="page-head">
+  <p class="kicker"><b>Preuves</b> · Six techniques, exécutées ici</p>
+  <h1>Le code affiché est le code qui tourne</h1>
+  <p class="lede">Chaque source à gauche est lue au chargement par <code class="mono">Function.prototype.toString</code> : c’est la fonction qui s’exécute à droite. Les trois premières sont portées telles quelles du TypeScript du dépôt ; les trois autres sont écrites pour cette page, dans le même esprit. Modifie les entrées.</p>
+</header>
+
+<main id="main">
+  <section id="liste">
+
+    <article class="proof" id="p1">
+      <header>
+        <span class="rank">01</span>
+        <h3>Recherche sans accents</h3>
+        <p class="what">Un lecteur tape <em>quebec</em>, <em>Netari</em> ou <em>ETOILE</em> : la requête et le texte sont décomposés (NFD), dépouillés de leurs diacritiques, puis comparés. <span class="claim">Le test du dépôt vérifie que « Netari » ne trouve rien et que « nectari » trouve l’essai.</span></p>
+      </header>
+      <div class="src">
+        <span class="kicker">Source</span>
+        <pre id="src1" tabindex="0"></pre>
+        <p class="ref">src/domain/search.ts · __tests__/search.test.ts</p>
+      </div>
+      <div class="demo">
+        <span class="kicker">Exécution</span>
+        <div class="field"><label for="q">Requête</label><input type="search" id="q" value="quebec" autocomplete="off" spellcheck="false" maxlength="80"></div>
+        <div class="field"><label for="qs">Rubrique</label><select id="qs"><option value="">Toutes</option></select></div>
+        <p class="out" id="qn"></p>
+        <ol class="list" id="qout"></ol>
+      </div>
+    </article>
+
+    <article class="proof" id="p2">
+      <header>
+        <span class="rank">02</span>
+        <h3>Édition déterministe</h3>
+        <p class="what">Quand le catalogue n’a pas dix rangs pour une date, l’application ne tire pas au hasard : elle hache <code class="mono">date:id</code> avec FNV-1a 32 bits et prend les dix plus petits scores. <span class="claim">Même date, même édition, sur n’importe quel appareil. Change la date : l’édition change, puis revient.</span></p>
+      </header>
+      <div class="src">
+        <span class="kicker">Source</span>
+        <pre id="src2" tabindex="0"></pre>
+        <p class="ref">src/domain/edition.ts · __tests__/edition.test.ts</p>
+      </div>
+      <div class="demo">
+        <span class="kicker">Exécution</span>
+        <div class="row">
+          <div class="field grow"><label for="ed">Date civile</label><input type="date" id="ed"></div>
+          <button class="btn" type="button" id="edPrev">Veille</button>
+          <button class="btn" type="button" id="edNext">Lendemain</button>
+        </div>
+        <p class="out" id="edhash"></p>
+        <ol class="list" id="edout"></ol>
+      </div>
+    </article>
+
+    <article class="proof" id="p3">
+      <header>
+        <span class="rank">03</span>
+        <h3>File idempotente et fusion last-write-wins</h3>
+        <p class="what">Hors-ligne, chaque geste devient une opération. Découper deux fois le même texte ne crée pas deux opérations : la file remplace. À la synchronisation, la note la plus récente gagne, que ce soit l’appareil ou le serveur. <span class="claim">L’appareil reste la vérité tant qu’il est plus récent.</span></p>
+      </header>
+      <div class="src">
+        <span class="kicker">Source</span>
+        <pre id="src3" tabindex="0"></pre>
+        <p class="ref">src/domain/syncQueue.ts · __tests__/syncQueue.test.ts</p>
+      </div>
+      <div class="demo">
+        <span class="kicker">Exécution</span>
+        <div class="row">
+          <button class="btn primary" type="button" id="opCut">Découper a-01</button>
+          <button class="btn" type="button" id="opCut2">Découper a-05</button>
+          <button class="btn" type="button" id="opNote">Annoter a-01</button>
+          <button class="btn small" type="button" id="opClear">Vider</button>
+        </div>
+        <p class="out" id="qcount" aria-live="polite"></p>
+        <ul class="list" id="qops"></ul>
+        <span class="kicker mt-8">Exécution · fusion</span>
+        <div class="row">
+          <div class="field grow-sm"><label for="tLocal">Note locale, modifiée à</label><input type="time" id="tLocal" value="08:14" step="60"></div>
+          <div class="field grow-sm"><label for="tRemote">Même note, serveur, à</label><input type="time" id="tRemote" value="08:20" step="60"></div>
+        </div>
+        <div class="verdict" id="mergeOut"></div>
+      </div>
+    </article>
+
+    <article class="proof" id="p4">
+      <header>
+        <span class="rank">04</span>
+        <h3>Un ratio ne se somme pas</h3>
+        <p class="what">Trois régions, un taux de livraison à temps chacune. La moyenne des taux et le taux global ne sont pas le même nombre dès que les volumes diffèrent. <span class="claim">Dans Power BI, la mesure est <code class="mono">DIVIDE(SUM(à temps), SUM(total))</code>, jamais <code class="mono">AVERAGE(taux)</code>.</span> Change un volume et regarde l’écart bouger.</p>
+      </header>
+      <div class="src">
+        <span class="kicker">Source</span>
+        <pre id="src4" tabindex="0"></pre>
+        <p class="ref">Écrit pour cette page · essai « Un ratio ne se somme pas », rubrique Power BI du dépôt</p>
+      </div>
+      <div class="demo">
+        <span class="kicker">Exécution</span>
+        <div class="table-wrap" tabindex="0">
+          <table id="ratioTable">
+            <thead><tr><th scope="col">Région</th><th class="num" scope="col">À temps</th><th class="num" scope="col">Total</th><th class="num" scope="col">Taux</th></tr></thead>
+            <tbody>
+              <tr><td>Centre-du-Québec</td><td class="num"><input type="number" id="r1a" value="95" min="0" max="1000000" aria-label="Centre-du-Québec, livraisons à temps"></td><td class="num"><input type="number" id="r1b" value="100" min="1" max="1000000" aria-label="Centre-du-Québec, livraisons totales"></td><td class="num" data-rate>95,0 %</td></tr>
+              <tr><td>Montréal</td><td class="num"><input type="number" id="r2a" value="1700" min="0" max="1000000" aria-label="Montréal, livraisons à temps"></td><td class="num"><input type="number" id="r2b" value="2000" min="1" max="1000000" aria-label="Montréal, livraisons totales"></td><td class="num" data-rate>85,0 %</td></tr>
+              <tr><td>Estrie</td><td class="num"><input type="number" id="r3a" value="45" min="0" max="1000000" aria-label="Estrie, livraisons à temps"></td><td class="num"><input type="number" id="r3b" value="50" min="1" max="1000000" aria-label="Estrie, livraisons totales"></td><td class="num" data-rate>90,0 %</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="error" id="ratioErr" role="alert" hidden></p>
+        <dl class="kv">
+          <dt>Moyenne des taux (faux)</dt><dd id="rAvg" class="big"></dd>
+          <dt>Taux global (juste)</dt><dd id="rTrue" class="big"></dd>
+          <dt>Écart</dt><dd id="rGap"></dd>
+        </dl>
+        <div class="verdict" id="rVerdict"></div>
+      </div>
+    </article>
+
+    <article class="proof" id="p5">
+      <header>
+        <span class="rank">05</span>
+        <h3>CPQ : les règles avant l’écran</h3>
+        <p class="what">Un configurateur d’exemple (un pupitre de lecture, prix fictifs). Les règles forment un graphe de contraintes : une option en exclut une autre, une autre en exige une troisième, une remise se déclenche sur un seuil. <span class="claim">Le prix n’est jamais saisi ; il est déduit, et chaque règle affiche son état.</span> Coche le plateau incliné : la lampe tombe, parce que le tiroir qu’elle exige est exclu.</p>
+      </header>
+      <div class="src">
+        <span class="kicker">Source</span>
+        <pre id="src5" tabindex="0"></pre>
+        <p class="ref">Écrit pour cette page · essai « CPQ : les règles avant l’écran », rubrique CPQ du dépôt</p>
+      </div>
+      <div class="demo">
+        <span class="kicker">Exécution</span>
+        <div class="opts" id="cpqOpts"></div>
+        <dl class="kv">
+          <dt>Base</dt><dd id="cpqBase"></dd>
+          <dt>Options</dt><dd id="cpqOptions"></dd>
+          <dt>Remise</dt><dd id="cpqDisc"></dd>
+          <dt>Prix</dt><dd id="cpqTotal" class="big" aria-live="polite"></dd>
+        </dl>
+        <span class="lbl-ui">Trace des règles</span>
+        <ul class="rules" id="cpqRules"></ul>
+      </div>
+    </article>
+
+    <article class="proof" id="p6">
+      <header>
+        <span class="rank">06</span>
+        <h3>Export Markdown du classeur</h3>
+        <p class="what">Le classeur de l’application s’exporte vers Fichiers en Markdown lisible sans l’application. Ici, une fonction sœur rend tes feuilles d’essai : écris-en une, retire-en une, et regarde le texte se réécrire. <span class="claim">La mémoire n’appartient pas à un format propriétaire.</span> Les feuilles restent dans ton navigateur.</p>
+      </header>
+      <div class="src">
+        <span class="kicker">Source</span>
+        <pre id="src6" tabindex="0"></pre>
+        <p class="ref">Écrit pour cette page, d’après src/domain/classeurMarkdown.ts · __tests__/markdown.test.ts</p>
+      </div>
+      <div class="demo">
+        <span class="kicker">Exécution</span>
+        <form id="nForm" novalidate>
+          <div class="field"><label for="nTitle">Titre</label><input type="text" id="nTitle" maxlength="120" autocomplete="off" placeholder="Ex. : Ce que je dois vérifier"></div>
+          <div class="field mt-8"><label for="nBody">Feuille</label><textarea id="nBody" rows="3" maxlength="2000" aria-describedby="nErr" placeholder="Ce qui est dit. Ce que j’en fais. Ce que je dois vérifier."></textarea></div>
+          <p class="error mt-6" id="nErr" role="alert" hidden></p>
+          <div class="row mt-8"><button class="btn primary" type="submit">Enregistrer</button><span class="status" id="nStatus" role="status"></span></div>
+        </form>
+        <ol class="list" id="nList"></ol>
+        <textarea id="mdOut" class="mono" rows="12" readonly aria-label="Markdown généré"></textarea>
+        <div class="row"><button class="btn" type="button" id="mdCopy">Copier</button><span class="out" id="mdMsg" role="status"></span></div>
+      </div>
+    </article>
+  </section>
+  <section id="suite">
+    <div class="row"><a class="btn primary" href="engagement.html">M’engager</a><a class="btn" href="parcours.html">Le parcours</a></div>
+  </section>
+</main>
+
+<footer>
+  <span>Zacharie L. Nolet · Techniques de l’informatique, Cégep de Victoriaville · <a href="mailto:2012487@etudiant.cegepvicto.ca?subject=Mandat%2C%20stage%20ou%20contrat">2012487@etudiant.cegepvicto.ca</a></span>
+  <span>Site statique sans framework, sans police externe, sans traceur. Les démonstrations portent les fonctions du dépôt <span class="mono">zacharie-l-nolet</span>.</span>
+  <nav class="footer-nav" aria-label="Pages légales et liens">
+    <a href="confidentialite.html">Confidentialité</a>
+    <a href="conditions.html">Conditions d’utilisation</a>
+    <a href="sitemap.xml">Plan du site</a>
+    <a href="https://github.com/zacharienoletGit/zacharie-l-nolet" rel="noopener">Dépôt GitHub</a>
+    <a href="#top" id="toTop">Haut de page</a>
+  </nav>
+</footer>
+
+<div class="notice" id="notice" hidden role="region" aria-label="Avis sur les données">
+  <p>Ce site n’utilise aucun témoin ni traceur. Il garde dans ton navigateur ta lumière, tes feuilles d’essai, ton brouillon de courriel et le fait que tu as vu cet avis. <a href="confidentialite.html">Détails</a></p>
+  <button class="btn small" type="button" id="noticeOk">Compris</button>
+</div>
+
+<div class="sticky-cta" id="stickyCta" hidden>
+  <a class="btn primary" href="engagement.html">M’engager</a>
+  <a class="btn" href="contact.html">M’écrire</a>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

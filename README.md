@@ -144,8 +144,8 @@ Le JS est partagé. La cible de design est **iPhone**.
 - `docs/UX-CLASSEUR.md` — spec coupures / notes
 - `docs/TESTING.md` — tests et perf
 - `docs/REPRODUCE.md` — prompts de rôle pour un autre développeur
-- `web/` — cahier de compétences (bio, parcours, preuves exécutées, Cité, contact). Site statique complet : 404, confidentialité, conditions, `robots.txt`, `sitemap.xml`, favicons, image Open Graph, en-têtes de sécurité (`_headers`). Déployé sur GitHub Pages par `.github/workflows/pages.yml` (activer Settings → Pages → Source : GitHub Actions).
-- `CLAUDE.md` — règles permanentes de code (aucune marque d’IA, listes anti-« vibecodé », site réel, sécurité, légal).
+- `web/` — site d’embauche (accueil, parcours, preuves exécutées, m’engager, contact). Site statique complet : 404, confidentialité, conditions, `robots.txt`, `sitemap.xml`, favicons, image Open Graph, en-têtes de sécurité (`_headers`). Déployé sur GitHub Pages par `.github/workflows/pages.yml` (activer Settings → Pages → Source : GitHub Actions).
+- `CLAUDE.md` — règles permanentes de code du dépôt (site réel, sécurité, légal, identité).
 
 ## Licence
 

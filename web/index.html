@@ -6,17 +6,16 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Zacharie L. Nolet</title>
-<meta name="description" content="Zacharie L. Nolet, Techniques de l’informatique au Cégep de Victoriaville : bio, parcours, six techniques exécutées sur la page, et lecture de la politique québécoise, canadienne et internationale.">
+<meta name="description" content="Zacharie L. Nolet, Techniques de l’informatique au Cégep de Victoriaville. Développement mobile et web, API PHP, intelligence d’affaires. Disponible pour un stage, un contrat ou un mandat.">
 <meta name="author" content="Zacharie L. Nolet">
 <meta name="theme-color" content="#F3EDE0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0B1A28" media="(prefers-color-scheme: dark)">
-<!-- Une fois le site hébergé, remplace la base des URL absolues (SITE_URL) dans sitemap.xml, robots.txt et ci-dessous. -->
 <link rel="canonical" href="https://zacharienoletgit.github.io/zacharie-l-nolet/">
 <meta property="og:type" content="profile">
 <meta property="og:locale" content="fr_CA">
 <meta property="og:site_name" content="Zacharie L. Nolet">
 <meta property="og:title" content="Zacharie L. Nolet">
-<meta property="og:description" content="Développeur, intelligence d’affaires, lecteur de la cité. Six techniques exécutées sur la page.">
+<meta property="og:description" content="Zacharie L. Nolet, Techniques de l’informatique au Cégep de Victoriaville. Développement mobile et web, API PHP, intelligence d’affaires. Disponible pour un stage, un contrat ou un mandat.">
 <meta property="og:url" content="https://zacharienoletgit.github.io/zacharie-l-nolet/">
 <meta property="og:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
 <meta property="og:image:width" content="1200">
@@ -24,7 +23,7 @@
 <meta property="og:image:alt" content="Zacharie L. Nolet, portrait et nom sur fond d’encre">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Zacharie L. Nolet">
-<meta name="twitter:description" content="Développeur, intelligence d’affaires, lecteur de la cité. Six techniques exécutées sur la page.">
+<meta name="twitter:description" content="Zacharie L. Nolet, Techniques de l’informatique au Cégep de Victoriaville. Développement mobile et web, API PHP, intelligence d’affaires. Disponible pour un stage, un contrat ou un mandat.">
 <meta name="twitter:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
@@ -33,405 +32,144 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<a class="skip" href="#preuves">Aller aux preuves</a>
+<a class="skip" href="#main">Aller au contenu</a>
 
 <div class="topbar">
-  <nav aria-label="Sommaire">
-    <a href="#bio">Bio</a>
-    <a href="#parcours">Parcours</a>
-    <a href="#competences">Compétences</a>
-    <a href="#preuves">Preuves</a>
-    <a href="#cite">Cité</a>
-    <a href="#contact">Contact</a>
+  <nav aria-label="Pages">
+    <a class="brand" href="./">Z. L. Nolet</a>
+    <a href="./" aria-current="page">Accueil</a>
+    <a href="parcours.html">Parcours</a>
+    <a href="preuves.html">Preuves</a>
+    <a href="engagement.html">M’engager</a>
+    <a href="contact.html">Contact</a>
   </nav>
-  <button class="btn small" id="themeBtn" type="button" aria-label="Changer la lumière">Lumière : Système</button>
+  <button class="btn small" id="themeBtn" type="button">Lumière : Système</button>
 </div>
 
-<header class="masthead">
-  <p class="kicker masthead-kicker"><span>Cahier de compétences</span><span>Édition du <time id="today">aujourd’hui</time></span><span>Rien n’est affirmé sans être exécuté</span></p>
+<header class="masthead" id="top">
+  <p class="kicker masthead-kicker"><span>Développeur · Techniques de l’informatique</span><span>Édition du <span id="today">aujourd’hui</span></span><span>Rien n’est affirmé sans être exécuté</span></p>
   <div class="hero">
     <figure class="hero-photo">
       <img src="photo-canal.jpg" alt="Zacharie L. Nolet, polo marine et lunettes de soleil, appuyé au parapet d’un canal bordé d’arbres" width="886" height="886" fetchpriority="high" class="img-fade">
     </figure>
     <div>
       <h1 class="name"><span class="w0">Zacharie</span> <span class="w1">L.</span> <span class="w2">Nolet</span></h1>
-      <p class="dek">Techniques de l’informatique au Cégep de Victoriaville. Développeur d’outils qui refusent le fil, analyste d’intelligence d’affaires attaché au grain, lecteur de la cité par ses leviers. Cette page ne liste pas des techniques : elle les fait tourner.</p>
-      <div class="cta row">
-        <a class="btn primary" id="ctaMail" href="#contact">M’écrire</a>
-        <a class="btn" href="#preuves">Voir les six preuves</a>
-      </div>
+    </div>
+    <p class="dek">Je construis des applications mobiles, des API et des tableaux de bord qui tiennent en production : code testé, données au bon grain, sécurité vérifiée avant la mise en ligne. Étudiant en Techniques de l’informatique au Cégep de Victoriaville, disponible pour un stage, un contrat ou un mandat.</p>
+    <div class="cta row" id="firstCta">
+      <a class="btn primary" href="engagement.html">M’engager</a>
+      <a class="btn" href="preuves.html">Voir les six preuves</a>
     </div>
   </div>
   <div class="rule thick draw hero-rule"></div>
-  <div class="facts" aria-label="Chiffres du dépôt">
-    <div class="fact"><strong class="count" data-to="22">22</strong><span>textes au catalogue</span></div>
-    <div class="fact"><strong class="count" data-to="18">18</strong><span>rubriques, en 5 groupes</span></div>
-    <div class="fact"><strong class="count" data-to="8">8</strong><span>suites de tests Jest</span></div>
-    <div class="fact"><strong class="count" data-to="10">10</strong><span>textes par édition, jamais plus</span></div>
+  <div class="facts" role="group" aria-label="Chiffres vérifiables du dépôt">
+    <div class="fact"><strong class="count" data-to="29">29</strong><span>tests Jest verts, 8 suites</span></div>
+    <div class="fact"><strong class="count" data-to="0">0</strong><span>vulnérabilité npm audit</span></div>
+    <div class="fact"><strong class="count" data-to="6">6</strong><span>techniques exécutées sur ce site</span></div>
+    <div class="fact"><strong class="count" data-to="8">8</strong><span>routes d’API PHP, fichiers JSON</span></div>
   </div>
 </header>
 
-<main>
-  <!-- ================= BIO ================= -->
+<main id="main">
+  <section id="offre">
+    <div class="sec-head reveal">
+      <p class="kicker"><b>Ce que je livre</b> · Trois terrains</p>
+      <h2>Du téléphone au tableau de bord</h2>
+      <p class="lede">Trois types de mandats que je peux prendre demain, avec ce qui le prouve.</p>
+    </div>
+    <ul class="filets two">
+      <li>
+        <h3>Applications mobiles iPhone et Android</h3>
+        <p>React Native en mode bare, TypeScript, navigation native, stockage local, synchronisation hors-ligne. Accessibilité : cibles de 44 pt, Dynamic Type, libellés VoiceOver en français.</p>
+        <span class="ref">Preuve : le cahier de lecture iPhone du dépôt, 4 onglets, 8 suites de tests.</span>
+      </li>
+      <li>
+        <h3>API et backend PHP</h3>
+        <p>Contrats JSON versionnés, écritures idempotentes, verrouillage de fichiers, aucune donnée inventée côté serveur. Prêt pour MySQL quand le volume le demande.</p>
+        <span class="ref">Preuve : 8 routes /v1 (articles, édition, notes, coupures) avec upsert sur clé.</span>
+      </li>
+      <li>
+        <h3>Intelligence d’affaires et systèmes de gestion</h3>
+        <p>Modèle en étoile, mesures Power BI justes (jamais une somme de ratios), périmètres clairs entre Sage X3, Nectari, Jitterbit et un CPQ.</p>
+        <span class="ref">Preuve : <a href="preuves.html#p4">un ratio ne se somme pas</a>, <a href="preuves.html#p5">règles CPQ avant l’écran</a>.</span>
+      </li>
+      <li>
+        <h3>Mise en ligne propre</h3>
+        <p>Page 404, politique de confidentialité, en-têtes de sécurité, CSP sans script en ligne, audit des dépendances, favicons, plan de site. Ce site en est l’exemple.</p>
+        <span class="ref">Preuve : <a href="engagement.html#methode">ma liste de lancement</a>, appliquée ici.</span>
+      </li>
+    </ul>
+  </section>
+
   <section id="bio">
     <div class="sec-head reveal">
-      <p class="kicker"><b>Bio</b> · Qui écrit</p>
-      <h2>Un cahier, pas un fil</h2>
+      <p class="kicker"><b>Qui</b> · En quelques lignes</p>
+      <h2>Le grain avant l’abstraction</h2>
     </div>
     <div class="cols cols-bio">
-      <div class="prose reveal">
+      <div class="prose">
         <p>Je m’appelle Zacharie L. Nolet. J’étudie en Techniques de l’informatique au Cégep de Victoriaville et je construis des logiciels avec une règle simple : <em>le grain avant l’abstraction</em>. Un écran ne calcule pas un rang. Une règle métier vit dans une fonction pure, avec son test, avant de vivre dans un thème.</p>
-        <p>Mon projet de référence est un cahier de lecture iPhone qui remplace les médias sociaux sans les imiter. Dix textes par jour, une clôture volontaire, un classeur hors-ligne dont la synchronisation est une file d’opérations idempotentes. Pas de fil infini, pas de « j’aime », pas de « pour toi ».</p>
-        <p>Côté décision, je travaille avec des systèmes qui existent déjà en production : Sage X3 est l’opérationnel, Nectari clone le champ certifié, Jitterbit cadence l’intégration, Power BI lit le mart. Je n’invente pas un KPI ; je refuse de sommer un ratio.</p>
-        <p>Côté cité, je lis la politique québécoise, canadienne et internationale comme on lit un débat : lentement, par compétences, par leviers, par institutions qui survivent à un cycle électoral. Un article qui a des noms mais pas de leviers est une scène, pas une analyse.</p>
-        <p>Le reste est méthode : la marge comme lieu de décision, la philosophie comme manière de choisir ce qui mérite une heure, le hip-hop comme archive orale avec des règles de vers.</p>
+        <p>Mon projet de référence est un cahier de lecture iPhone : dix textes par jour, un classeur hors-ligne, une synchronisation par file d’opérations idempotentes, un backend PHP minimal. Pas de fil infini, pas de « j’aime ».</p>
+        <p>Côté décision, je m’intéresse aux systèmes de gestion tels qu’ils tournent en entreprise : Sage X3 est l’opérationnel, Nectari clone le champ certifié, Jitterbit cadence l’intégration, Power BI lit le mart. Je n’invente pas un KPI ; je refuse de sommer un ratio.</p>
+        <p>En 2026, mon équipe a reçu le prix « Badge fort, salue l’effort » à l’Exposat, en Techniques de l’informatique. <a href="parcours.html">Le parcours complet.</a></p>
       </div>
-      <figure class="figure reveal">
+      <figure class="figure">
         <img src="photo-nuit.jpg" alt="Zacharie L. Nolet en veston noir, le soir, dans une rue éclairée" width="886" height="886" loading="lazy" class="img-fade">
         <figcaption>Le soir, après la fermeture de l’édition.</figcaption>
       </figure>
     </div>
   </section>
 
-  <!-- ================= PARCOURS ================= -->
-  <section id="parcours">
+  <section id="preuves-apercu">
     <div class="sec-head reveal">
-      <p class="kicker"><b>CV</b> · Parcours</p>
-      <h2>Ce qui a été fait, daté</h2>
-    </div>
-    <div class="cols">
-      <div class="reveal">
-        <p class="kicker mb-12">Formation et distinction</p>
-        <ol class="timeline">
-          <li>
-            <span class="when">2026 · Exposat</span>
-            <h3>Prix « Badge fort, salue l’effort », 500 $</h3>
-            <p>Exposat 2026, Techniques de l’informatique. Remis à l’équipe Philippe-Vu Beaulieu, Zacharie Nolet, Félix Dupras-Simard, Frédérick Bethermat et Rachid Touil.</p>
-          </li>
-          <li>
-            <span class="when">Cégep de Victoriaville</span>
-            <h3>DEC, Techniques de l’informatique</h3>
-            <p>Programmation, bases de données, systèmes, projets en équipe. Intérêt marqué pour l’intelligence d’affaires et les systèmes de gestion.</p>
-          </li>
-          <li>
-            <span class="when">En continu</span>
-            <h3>Systèmes de gestion et décision</h3>
-            <p>Sage X3, Nectari, Jitterbit, Power BI, CPQ : périmètre de chacun, vocabulaire partagé, modèle en étoile.</p>
-          </li>
-        </ol>
-      </div>
-      <div class="reveal">
-        <p class="kicker mb-12">Projets</p>
-        <ol class="timeline">
-          <li>
-            <span class="when">2026</span>
-            <h3>Zacharie L. Nolet, cahier de lecture iPhone</h3>
-            <p>React Native 0.87 bare, TypeScript, Context + AsyncStorage, file de sync, backend PHP 8 à fichiers JSON, 8 suites Jest. Flux RSS de dix médias composés en une édition d’étagères diverses.</p>
-          </li>
-          <li>
-            <span class="when">2026</span>
-            <h3>Ce cahier de compétences</h3>
-            <p>Page statique sans framework, sans police externe, sans traceur. Six fonctions du dépôt portées et exécutées sur la page. Page 404, politique de confidentialité, conditions, plan de site, en-têtes de sécurité.</p>
-          </li>
-        </ol>
-        <figure class="figure figure-award">
-          <img src="exposat-2026.jpg" alt="Affiche Exposat 2026, Techniques de l’informatique : l’équipe sur scène avec ses enveloppes, prix Badge fort, salue l’effort, 500 $" width="816" height="962" loading="lazy" class="img-fade">
-          <figcaption>Exposat 2026. Cinq noms, une enveloppe, une scène.</figcaption>
-        </figure>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= COMPÉTENCES ================= -->
-  <section id="competences">
-    <div class="sec-head reveal">
-      <p class="kicker"><b>Compétences</b> · Deux ateliers</p>
-      <h2>Atelier et Cité</h2>
-      <p class="lede">Chaque filet renvoie à l’endroit de la page ou du dépôt où la compétence est exécutée. Les niveaux sont une auto-évaluation.</p>
-    </div>
-    <div class="cols">
-      <div class="reveal">
-        <p class="kicker mb-12">Atelier</p>
-        <ul class="skills">
-          <li><span class="lbl">TypeScript · React Native</span><span class="lvl">85</span><span class="track"><i data-w="0.85"></i></span><span class="proof-ref">src/features, src/components · 4 onglets, navigation native, Dynamic Type</span></li>
-          <li><span class="lbl">Fonctions pures et tests (Jest)</span><span class="lvl">80</span><span class="track"><i data-w="0.8"></i></span><span class="proof-ref">src/domain · édition, classeur, recherche, file de sync · <a href="#preuves">preuves 01 à 03</a></span></li>
-          <li><span class="lbl">Architecture local-first et sync</span><span class="lvl">80</span><span class="track"><i data-w="0.8"></i></span><span class="proof-ref">file idempotente, last-write-wins sur updatedAt · <a href="#p3">preuve 03</a></span></li>
-          <li><span class="lbl">PHP 8 · API JSON</span><span class="lvl">70</span><span class="track"><i data-w="0.7"></i></span><span class="proof-ref">backend/php · 8 routes, fichiers JSON avec flock, upsert idempotent</span></li>
-          <li><span class="lbl">Intelligence d’affaires · Power BI</span><span class="lvl">70</span><span class="track"><i data-w="0.7"></i></span><span class="proof-ref">le mart, pas la source · <a href="#p4">preuve 04</a></span></li>
-          <li><span class="lbl">Sage X3 · Nectari · Jitterbit</span><span class="lvl">60</span><span class="track"><i data-w="0.6"></i></span><span class="proof-ref">périmètres distincts : opérationnel, champ certifié, horloge d’intégration</span></li>
-          <li><span class="lbl">CPQ · règles de configuration</span><span class="lvl">55</span><span class="track"><i data-w="0.55"></i></span><span class="proof-ref">un graphe de contraintes, pas un formulaire · <a href="#p5">preuve 05</a></span></li>
-        </ul>
-      </div>
-      <div class="reveal">
-        <p class="kicker mb-12">Cité</p>
-        <ul class="skills">
-          <li><span class="lbl">Partage des compétences (1867, art. 91 à 95)</span><span class="lvl">80</span><span class="track"><i data-w="0.8"></i></span><span class="proof-ref"><a href="#cite">tri fédéral / provincial / partagé</a></span></li>
-          <li><span class="lbl">Procédure parlementaire québécoise</span><span class="lvl">75</span><span class="track"><i data-w="0.75"></i></span><span class="proof-ref"><a href="#etapes">le chemin d’un projet de loi</a></span></li>
-          <li><span class="lbl">Lecture par leviers (international)</span><span class="lvl">75</span><span class="track"><i data-w="0.75"></i></span><span class="proof-ref"><a href="#leviers">sanctions, traités, cours, cycles</a></span></li>
-          <li><span class="lbl">Communiqué · reportage · analyse</span><span class="lvl">80</span><span class="track"><i data-w="0.8"></i></span><span class="proof-ref"><a href="#grille">grille tenu / inféré / à vérifier</a></span></li>
-          <li><span class="lbl">Rédaction longue en français</span><span class="lvl">85</span><span class="track"><i data-w="0.85"></i></span><span class="proof-ref">22 essais du catalogue, docs de conception du dépôt</span></li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= PREUVES ================= -->
-  <section id="preuves">
-    <div class="sec-head reveal">
-      <p class="kicker"><b>Preuves</b> · Six techniques, exécutées ici</p>
+      <p class="kicker"><b>Preuves</b> · Six techniques, exécutées</p>
       <h2>Le code affiché est le code qui tourne</h2>
-      <p class="lede">Chaque source à gauche est lue par <code class="mono">Function.prototype.toString</code> au chargement : c’est la fonction réelle, portée du TypeScript du dépôt. Modifie les entrées à droite.</p>
+      <p class="lede">Sur la page Preuves, chaque source est lue au chargement par le navigateur : c’est la fonction réelle qui s’exécute à côté. Modifie les entrées, regarde le résultat.</p>
     </div>
-
-    <!-- 01 Recherche -->
-    <article class="proof reveal" id="p1">
-      <header>
-        <span class="rank">01</span>
-        <h3>Recherche sans accents</h3>
-        <p class="what">Un lecteur tape <em>quebec</em>, <em>Netari</em> ou <em>ETOILE</em> : la requête et le texte sont décomposés (NFD), dépouillés de leurs diacritiques, puis comparés. <span class="claim">Le test du dépôt vérifie que « Netari » ne trouve rien et que « nectari » trouve l’essai.</span></p>
-      </header>
-      <div class="src">
-        <span class="kicker">Source</span>
-        <pre id="src1"></pre>
-        <p class="ref">src/domain/search.ts · __tests__/search.test.ts</p>
-      </div>
-      <div class="demo">
-        <span class="kicker">Exécution</span>
-        <div class="field"><label for="q">Requête</label><input type="search" id="q" value="quebec" autocomplete="off" spellcheck="false" maxlength="80"></div>
-        <div class="field"><label for="qs">Rubrique</label><select id="qs"><option value="">Toutes</option></select></div>
-        <p class="out" id="qn" aria-live="polite"></p>
-        <ol class="list" id="qout"></ol>
-      </div>
-    </article>
-
-    <!-- 02 Édition déterministe -->
-    <article class="proof reveal" id="p2">
-      <header>
-        <span class="rank">02</span>
-        <h3>Édition déterministe</h3>
-        <p class="what">Quand le catalogue n’a pas dix rangs pour une date, l’application ne tire pas au hasard : elle hache <code class="mono">date:id</code> avec FNV-1a 32 bits et prend les dix plus petits scores. <span class="claim">Même date, même édition, sur n’importe quel appareil. Change la date : l’édition change, puis revient.</span></p>
-      </header>
-      <div class="src">
-        <span class="kicker">Source</span>
-        <pre id="src2"></pre>
-        <p class="ref">src/domain/edition.ts · __tests__/edition.test.ts</p>
-      </div>
-      <div class="demo">
-        <span class="kicker">Exécution</span>
-        <div class="row">
-          <div class="field grow"><label for="ed">Date civile</label><input type="date" id="ed"></div>
-          <button class="btn" type="button" id="edPrev">Veille</button>
-          <button class="btn" type="button" id="edNext">Lendemain</button>
-        </div>
-        <p class="out" id="edhash" aria-live="polite"></p>
-        <ol class="list" id="edout"></ol>
-      </div>
-    </article>
-
-    <!-- 03 File de sync -->
-    <article class="proof reveal" id="p3">
-      <header>
-        <span class="rank">03</span>
-        <h3>File idempotente et fusion last-write-wins</h3>
-        <p class="what">Hors-ligne, chaque geste devient une opération. Découper deux fois le même texte ne crée pas deux opérations : la file remplace. À la synchronisation, la note la plus récente gagne, que ce soit l’appareil ou le serveur. <span class="claim">L’appareil reste la vérité tant qu’il est plus récent.</span></p>
-      </header>
-      <div class="src">
-        <span class="kicker">Source</span>
-        <pre id="src3"></pre>
-        <p class="ref">src/domain/syncQueue.ts · __tests__/syncQueue.test.ts</p>
-      </div>
-      <div class="demo">
-        <span class="kicker">Exécution · file</span>
-        <div class="row">
-          <button class="btn primary" type="button" id="opCut">Découper a-01</button>
-          <button class="btn" type="button" id="opCut2">Découper a-05</button>
-          <button class="btn" type="button" id="opNote">Annoter a-01</button>
-          <button class="btn small" type="button" id="opClear">Vider</button>
-        </div>
-        <p class="out" id="qcount" aria-live="polite"></p>
-        <ul class="list" id="qops"></ul>
-        <span class="kicker mt-8">Exécution · fusion</span>
-        <div class="row">
-          <div class="field grow-sm"><label for="tLocal">Note locale, modifiée à</label><input type="time" id="tLocal" value="08:14" step="60"></div>
-          <div class="field grow-sm"><label for="tRemote">Même note, serveur, à</label><input type="time" id="tRemote" value="08:20" step="60"></div>
-        </div>
-        <div class="verdict" id="mergeOut" aria-live="polite"></div>
-      </div>
-    </article>
-
-    <!-- 04 Ratio -->
-    <article class="proof reveal" id="p4">
-      <header>
-        <span class="rank">04</span>
-        <h3>Un ratio ne se somme pas</h3>
-        <p class="what">Trois régions, un taux de livraison à temps chacune. La moyenne des taux et le taux global ne sont pas le même nombre dès que les volumes diffèrent. <span class="claim">Dans Power BI, la mesure est <code class="mono">DIVIDE(SUM(à temps), SUM(total))</code>, jamais <code class="mono">AVERAGE(taux)</code>.</span> Change un volume et regarde l’écart bouger.</p>
-      </header>
-      <div class="src">
-        <span class="kicker">Source</span>
-        <pre id="src4"></pre>
-        <p class="ref">Essai « Un ratio ne se somme pas », rubrique Power BI</p>
-      </div>
-      <div class="demo">
-        <span class="kicker">Exécution</span>
-        <div class="table-wrap">
-          <table id="ratioTable">
-            <thead><tr><th scope="col">Région</th><th class="num" scope="col">À temps</th><th class="num" scope="col">Total</th><th class="num" scope="col">Taux</th></tr></thead>
-            <tbody>
-              <tr><td>Centre-du-Québec</td><td class="num"><input type="number" id="r1a" value="95" min="0" max="1000000" aria-label="Centre-du-Québec, livraisons à temps"></td><td class="num"><input type="number" id="r1b" value="100" min="1" max="1000000" aria-label="Centre-du-Québec, livraisons totales"></td><td class="num" data-rate>95,0 %</td></tr>
-              <tr><td>Montréal</td><td class="num"><input type="number" id="r2a" value="1700" min="0" max="1000000" aria-label="Montréal, livraisons à temps"></td><td class="num"><input type="number" id="r2b" value="2000" min="1" max="1000000" aria-label="Montréal, livraisons totales"></td><td class="num" data-rate>85,0 %</td></tr>
-              <tr><td>Estrie</td><td class="num"><input type="number" id="r3a" value="45" min="0" max="1000000" aria-label="Estrie, livraisons à temps"></td><td class="num"><input type="number" id="r3b" value="50" min="1" max="1000000" aria-label="Estrie, livraisons totales"></td><td class="num" data-rate>90,0 %</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="error" id="ratioErr" hidden></p>
-        <dl class="kv">
-          <dt>Moyenne des taux (faux)</dt><dd id="rAvg" class="big"></dd>
-          <dt>Taux global (juste)</dt><dd id="rTrue" class="big"></dd>
-          <dt>Écart</dt><dd id="rGap"></dd>
-        </dl>
-        <div class="verdict" id="rVerdict" aria-live="polite"></div>
-      </div>
-    </article>
-
-    <!-- 05 CPQ -->
-    <article class="proof reveal" id="p5">
-      <header>
-        <span class="rank">05</span>
-        <h3>CPQ : les règles avant l’écran</h3>
-        <p class="what">Un configurateur d’exemple (un pupitre de lecture, prix fictifs). Les règles forment un graphe de contraintes : une option en exige une autre, une autre en exclut une troisième, une remise se déclenche sur un seuil. <span class="claim">Le prix n’est jamais saisi ; il est déduit, et chaque règle affiche son état.</span></p>
-      </header>
-      <div class="src">
-        <span class="kicker">Source</span>
-        <pre id="src5"></pre>
-        <p class="ref">Essai « CPQ : les règles avant l’écran », rubrique CPQ</p>
-      </div>
-      <div class="demo">
-        <span class="kicker">Exécution</span>
-        <div class="opts" id="cpqOpts"></div>
-        <dl class="kv">
-          <dt>Base</dt><dd id="cpqBase"></dd>
-          <dt>Options</dt><dd id="cpqOptions"></dd>
-          <dt>Remise</dt><dd id="cpqDisc"></dd>
-          <dt>Prix</dt><dd id="cpqTotal" class="big" aria-live="polite"></dd>
-        </dl>
-        <span class="lbl-ui">Trace des règles</span>
-        <ul class="rules" id="cpqRules"></ul>
-      </div>
-    </article>
-
-    <!-- 06 Export Markdown -->
-    <article class="proof reveal" id="p6">
-      <header>
-        <span class="rank">06</span>
-        <h3>Export Markdown du classeur</h3>
-        <p class="what">Le classeur de l’application s’exporte vers Fichiers en Markdown lisible sans l’application. Ici, la même fonction rend la <a href="#grille">grille de lecture</a> de la section Cité : modifie-la, puis regarde le texte se réécrire. <span class="claim">La mémoire n’appartient pas à un format propriétaire.</span></p>
-      </header>
-      <div class="src">
-        <span class="kicker">Source</span>
-        <pre id="src6"></pre>
-        <p class="ref">src/domain/classeurMarkdown.ts · __tests__/markdown.test.ts</p>
-      </div>
-      <div class="demo">
-        <span class="kicker">Exécution</span>
-        <textarea id="mdOut" rows="14" readonly aria-label="Markdown généré"></textarea>
-        <div class="row"><button class="btn" type="button" id="mdCopy">Copier</button><span class="out" id="mdMsg" role="status"></span></div>
-      </div>
-    </article>
+    <ol class="steps">
+      <li><div><h3><a href="preuves.html#p1">Recherche sans accents</a></h3><p>Normalisation Unicode, portée du TypeScript du dépôt.</p></div></li>
+      <li><div><h3><a href="preuves.html#p2">Édition déterministe</a></h3><p>Hachage FNV-1a : même date, même résultat sur tout appareil.</p></div></li>
+      <li><div><h3><a href="preuves.html#p3">File idempotente et fusion last-write-wins</a></h3><p>Synchronisation hors-ligne sans doublon ni écrasement.</p></div></li>
+      <li><div><h3><a href="preuves.html#p4">Un ratio ne se somme pas</a></h3><p>La mesure Power BI juste, avec l’écart sous les yeux.</p></div></li>
+      <li><div><h3><a href="preuves.html#p5">Règles CPQ avant l’écran</a></h3><p>Exigences, exclusions, remise : un prix déduit, jamais saisi.</p></div></li>
+      <li><div><h3><a href="preuves.html#p6">Export Markdown du classeur</a></h3><p>La mémoire n’appartient pas à un format propriétaire.</p></div></li>
+    </ol>
+    <div class="row mt-24"><a class="btn primary" href="preuves.html">Ouvrir les preuves</a></div>
   </section>
 
-  <!-- ================= CITÉ ================= -->
-  <section id="cite">
+  <section id="engager">
     <div class="sec-head reveal">
-      <p class="kicker"><b>Cité</b> · Politique québécoise, canadienne, internationale</p>
-      <h2>Lire la cité par ses leviers</h2>
-      <p class="lede">Trois exercices que je m’impose avant d’avoir une opinion : savoir qui a compétence, savoir où en est le texte, savoir quels leviers l’article nomme.</p>
+      <p class="kicker"><b>Travailler ensemble</b> · Stage, contrat, mandat</p>
+      <h2>Un courriel, une réponse de ma part</h2>
+      <p class="lede">Je réponds moi-même, en français. Dis-moi le contexte et le problème ; je te dis ce que je peux livrer et comment.</p>
     </div>
-
-    <div class="cols cols-wide">
-      <div class="reveal">
-        <p class="kicker mb-6">Qui a compétence ?</p>
-        <h3 class="h3-sm">Fédéral, provincial ou partagé</h3>
-        <p class="note mt-6 mb-12">Loi constitutionnelle de 1867. Réponds, puis lis l’article cité. Le score se calcule à la fin.</p>
-        <ul class="quiz" id="quiz"></ul>
-        <div class="row mt-12"><div class="verdict grow" id="quizScore" aria-live="polite">Aucune réponse encore.</div><button class="btn small" type="button" id="quizReset">Recommencer</button></div>
-      </div>
-
-      <div class="stack">
-        <div class="reveal" id="etapes">
-          <p class="kicker mb-6">Où en est le texte ?</p>
-          <h3 class="h3-sm">Le chemin d’un projet de loi à l’Assemblée nationale</h3>
-          <p class="note mt-6 mb-12">Clique les étapes dans l’ordre. Une erreur secoue la mauvaise étape.</p>
-          <ol class="steps" id="steps"></ol>
-          <div class="row mt-12"><div class="verdict grow" id="stepsOut" aria-live="polite">Six étapes à placer.</div><button class="btn small" type="button" id="stepsReset">Mélanger</button></div>
-        </div>
-
-        <div class="reveal" id="leviers">
-          <p class="kicker mb-6">Quels leviers ?</p>
-          <h3 class="h3-sm">Un article international a-t-il des leviers ?</h3>
-          <p class="note mt-6 mb-12">Coche ce que le texte que tu viens de lire nomme réellement. Un article qui n’a que des visages est une scène.</p>
-          <div class="leviers" id="levList"></div>
-          <div class="verdict mt-12" id="leviersOut" aria-live="polite"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="reveal grille-wrap" id="grille">
-      <p class="kicker mb-6">Communiqué, reportage, analyse</p>
-      <h3 class="h3-sm">Grille de lecture : tenu, inféré, à vérifier</h3>
-      <p class="note mt-6 mb-14">La règle de l’essai sur la politique québécoise : distingue ce qu’une source tient, ce que tu infères, ce que tu dois vérifier. Les lignes ci-dessous sont des exemples ; remplace-les. Elles restent dans ton navigateur seulement et alimentent la preuve 06.</p>
-      <form class="add" id="gForm" novalidate>
-        <div class="field"><label for="gText">Phrase</label><input type="text" id="gText" placeholder="Ex. : le projet de loi a été présenté le 12 septembre" autocomplete="off" maxlength="240" aria-describedby="gErr"></div>
-        <div class="field"><label for="gKind">Statut</label><select id="gKind"><option value="tenu">Tenu par une source</option><option value="infere">Inféré</option><option value="verifier">À vérifier</option></select></div>
-        <button class="btn primary" type="submit" id="gAdd">Annoter</button>
-        <p class="error add-err" id="gErr" hidden></p>
-      </form>
-      <div class="grille mt-16">
-        <div class="col"><h4>Tenu par une source</h4><ul id="g-tenu"></ul></div>
-        <div class="col"><h4>Inféré</h4><ul id="g-infere"></ul></div>
-        <div class="col"><h4>À vérifier</h4><ul id="g-verifier"></ul></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= CONTACT ================= -->
-  <section id="contact">
-    <div class="sec-head reveal">
-      <p class="kicker"><b>Contact</b> · Une adresse, pas un formulaire</p>
-      <h2>M’écrire</h2>
-      <p class="lede">Un courriel suffit. Je réponds moi-même, en français ou en anglais.</p>
-    </div>
-    <div class="cols">
-      <div class="reveal contact-card">
-        <dl class="kv kv-contact">
-          <dt>Courriel</dt><dd><a id="mailLink" href="#contact">adresse à venir</a></dd>
-          <dt>Lieu</dt><dd>Victoriaville, Centre-du-Québec, Canada</dd>
-          <dt>Code</dt><dd><a href="https://github.com/zacharienoletGit/zacharie-l-nolet" rel="noopener">github.com/zacharienoletGit/zacharie-l-nolet</a></dd>
-        </dl>
-        <div class="row mt-16"><a class="btn primary" id="mailBtn" href="#contact">Ouvrir mon courriel</a><button class="btn" type="button" id="mailCopy">Copier l’adresse</button><span class="out" id="mailMsg" role="status"></span></div>
-        <p class="note mt-12">Ton adresse ne sert qu’à te répondre. Rien n’est collecté sur cette page : voir la <a href="confidentialite.html">politique de confidentialité</a>.</p>
-      </div>
-      <figure class="figure reveal">
-        <img src="photo-canal-2.jpg" alt="Zacharie L. Nolet debout devant un canal, mains dans les poches, polo marine" width="886" height="886" loading="lazy" class="img-fade">
-        <figcaption>Disponible pour un stage, un mandat ou une conversation sur le grain.</figcaption>
-      </figure>
+    <div class="row">
+      <a class="btn primary" href="engagement.html">Voir les formats et la méthode</a>
+      <a class="btn" href="contact.html">M’écrire</a>
     </div>
   </section>
 </main>
 
 <footer>
-  <span>Zacharie L. Nolet · Cahier de compétences · Encre de minuit, filet d’or, Georgia.</span>
-  <span>Page statique sans framework, sans police externe, sans traceur. Les démonstrations portent les fonctions du dépôt <span class="mono">zacharie-l-nolet</span>.</span>
-  <nav class="footer-nav" aria-label="Pages légales"><a href="confidentialite.html">Confidentialité</a><a href="conditions.html">Conditions d’utilisation</a><a href="sitemap.xml">Plan du site</a><a href="#top" id="toTop">Haut de page</a></nav>
+  <span>Zacharie L. Nolet · Techniques de l’informatique, Cégep de Victoriaville · <a href="mailto:2012487@etudiant.cegepvicto.ca?subject=Mandat%2C%20stage%20ou%20contrat">2012487@etudiant.cegepvicto.ca</a></span>
+  <span>Site statique sans framework, sans police externe, sans traceur. Les démonstrations portent les fonctions du dépôt <span class="mono">zacharie-l-nolet</span>.</span>
+  <nav class="footer-nav" aria-label="Pages légales et liens">
+    <a href="confidentialite.html">Confidentialité</a>
+    <a href="conditions.html">Conditions d’utilisation</a>
+    <a href="sitemap.xml">Plan du site</a>
+    <a href="https://github.com/zacharienoletGit/zacharie-l-nolet" rel="noopener">Dépôt GitHub</a>
+    <a href="#top" id="toTop">Haut de page</a>
+  </nav>
 </footer>
 
 <div class="notice" id="notice" hidden role="region" aria-label="Avis sur les données">
-  <p>Ce site n’utilise aucun témoin ni traceur. Il garde seulement ta lumière et ta grille de lecture dans ton navigateur. <a href="confidentialite.html">Détails</a></p>
+  <p>Ce site n’utilise aucun témoin ni traceur. Il garde dans ton navigateur ta lumière, tes feuilles d’essai, ton brouillon de courriel et le fait que tu as vu cet avis. <a href="confidentialite.html">Détails</a></p>
   <button class="btn small" type="button" id="noticeOk">Compris</button>
 </div>
 
 <div class="sticky-cta" id="stickyCta" hidden>
-  <a class="btn primary" id="stickyMail" href="#contact">M’écrire</a>
-  <a class="btn" href="#preuves">Preuves</a>
+  <a class="btn primary" href="engagement.html">M’engager</a>
+  <a class="btn" href="contact.html">M’écrire</a>
 </div>
 
 <script src="app.js"></script>
