@@ -171,6 +171,10 @@ for (const f of pages) {
       expect(/tient/.test(await text('#abVerdict')) && !/NaN/.test(await text('#abOut')), 'données : 0 % contre 100 % ne donne pas un verdict valide');
       await page.fill('#dx0', '4'); await page.fill('#dy0', '9999999'); expect(!(await page.isHidden('#dRegErr')), 'données : une vente hors limites passe sans erreur');
       await page.fill('#dy0', '50'); await page.fill('#dSpend', '5000'); expect((await page.getAttribute('#dSpend', 'aria-invalid')) === 'true' && !/prévoit/.test(await text('#dRegOut')), 'données : une dépense de prévision hors limites produit une prévision');
+      await page.fill('#dy0', '300'); await page.fill('#dy4', '10'); await page.fill('#dy6', '5'); await page.fill('#dSpend', '1000');
+      const shapes = await page.$$eval('#dChart .fit, #dChart circle', els => els.map(e => e.tagName === 'circle' ? [Number(e.getAttribute('cy'))] : [Number(e.getAttribute('y1')), Number(e.getAttribute('y2'))]).flat());
+      expect(shapes.length > 0 && shapes.every(y => y >= 16 && y <= 276), 'données : la droite ou un point sort du graphique quand la prévision est négative');
+      await page.fill('#dy0', '50'); await page.fill('#dy4', '80'); await page.fill('#dy6', '97');
       await page.fill('#dSpend', '15'); await page.fill('#abNa', '5'); await page.fill('#abXa', '0'); await page.fill('#abNb', '5'); await page.fill('#abXb', '2');
       expect(/hasard/.test(await text('#abVerdict')), 'données : 0/5 contre 2/5 est annoncé décisif');
       await page.fill('#abXa', '11'); await page.fill('#abNa', '10'); expect((await page.getAttribute('#abXa', 'aria-invalid')) === 'true' && (await page.getAttribute('#abXb', 'aria-invalid')) === 'false', 'données : le champ valide est marqué invalide');
@@ -178,6 +182,10 @@ for (const f of pages) {
     if (f === 'cpq/index.html') {
       expect(/\$/.test(await text('#cqTotal')), 'CPQ : pas de total au chargement');
       await page.click('#cq-inclinable'); expect(!(await page.isChecked('#cq-tiroir')) && (await page.isChecked('#cq-inclinable')), 'CPQ : le plateau inclinable ne retire pas le tiroir');
+      await page.click('#cq-lampe'); expect((await page.isChecked('#cq-tiroir')) && !(await page.isChecked('#cq-inclinable')), 'CPQ : la lampe ne ramène pas le tiroir à la place du plateau inclinable');
+      const traced = await page.$$eval('#cqTrace li', els => els.map(e => e.textContent.split(' · ')[0].trim()));
+      expect(traced.length === 4 && new Set(traced).size === 4, 'CPQ : une règle apparaît deux fois (ou manque) dans la trace');
+      await page.click('#cq-inclinable');
       await page.fill('#cqQty', '10'); expect(/Remise 10 %/.test(await text('#cqTotals')), 'CPQ : la remise de 10 % ne se déclenche pas à 10');
       const amount = (t) => Number(t.replace(/[^\d,−-]/g, '').replace('−', '-').replace(',', '.'));
       const totals = await page.$$eval('#cqTotals dd', ds => ds.map(d => d.textContent));

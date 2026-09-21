@@ -51,26 +51,28 @@
   function resolveOptions(selected, changed, width, cfg) {
     const picked = new Set(selected);
     const trace = [];
+    // Une règle n’a qu’une ligne de trace : si elle se déclenche après avoir été notée « satisfaite », la note est remplacée.
+    const note = (rule, state, text) => { const entry = { rule, state, note: text }; const i = trace.findIndex(t => t.rule.id === rule.id); if (i >= 0) trace[i] = entry; else trace.push(entry); };
     for (const rule of cfg.rules) {
       if (rule.type === 'excludes' && picked.has(rule.a) && picked.has(rule.b)) {
         const loser = rule.a === changed ? rule.b : rule.a;
         picked.delete(loser);
-        trace.push({ rule, state: 'fire', note: `${cfg.options[loser].label} retiré` });
+        note(rule, 'fire', `${cfg.options[loser].label} retiré`);
       } else if (rule.type === 'requires' && picked.has(rule.a) && !picked.has(rule.b)) {
         const blocked = cfg.rules.some(r => r.type === 'excludes' && ((r.a === rule.b && picked.has(r.b)) || (r.b === rule.b && picked.has(r.a))));
         if (blocked && changed === rule.a) {
-          for (const r of cfg.rules) if (r.type === 'excludes') for (const k of [r.a, r.b]) if (k !== rule.b && picked.has(k) && (r.a === rule.b || r.b === rule.b)) { picked.delete(k); trace.push({ rule: r, state: 'fire', note: `${cfg.options[k].label} retiré : ${cfg.options[rule.a].label} l’exige` }); }
-          picked.add(rule.b); trace.push({ rule, state: 'fire', note: `${cfg.options[rule.b].label} ajouté` });
+          for (const r of cfg.rules) if (r.type === 'excludes') for (const k of [r.a, r.b]) if (k !== rule.b && picked.has(k) && (r.a === rule.b || r.b === rule.b)) { picked.delete(k); note(r, 'fire', `${cfg.options[k].label} retiré : ${cfg.options[rule.a].label} l’exige`); }
+          picked.add(rule.b); note(rule, 'fire', `${cfg.options[rule.b].label} ajouté`);
         } else if (blocked) {
-          picked.delete(rule.a); trace.push({ rule, state: 'fire', note: `${cfg.options[rule.a].label} retirée : son tiroir est exclu` });
+          picked.delete(rule.a); note(rule, 'fire', `${cfg.options[rule.a].label} retirée : son tiroir est exclu`);
         } else {
-          picked.add(rule.b); trace.push({ rule, state: 'fire', note: `${cfg.options[rule.b].label} ajouté automatiquement` });
+          picked.add(rule.b); note(rule, 'fire', `${cfg.options[rule.b].label} ajouté automatiquement`);
         }
       } else if (rule.type === 'minWidth' && picked.has(rule.a) && width < rule.width) {
         picked.delete(rule.a);
-        trace.push({ rule, state: 'fire', note: `${cfg.options[rule.a].label} retiré : ${width} cm` });
+        note(rule, 'fire', `${cfg.options[rule.a].label} retiré : ${width} cm`);
       } else if (rule.type !== 'tiers') {
-        trace.push({ rule, state: 'ok', note: 'satisfaite' });
+        note(rule, 'ok', 'satisfaite');
       }
     }
     return { picked, trace };

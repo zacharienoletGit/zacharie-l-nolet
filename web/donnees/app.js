@@ -110,9 +110,11 @@
     };
     const drawChart = (xs, ys, m, pred, spend) => {
       const W = 560, H = 320, L = 52, R = 30, T = 16, B = 44;
-      const allX = xs.concat(pred !== null ? [spend] : []), allY = ys.concat(pred !== null ? [pred] : []);
-      // L’échelle part de zéro, mais descend sous zéro si une prévision y tombe : rien ne sort du cadre.
-      const x0 = 0, x1 = Math.max(...allX) * 1.1 || 1, y0 = Math.min(0, Math.min(...allY) * 1.1), y1 = Math.max(...allY) * 1.1 || 1;
+      const allX = xs.concat(pred !== null ? [spend] : []);
+      const x0 = 0, x1 = Math.max(...allX) * 1.1 || 1;
+      // L’échelle verticale couvre les points, la prévision et les deux bouts de la droite tracée : rien ne sort du cadre.
+      const allY = ys.concat(pred !== null ? [pred] : [], [x0, x1].map(x => m.intercept + m.slope * x));
+      const y0 = Math.min(0, Math.min(...allY) * 1.1), y1 = Math.max(...allY) * 1.1 || 1;
       const sx = (v) => L + ((v - x0) / (x1 - x0)) * (W - L - R), sy = (v) => H - B - ((v - y0) / (y1 - y0)) * (H - T - B);
       const ticks = (min, max, n) => Array.from({ length: n + 1 }, (_, i) => Math.round(min + ((max - min) / n) * i));
       const svg = [`<svg viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="dChartTitle" class="chart"><title id="dChartTitle">Nuage de points : publicité en abscisse, ventes en ordonnée, avec la droite ajustée</title>`];
