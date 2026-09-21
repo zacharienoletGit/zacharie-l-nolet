@@ -75,13 +75,20 @@ for (const f of pages) {
     const links = [...new Set(hrefs.map(h => rootify(h).replace(/[#?].*$/, '')).filter(Boolean))];
     const fragments = [...new Set(hrefs.filter(h => h.includes('#')).map(rootify))];
     const missingHere = fragments.filter(h => h.startsWith('#')).map(h => h.slice(1)).filter(id => id && !document.getElementById(id));
+    // Ressources que Chromium ne demande pas forcément (vidéos en preload="none", variantes srcset, icônes, manifeste) : on les liste pour les vérifier sur disque.
+    const assets = new Set();
+    document.querySelectorAll('img[src], script[src], source[src], track[src], video[poster], link[href]').forEach(el => {
+      const v = el.getAttribute('src') || el.getAttribute('poster') || el.getAttribute('href');
+      if (v && !/^(https?:|data:|mailto:)/.test(v) || (v && v.startsWith(site))) assets.add(rootify(v));
+    });
+    document.querySelectorAll('[srcset]').forEach(el => el.getAttribute('srcset').split(',').forEach(c => { const u = c.trim().split(/\s+/)[0]; if (u) assets.add(rootify(u)); }));
     return {
       title: document.title, lang: document.documentElement.lang,
       description: document.querySelector('meta[name="description"]')?.content || '',
       canonical: document.querySelector('link[rel="canonical"]')?.href || '',
       wide: document.documentElement.scrollWidth > document.documentElement.clientWidth,
       noAlt: [...document.images].filter(i => !i.hasAttribute('alt')).length,
-      dup: [...new Set(dup)], links, fragments, missingHere,
+      dup: [...new Set(dup)], links, fragments, missingHere, assets: [...assets],
     };
   }, SITE);
   await page.setViewportSize({ width: 400, height: 800 });
@@ -104,6 +111,16 @@ for (const f of pages) {
   };
   for (const l of d.links) if (!fs.existsSync(resolve(l))) fail(f, `lien interne cassé : ${l}`);
   for (const id of d.missingHere) fail(f, `ancre absente sur la page : #${id}`);
+  for (const a of d.assets) {
+    const target = resolve(a);
+    if (!fs.existsSync(target)) { fail(f, `ressource absente : ${a}`); continue; }
+    if (a.endsWith('.webmanifest')) {
+      try {
+        const man = JSON.parse(fs.readFileSync(target, 'utf8'));
+        for (const icon of man.icons || []) if (!fs.existsSync(path.join(path.dirname(target), icon.src))) fail(f, `icône du manifeste absente : ${icon.src}`);
+      } catch (e) { fail(f, `manifeste illisible : ${a}`); }
+    }
+  }
   for (const h of d.fragments.filter(x => !x.startsWith('#'))) {
     const [file, id] = h.split('#');
     const target = resolve(file);

@@ -185,8 +185,9 @@
   };
   const sameFeuille = (a, b) => a.title === b.title && a.body === b.body && (a.articleId || '') === (b.articleId || '');
   const writeFeuilles = (mutate, fallback) => {
-    const next = mutate(readFeuilles(fallback));
-    return { saved: store.set(FEUILLES_KEY, next), next };
+    const before = readFeuilles(fallback);
+    const next = mutate(before);
+    return { saved: store.set(FEUILLES_KEY, next), next, applied: next.length !== before.length };
   };
   const onOtherTab = (fn) => window.addEventListener('storage', (e) => { if (e.key === FEUILLES_KEY || e.key === null) fn(); });
 
@@ -598,7 +599,7 @@
       showChErr('');
       const note = cleanFeuille({ title, body, articleId: pendingArticle || undefined });
       const r = writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), feuilles);
-      if (r.saved && !r.next.some(n => sameFeuille(n, note))) {
+      if (r.saved && !r.applied) {
         // Un autre onglet a rempli le classeur entre-temps : rien n’est perdu, la saisie reste dans le formulaire.
         feuilles = readFeuilles(r.next); renderClasseur();
         $('chNStatus').textContent = '';
@@ -845,7 +846,7 @@
     showNErr('');
     const note = cleanFeuille({ title, body });
     const r = writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), notes);
-    if (r.saved && !r.next.some(n => sameFeuille(n, note))) {
+    if (r.saved && !r.applied) {
       notes = readFeuilles(r.next); renderNotes();
       $('nStatus').textContent = '';
       showNErr('Soixante notes, c’est un classeur plein : une autre page vient de le remplir. Retirez-en avant d’en ajouter.');

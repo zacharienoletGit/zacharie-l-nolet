@@ -31,7 +31,7 @@ Ces règles viennent de Ludovic Zacharie Nolet Gilbert. Elles s’appliquent à 
 
 ## CV
 
-- `web/cv.html` (une page, feuille `cv.css`, impression Letter) et `web/Ludovic-Zacharie-Nolet-Gilbert-CV.pdf` généré avec Chromium (`page.pdf`, média print). Regénérer le PDF à chaque changement du CV. Le PDF doit tenir sur **une** page.
+- `web/cv.html` (une page, feuille `cv.css`, impression Letter) et `web/Ludovic-Zacharie-Nolet-Gilbert-CV.pdf` généré avec Chromium (`page.pdf`, média print). Regénérer le PDF à chaque changement du CV, et recopier le résultat sous l’ancien nom `web/Zacharie-L-Nolet-CV.pdf` (alias gardé pour les liens déjà partagés). Le PDF doit tenir sur **une** page.
 
 ## A. Ne jamais avoir l’air « vibecodé » (reel aj.on.ai, « 30 reasons your site looks vibecoded »)
 

@@ -100,20 +100,24 @@
       const pred = Number.isFinite(spend) ? m.intercept + m.slope * spend : null;
       $('dRegOut').textContent = `Corrélation r = ${f1(m.r)}. Chaque tranche de 1 000 $ de publicité en plus va avec ${kd(m.slope)} de ventes en plus. R² = ${f1(m.r2)} : la publicité « explique » ${Math.round(m.r2 * 100)} % des variations` +
         (pred !== null ? `. Avec ${f1(spend)} k$ de publicité, le modèle prévoit ${kd(pred)} de ventes.` : '.');
+      const before = outlier && xs.length > 3 ? linreg(xs.slice(0, -1), ys.slice(0, -1)) : null;
       $('dRegVerdict').textContent = outlier
-        ? `Un seul mois hors norme change tout : r passe de ${f1(linreg(BASE.map(b => b[0]), BASE.map(b => b[1])).r)} à ${f1(m.r)}. On regarde les points avant de croire le chiffre.`
+        ? (before && Number.isFinite(before.r)
+          ? `Un seul mois hors norme change tout : sans lui, avec vos lignes actuelles, r vaut ${f1(before.r)} ; avec lui, ${f1(m.r)}. On regarde les points avant de croire le chiffre.`
+          : `Le mois hors norme est compté dans r = ${f1(m.r)}. On regarde les points avant de croire le chiffre.`)
         : 'Une corrélation forte ne dit pas qui cause quoi : publicité et ventes peuvent monter ensemble parce que c’est la haute saison. Ajoutez un mois hors norme pour voir le chiffre plier.';
       drawChart(xs, ys, m, pred, spend);
     };
     const drawChart = (xs, ys, m, pred, spend) => {
       const W = 560, H = 320, L = 52, R = 30, T = 16, B = 44;
       const allX = xs.concat(pred !== null ? [spend] : []), allY = ys.concat(pred !== null ? [pred] : []);
-      const x0 = 0, x1 = Math.max(...allX) * 1.1 || 1, y0 = 0, y1 = Math.max(...allY) * 1.1 || 1;
+      // L’échelle part de zéro, mais descend sous zéro si une prévision y tombe : rien ne sort du cadre.
+      const x0 = 0, x1 = Math.max(...allX) * 1.1 || 1, y0 = Math.min(0, Math.min(...allY) * 1.1), y1 = Math.max(...allY) * 1.1 || 1;
       const sx = (v) => L + ((v - x0) / (x1 - x0)) * (W - L - R), sy = (v) => H - B - ((v - y0) / (y1 - y0)) * (H - T - B);
-      const ticks = (max, n) => Array.from({ length: n + 1 }, (_, i) => Math.round((max / n) * i));
+      const ticks = (min, max, n) => Array.from({ length: n + 1 }, (_, i) => Math.round(min + ((max - min) / n) * i));
       const svg = [`<svg viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="dChartTitle" class="chart"><title id="dChartTitle">Nuage de points : publicité en abscisse, ventes en ordonnée, avec la droite ajustée</title>`];
-      for (const t of ticks(y1, 4)) svg.push(`<line class="grid" x1="${L}" x2="${W - R}" y1="${sy(t)}" y2="${sy(t)}"/><text class="tick" x="${L - 8}" y="${sy(t) + 4}" text-anchor="end">${t}</text>`);
-      for (const t of ticks(x1, 4)) svg.push(`<text class="tick" x="${sx(t)}" y="${H - B + 18}" text-anchor="middle">${t}</text>`);
+      for (const t of ticks(y0, y1, 4)) svg.push(`<line class="grid" x1="${L}" x2="${W - R}" y1="${sy(t)}" y2="${sy(t)}"/><text class="tick" x="${L - 8}" y="${sy(t) + 4}" text-anchor="end">${t}</text>`);
+      for (const t of ticks(x0, x1, 4)) svg.push(`<text class="tick" x="${sx(t)}" y="${H - B + 18}" text-anchor="middle">${t}</text>`);
       svg.push(`<text class="axis" x="${(L + W - R) / 2}" y="${H - 6}" text-anchor="middle">Publicité (k$)</text><text class="axis" transform="translate(14 ${(T + H - B) / 2}) rotate(-90)" text-anchor="middle">Ventes (k$)</text>`);
       const xa = x0, xb = x1, xm = x1 * 0.45; svg.push(`<line class="fit" x1="${sx(xa)}" y1="${sy(m.intercept + m.slope * xa)}" x2="${sx(xb)}" y2="${sy(m.intercept + m.slope * xb)}"/><text class="fit-label" x="${sx(xm)}" y="${sy(m.intercept + m.slope * xm) - 12}" text-anchor="middle">Droite ajustée</text>`);
       const label = (x, y, text) => (x > W - 120 ? `<text class="dot-label" x="${x - 10}" y="${y + 4}" text-anchor="end">${text}</text>` : `<text class="dot-label" x="${x + 10}" y="${y + 4}">${text}</text>`);
