@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Coulisses · Zacharie L. Nolet</title>
+<meta name="description" content="Comment le site de Zacharie L. Nolet est construit : sans outil de construction, léger, sécurisé, accessible, vérifié. Chaque choix expliqué simplement, avec sa preuve mesurable.">
+<meta name="author" content="Zacharie L. Nolet">
+<meta name="theme-color" content="#F3EDE0">
+<link rel="canonical" href="https://zacharienoletgit.github.io/zacharie-l-nolet/coulisses.html">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_CA">
+<meta property="og:site_name" content="Zacharie L. Nolet">
+<meta property="og:title" content="Coulisses · Zacharie L. Nolet">
+<meta property="og:description" content="Comment le site de Zacharie L. Nolet est construit : sans outil de construction, léger, sécurisé, accessible, vérifié. Chaque choix expliqué simplement, avec sa preuve mesurable.">
+<meta property="og:url" content="https://zacharienoletgit.github.io/zacharie-l-nolet/coulisses.html">
+<meta property="og:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zacharie L. Nolet, portrait et nom sur fond d’encre">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Coulisses · Zacharie L. Nolet">
+<meta name="twitter:description" content="Comment le site de Zacharie L. Nolet est construit : sans outil de construction, léger, sécurisé, accessible, vérifié. Chaque choix expliqué simplement, avec sa preuve mesurable.">
+<meta name="twitter:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<a class="skip" href="#main">Aller au contenu</a>
+
+<div class="topbar">
+  <nav aria-label="Pages">
+    <a class="brand" href="./">Z. L. Nolet</a>
+    <a href="./">Accueil</a>
+    <a href="parcours.html">Parcours</a>
+    <a href="preuves.html">Preuves</a>
+    <a href="engagement.html">Travailler ensemble</a>
+    <a href="coulisses.html" aria-current="page">Coulisses</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</div>
+<header class="page-head">
+  <p class="kicker"><b>Coulisses</b> · Comment ce site est fait</p>
+  <h1>Le site lui-même est une preuve</h1>
+  <p class="lede">Ce que j’ai décidé, pourquoi, et comment le vérifier. Les chiffres viennent des fichiers du dépôt ; votre navigateur mesure le reste, en direct.</p>
+</header>
+
+<main id="main">
+  <section id="direct">
+    <div class="sec-head">
+      <p class="kicker"><b>En direct</b> · Mesuré par votre navigateur, maintenant</p>
+      <h2>Ce que votre navigateur vient de faire</h2>
+    </div>
+    <ul class="filets">
+      <li><h3>Fichiers chargés pour cette page</h3><p class="out" id="metaLoaded" role="status">Mesure en cours…</p><span class="ref">En clair : un site léger charge peu de fichiers, et seulement depuis lui-même. Rien ne part vers un autre serveur.</span></li>
+      <li><h3>Ce que la page interdit</h3><p class="out" id="metaCsp">Lecture de la politique…</p><span class="ref">En clair : la politique de sécurité du contenu (CSP) est lue directement dans l’en-tête de cette page, pas recopiée.</span></li>
+      <li><h3>Lisibilité du texte</h3><p class="out" id="metaContrast">Calcul…</p><span class="ref">En clair : le rapport de contraste est calculé à partir des couleurs réellement affichées. La norme demande au moins 4,5 pour 1 ; je vise 7 pour 1.</span></li>
+      <li><h3>Mouvement</h3><p class="out" id="metaMotion">Détection…</p><span class="ref">En clair : deux animations existent sur le site, et votre réglage « réduire les animations » les coupe toutes les deux.</span></li>
+    </ul>
+  </section>
+
+  <section id="choix">
+    <div class="sec-head">
+      <p class="kicker"><b>Choix et raisons</b> · Avec la preuve à côté</p>
+      <h2>Huit décisions, expliquées simplement</h2>
+    </div>
+    <ul class="filets two">
+      <li><h3>Aucun outil de construction</h3><p>HTML, CSS et JavaScript écrits à la main, sans cadriciel ni dépendance. Le code que vous lisez sur la page Preuves est celui qui s’exécute.</p><span class="ref">Preuve : 46 fichiers en tout, une feuille de style de 19 Ko, un script de 35 Ko.</span></li>
+      <li><h3>Léger dès l’accueil</h3><p>L’accueil complet (page, style, script, photo, icône) pèse 90 Ko. Les photos existent en deux tailles ; les vidéos ne se téléchargent qu’au clic.</p><span class="ref">Preuve : tailles des fichiers du dépôt ; <span class="mono">preload="none"</span> sur chaque vidéo.</span></li>
+      <li><h3>Sécurité par défaut</h3><p>Aucun script ni style en ligne, aucune connexion sortante, aucun objet embarqué : la page le déclare et le navigateur l’applique. Tout texte affiché par le script est d’abord échappé.</p><span class="ref">Preuve : la politique lue ci-dessus, le fichier <span class="mono">_headers</span> (HSTS, X-Frame-Options, Referrer-Policy) et la fonction <span class="mono">esc()</span> de <span class="mono">app.js</span>.</span></li>
+      <li><h3>Accessible sans exception</h3><p>Lien d’évitement, focus visible, chaque résultat annoncé aux lecteurs d’écran, chaque erreur reliée à son champ, contraste élevé, animations coupées sur demande.</p><span class="ref">Preuve : appuyez sur Tab dès l’ouverture ; le contraste mesuré ci-dessus ; <span class="mono">role="status"</span> sur chaque résultat de la page Preuves.</span></li>
+      <li><h3>Deux animations, pas une de plus</h3><p>L’ouverture de l’accueil (deux secondes, en CSS) et le nom qui glisse vers la barre de navigation d’une page à l’autre. Rien ne bouge au défilement.</p><span class="ref">Preuve : <span class="mono">style.css</span>, sections « Animation 1 » et « Animation 2 » ; aucun observateur de défilement dans <span class="mono">app.js</span>.</span></li>
+      <li><h3>Un vrai site, pas une maquette</h3><p>Page d’erreur, plan du site, fichier robots, image de partage, icônes, manifeste, adresse canonique, politique de confidentialité et conditions.</p><span class="ref">Preuve : <a href="404.html">404</a> · <a href="sitemap.xml">plan du site</a> · <a href="robots.txt">robots</a> · <a href="site.webmanifest">manifeste</a> · <a href="confidentialite.html">confidentialité</a> · <a href="conditions.html">conditions</a>.</span></li>
+      <li><h3>Vérifié avant chaque mise en ligne</h3><p>Un script pilote Chromium sur les dix pages : affichage à 400 pixels, débordements, images sans description, identifiants en double, erreurs de console. L’application passe ses tests automatisés et son audit de dépendances.</p><span class="ref">Preuve : 29 tests dans 8 fichiers (<span class="mono">npm test</span>), <span class="mono">npm audit</span> sans vulnérabilité, CV en PDF sur une page.</span></li>
+      <li><h3>Ce que je ferais à plus grande échelle</h3><p>Un outil de construction dès qu’il y a plusieurs contributeurs ; un serveur avec limitation de débit dès qu’un formulaire envoie des données ; une mesure d’audience sans témoin ; des tests de bout en bout sur les parcours qui rapportent.</p><span class="ref">En clair : savoir quand un outil devient utile compte autant que savoir s’en passer.</span></li>
+    </ul>
+    <div class="row mt-24"><a class="btn primary" href="contact.html">Me contacter</a><a class="btn" href="preuves.html">Voir les démonstrations</a></div>
+  </section>
+</main>
+
+<footer>
+  <span>Zacharie L. Nolet · Techniques de l’informatique, Cégep de Victoriaville · <a href="mailto:2012487@etudiant.cegepvicto.ca?subject=Mandat%2C%20stage%20ou%20contrat">2012487@etudiant.cegepvicto.ca</a></span>
+  <span>Site fait à la main, sans traceur ni outil externe. Les démonstrations exécutent le code de mon projet <span class="mono">zacharie-l-nolet</span>.</span>
+  <nav class="footer-nav" aria-label="Pages légales et liens">
+    <a href="confidentialite.html">Confidentialité</a>
+    <a href="conditions.html">Conditions d’utilisation</a>
+    <a href="sitemap.xml">Plan du site</a>
+    <a href="https://github.com/zacharienoletGit/zacharie-l-nolet" rel="noopener">Dépôt GitHub</a>
+    <a href="#top" id="toTop">Haut de page</a>
+  </nav>
+</footer>
+
+<div class="notice" id="notice" hidden role="region" aria-label="Avis sur les données">
+  <p>Ce site n’utilise aucun témoin ni traceur. Il garde seulement dans votre navigateur vos notes d’essai, votre brouillon de courriel et le fait que vous avez vu cet avis. <a href="confidentialite.html">Détails</a></p>
+  <button class="btn small" type="button" id="noticeOk">Compris</button>
+</div>
+
+<div class="sticky-cta" id="stickyCta" hidden>
+  <a class="btn primary" href="contact.html">Me contacter</a>
+  <a class="btn" href="preuves.html">Mon travail</a>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

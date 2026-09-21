@@ -172,6 +172,58 @@
   /* ======================================================================
      Preuves (page preuves.html seulement)
      ====================================================================== */
+  /* ---------- Coulisses : la page se mesure elle-même ---------- */
+  if ($('metaLoaded')) {
+    const ko = (n) => (n / 1024).toLocaleString('fr-CA', { maximumFractionDigits: 0 }) + ' Ko';
+    const measure = () => {
+      const nav = performance.getEntriesByType('navigation')[0];
+      const res = performance.getEntriesByType('resource');
+      const mine = (u) => u.startsWith(location.origin) || u.startsWith('file:');
+      const foreign = res.filter(r => !mine(r.name)).length;
+      const bytes = res.concat(nav ? [nav] : []).reduce((t, r) => t + (r.transferSize || r.encodedBodySize || r.decodedBodySize || 0), 0);
+      const n = res.length + (nav ? 1 : 0);
+      $('metaLoaded').textContent = (n === 1 ? '1 fichier chargé, la page elle-même' : `${n} fichiers chargés, page comprise`) +
+        (foreign ? `, dont ${foreign} depuis un autre site.` : ', tous depuis ce site.') +
+        (bytes ? ` Poids total : ${ko(bytes)}.` : ' Poids non mesurable hors d’un serveur web.');
+    };
+    if (document.readyState === 'complete') measure(); else window.addEventListener('load', () => setTimeout(measure, 0));
+
+    const cspMeta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+    const csp = cspMeta ? cspMeta.getAttribute('content') : '';
+    const has = (d) => csp.split(';').map(x => x.trim()).find(x => x.startsWith(d + ' ')) || '';
+    const said = [];
+    if (has('connect-src').includes("'none'")) said.push('aucune connexion sortante');
+    if (has('script-src') && !has('script-src').includes("'unsafe-inline'")) said.push('aucun script en ligne');
+    if (has('style-src') && !has('style-src').includes("'unsafe-inline'")) said.push('aucun style en ligne');
+    if (has('object-src').includes("'none'")) said.push('aucun objet embarqué');
+    if (has('form-action').includes("'none'")) said.push('aucun envoi de formulaire vers un serveur');
+    $('metaCsp').textContent = csp
+      ? `Cette page déclare : ${said.join(', ')}. Politique complète : ${csp}`
+      : 'Aucune politique trouvée dans l’en-tête de cette page.';
+
+    const lum = (rgb) => {
+      const m = rgb.match(/\d+(\.\d+)?/g);
+      if (!m || m.length < 3) return null;
+      const [r, g, b] = m.slice(0, 3).map(v => { const c = Number(v) / 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const ratio = (fg, bg) => { const a = lum(fg), b = lum(bg); return a === null || b === null ? null : ((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)); };
+    const probe = document.createElement('span'); probe.className = 'muted'; probe.hidden = true; document.body.appendChild(probe);
+    const cs = getComputedStyle(document.body), cm = getComputedStyle(probe);
+    const r1 = ratio(cs.color, cs.backgroundColor), r2 = ratio(cm.color, cs.backgroundColor);
+    probe.remove();
+    const f = (x) => x === null ? 'non mesurable' : x.toLocaleString('fr-CA', { maximumFractionDigits: 1 }) + ' pour 1';
+    $('metaContrast').textContent = `Texte courant sur le fond : ${f(r1)}. Texte secondaire sur le fond : ${f(r2)}.`;
+
+    const reducedNow = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const vt = 'startViewTransition' in document;
+    $('metaMotion').textContent = (reducedNow
+      ? 'Vous avez demandé moins d’animations : les deux sont coupées sur ce site.'
+      : 'Vos réglages permettent les animations : les deux du site sont actives.') +
+      (vt ? ' Votre navigateur sait faire glisser le nom d’une page à l’autre.' : ' Votre navigateur ne fait pas encore les transitions de vue : il fait un fondu simple.');
+  }
+
+
   if (!$('q')) return;
 
   /* Catalogue de démonstration : seulement les textes techniques du dépôt (11 sur 22). */

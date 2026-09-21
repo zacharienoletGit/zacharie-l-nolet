@@ -13,7 +13,7 @@ Ces règles viennent de Zacharie L. Nolet. Elles s’appliquent à toute session
 - Langue des livrables et des commentaires : français (Québec).
 - **Le site web (`web/`) parle seulement d’informatique et d’embauche.** Pas de section politique, philosophie ou hip-hop : ces sujets restent dans le catalogue de l’app, pas sur le site. Le site est fait pour décrocher un stage, un contrat ou un mandat : chaque page mène vers `engagement.html` et `contact.html`.
 - **Écrit pour un employeur, en langage clair.** Le site doit être attirant pour un employeur maintenant et compréhensible par tout le monde : vouvoiement, phrases courtes, aucun jargon sans explication (pas de « grain », « idempotent », « last-write-wins », « mart » sans une phrase « en clair » à côté). Chaque compétence est suivie de sa preuve. Le bouton principal de chaque page mène au contact.
-- **Plusieurs pages, sans build.** `index.html`, `parcours.html`, `preuves.html`, `engagement.html`, `contact.html`, `cv.html`, plus `404.html`, `confidentialite.html`, `conditions.html`. Un seul `style.css`, un seul `app.js` (les démos ne tournent que si leurs éléments existent). L’adresse de contact est écrite dans le HTML et dans la constante `CONTACT_EMAIL` de `app.js` : changer les deux ensemble.
+- **Plusieurs pages, sans build.** `index.html`, `parcours.html`, `preuves.html`, `engagement.html`, `coulisses.html` (le site expliqué et mesuré en direct), `contact.html`, `cv.html`, plus `404.html`, `confidentialite.html`, `conditions.html`. Un seul `style.css`, un seul `app.js` (les démos ne tournent que si leurs éléments existent). L’adresse de contact est écrite dans le HTML et dans la constante `CONTACT_EMAIL` de `app.js` : changer les deux ensemble.
 
 ## Projets à venir
 
