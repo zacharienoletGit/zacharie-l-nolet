@@ -2,7 +2,9 @@
 // Sert web/ localement, ouvre chaque page dans Chromium (bureau et 400 px) et refuse de publier si :
 // titre, description ou canonique manquants ; débordement horizontal ; image sans texte de remplacement ;
 // identifiant en double ; lien interne cassé ; erreur de console ou de script ; démonstrations muettes.
-// Usage : node scripts/verify-web.mjs   (variables facultatives : PLAYWRIGHT_MODULE, CHROMIUM_PATH)
+// Il exerce aussi les démonstrations : recherche, édition, synchronisation, ratio, CPQ, notes, cahier, données, devis, formulaire de contact.
+// Usage : npm run verify:web   (Playwright est une dépendance de développement ; une fois : npx playwright install chromium ;
+// variables facultatives : PLAYWRIGHT_MODULE, CHROMIUM_PATH)
 import fs from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
@@ -22,7 +24,9 @@ const server = http.createServer((req, res) => {
 await new Promise(r => server.listen(0, '127.0.0.1', r));
 const base = `http://127.0.0.1:${server.address().port}/`;
 
-const pw = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
+let pw;
+try { pw = await import(process.env.PLAYWRIGHT_MODULE || 'playwright'); }
+catch (e) { console.error('Playwright introuvable. Installez les dépendances de développement (npm install), puis une fois : npx playwright install chromium.'); process.exit(2); }
 const browser = await pw.chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 const failures = [];
 const fail = (page, msg) => failures.push(`${page} : ${msg}`);
@@ -77,12 +81,53 @@ for (const f of pages) {
     const target = l === '' || l === './' ? 'index.html' : l;
     if (!fs.existsSync(path.join(root, target))) fail(f, `lien interne cassé : ${l}`);
   }
-  for (const n of noise) fail(f, n);
 
-  // Les démonstrations doivent parler : une page muette est une page cassée.
-  if (f === 'preuves.html') { const t = await page.textContent('#qn'); if (!/textes?/.test(t || '')) fail(f, 'la recherche n’affiche aucun résultat'); }
-  if (f === 'demo.html') { const n = await page.evaluate(() => document.querySelectorAll('#chEdition li').length); if (n !== 10) fail(f, `édition de ${n} textes au lieu de 10`); }
-  if (f === 'coulisses.html') { const t = await page.textContent('#metaContrast'); if (!/pour 1/.test(t || '')) fail(f, 'le contraste n’est pas mesuré'); }
+  // Les démonstrations doivent répondre : on déclenche les gestes principaux et on vérifie leurs sorties.
+  const expect = (cond, msg) => { if (!cond) fail(f, msg); };
+  const text = (sel) => page.textContent(sel).then(t => (t || '').trim());
+  try {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    if (f === 'preuves.html') {
+      await page.fill('#q', 'ETOILE'); expect(/2 textes/.test(await text('#qn')), 'recherche : « ETOILE » ne trouve pas 2 textes');
+      const before = await text('#edhash'); await page.click('#edNext'); expect((await text('#edhash')) !== before, 'édition : changer la date ne change pas l’édition');
+      await page.fill('#tLocal', ''); expect(/deux heures/.test(await text('#mergeOut')), 'synchronisation : heure vide sans message');
+      await page.fill('#tLocal', '08:30'); expect(/gagne/.test(await text('#mergeOut')), 'synchronisation : aucun verdict après saisie');
+      await page.fill('#r2b', ''); expect(/impossible/.test(await text('#rVerdict')), 'ratio : case vide sans verdict d’attente');
+      await page.fill('#r2b', '20000'); await page.fill('#r2a', '17000'); expect(/points?|%/.test(await text('#rVerdict')), 'ratio : aucun verdict après saisie');
+      const total0 = await text('#cpqTotal'); await page.click('#cpq-plateau'); expect((await text('#cpqTotal')) !== total0 && !(await page.isChecked('#cpq-tiroir')), 'CPQ : le plateau ne fait pas tomber le tiroir');
+      await page.click('#nForm button[type=submit]'); expect(!(await page.isHidden('#nErr')), 'notes : une note vide passe sans erreur');
+      await page.fill('#nBody', 'Feuille de vérification.'); await page.click('#nForm button[type=submit]'); expect(/enregistrée|visite/.test(await text('#nStatus')), 'notes : aucun accusé d’enregistrement');
+      expect(/Feuille de vérification/.test(await page.inputValue('#mdOut')), 'export : la note n’apparaît pas dans le Markdown');
+    }
+    if (f === 'demo.html') {
+      expect((await page.locator('#chEdition li').count()) === 10, 'cahier : l’édition n’a pas 10 textes');
+      await page.click('#chEdition li:nth-child(1) [data-clip]'); expect((await text('#chCount')) === '1', 'cahier : découper ne compte pas la coupure');
+      await page.click('#tab-rubriques'); await page.fill('#chQ', 'etoile'); expect(/2 textes/.test(await text('#chQn')), 'cahier : la recherche ne trouve pas 2 textes');
+      await page.click('#tab-classeur'); await page.fill('#chNBody', 'Feuille de vérification.'); await page.click('#chNoteForm button[type=submit]');
+      expect((await page.locator('#chNotes li:not(.empty)').count()) === 1, 'cahier : la feuille n’est pas dans le classeur');
+      await page.click('#chMd'); const md = await page.inputValue('#chMdOut'); expect(/## Coupures/.test(md) && /Feuille de vérification/.test(md), 'cahier : l’export omet les coupures ou la feuille');
+      await page.click('#tab-cabinet'); await page.click('#chReset'); expect((await text('#chKvClips')) === '0', 'cahier : la remise à zéro ne vide pas les coupures');
+    }
+    if (f === 'donnees.html') {
+      expect(/Corrélation r = /.test(await text('#dRegOut')), 'données : pas de corrélation calculée');
+      await page.click('#dOutlier'); expect(/hors norme/.test(await text('#dRegVerdict')) && (await page.locator('#dChart .hot').count()) === 1, 'données : le mois hors norme n’apparaît pas');
+      await page.fill('#abXb', '5200'); await page.fill('#abNb', '100000'); await page.fill('#abNa', '100000'); await page.fill('#abXa', '4800');
+      expect(/tient/.test(await text('#abVerdict')), 'données : le test A/B ne tranche pas à 100 000 visiteurs');
+    }
+    if (f === 'cpq.html') {
+      expect(/\$/.test(await text('#cqTotal')), 'CPQ : pas de total au chargement');
+      await page.click('#cq-inclinable'); expect(!(await page.isChecked('#cq-tiroir')) && (await page.isChecked('#cq-inclinable')), 'CPQ : le plateau inclinable ne retire pas le tiroir');
+      await page.fill('#cqQty', '10'); expect(/Remise 10 %/.test(await text('#cqTotals')), 'CPQ : la remise de 10 % ne se déclenche pas à 10');
+      await page.fill('#cqW', '300'); expect(!(await page.isHidden('#cqErr')) && (await text('#cqTotal')) === '—', 'CPQ : une largeur impossible laisse un total');
+    }
+    if (f === 'contact.html') {
+      await page.click('#cSend'); expect((await page.getAttribute('#cName', 'aria-invalid')) === 'true', 'contact : le nom vide n’est pas signalé');
+      await page.fill('#cName', 'Vérification'); await page.fill('#cMsg', 'Un mandat de tableau de bord pour trois régions.'); await page.click('#cSend'); await page.waitForTimeout(500);
+      expect(!(await page.isHidden('#cThanks')), 'contact : pas d’état de remerciement après l’envoi');
+    }
+    if (f === 'coulisses.html') { expect(/pour 1/.test(await text('#metaContrast')), 'coulisses : le contraste n’est pas mesuré'); }
+  } catch (e) { fail(f, 'interaction impossible : ' + e.message.split('\n')[0]); }
+  for (const n of noise) fail(f, n);
   console.log(`${failures.some(x => x.startsWith(f + ' :')) ? '✗' : '✓'} ${f} — ${d.title}`);
   await ctx.close();
 }

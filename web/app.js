@@ -172,6 +172,24 @@
   /* ======================================================================
      Preuves (page preuves.html seulement)
      ====================================================================== */
+
+  /* Classeur partagé (zln-feuilles) : on relit le stockage avant chaque écriture, pour ne jamais écraser
+     une feuille écrite par un autre onglet ; l’événement storage rafraîchit l’affichage. */
+  const FEUILLES_KEY = 'zln-feuilles';
+  const cleanFeuille = (n) => ({ title: n.title.slice(0, 120), body: n.body.slice(0, 2000), ...(typeof n.articleId === 'string' ? { articleId: n.articleId.slice(0, 40) } : {}) });
+  const readFeuilles = (fallback) => {
+    const stored = store.get(FEUILLES_KEY);
+    return Array.isArray(stored)
+      ? stored.filter(n => n && typeof n === 'object' && typeof n.title === 'string' && typeof n.body === 'string').map(cleanFeuille).slice(0, 60)
+      : (fallback || []);
+  };
+  const sameFeuille = (a, b) => a.title === b.title && a.body === b.body && (a.articleId || '') === (b.articleId || '');
+  const writeFeuilles = (mutate, fallback) => {
+    const next = mutate(readFeuilles(fallback));
+    return { saved: store.set(FEUILLES_KEY, next), next };
+  };
+  const onOtherTab = (fn) => window.addEventListener('storage', (e) => { if (e.key === FEUILLES_KEY || e.key === null) fn(); });
+
   /* ---------- Coulisses : la page se mesure elle-même ---------- */
   if ($('metaLoaded')) {
     const ko = (n) => (n / 1024).toLocaleString('fr-CA', { maximumFractionDigits: 0 }) + ' Ko';
@@ -402,6 +420,42 @@
     return { picked, excluded, options, optionsTotal, discount, total: CPQ.base.price + optionsTotal - discount, trace };
   }
 
+
+  function noteBlock(note, article) {
+    const title = note.title.trim() || 'Sans titre';
+    const link = article ? `\n_En marge de : ${article.title}_\n` : '\n';
+    return `### ${title}\n${link}\n${note.body.trim() || '_Feuille vide._'}\n`;
+  }
+
+  function renderClasseurMarkdown(input) {
+    const byId = new Map(input.articles.map(a => [a.id, a]));
+    const lines = [
+      '# Classeur — Ludovic Zacharie Nolet Gilbert',
+      '',
+      `Exporté le ${input.exportedAt}.`,
+      '',
+      'Mémoire locale. Rien n’est un fil social.',
+      '',
+    ];
+    if (input.bookmarks.length) {
+      lines.push('## Coupures', '');
+      for (const mark of input.bookmarks) {
+        const article = byId.get(mark.articleId);
+        lines.push(`- ${article ? article.title : mark.articleId}`);
+      }
+      lines.push('');
+    }
+    if (!input.notes.length) {
+      lines.push('## Notes', '', '_Aucune feuille._', '');
+    } else {
+      lines.push('## Notes', '');
+      for (const note of input.notes) {
+        lines.push(noteBlock(note, note.articleId ? byId.get(note.articleId) : undefined));
+      }
+    }
+    return `${lines.join('\n').trim()}\n`;
+  }
+
   function renderFeuillesMarkdown(notes, exportedAt) {
     const lines = [
       '# Classeur — Ludovic Zacharie Nolet Gilbert',
@@ -450,24 +504,22 @@
     });
 
     const clips = new Set();
-    const storedNotes = store.get('zln-feuilles');
-    let feuilles = Array.isArray(storedNotes)
-      ? storedNotes.filter(n => n && typeof n === 'object' && typeof n.title === 'string' && typeof n.body === 'string').map(n => ({ title: n.title.slice(0, 120), body: n.body.slice(0, 2000) })).slice(0, 60)
-      : [];
+    let feuilles = readFeuilles([]);
+    let pendingArticle = null;
     const byId = (id) => CATALOG.find(a => a.id === id);
     const today = new Date();
     const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     $('chEdDate').value = iso(today);
     $('chDate').textContent = today.toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-    const row = (a, i) => `<li>
+    const row = (a, i, list) => `<li>
       <span class="n">${String(i + 1).padStart(2, '0')}</span>
       <h4>${esc(a.title)}</h4>
       <p class="dek">${esc(a.dek)}</p>
       <p class="meta">${esc(SECTIONS[a.section] || a.section)} · ${esc(a.source)} · ${a.min} min</p>
       <div class="acts">
-        <button class="btn small" type="button" data-clip="${esc(a.id)}" aria-pressed="${clips.has(a.id)}">${clips.has(a.id) ? 'Découpé' : 'Découper'}</button>
-        <button class="btn small" type="button" data-feuille="${esc(a.id)}">Feuille</button>
+        <button class="btn small" type="button" id="${list}-clip-${esc(a.id)}" data-clip="${esc(a.id)}" aria-pressed="${clips.has(a.id)}" aria-label="${clips.has(a.id) ? 'Retirer la coupure' : 'Découper'} : ${esc(a.title)}">${clips.has(a.id) ? 'Découpé' : 'Découper'}</button>
+        <button class="btn small" type="button" id="${list}-feuille-${esc(a.id)}" data-feuille="${esc(a.id)}" aria-label="Écrire une feuille sur : ${esc(a.title)}">Feuille</button>
       </div>
     </li>`;
     const wire = (root) => {
@@ -478,6 +530,7 @@
       }));
       root.querySelectorAll('[data-feuille]').forEach(b => b.addEventListener('click', () => {
         const a = byId(b.dataset.feuille);
+        pendingArticle = a ? a.id : null;
         $('chNTitle').value = a ? a.title : '';
         select($('tab-classeur'), false);
         $('chNBody').focus();
@@ -486,7 +539,7 @@
     const renderEdition = () => keepFocus(() => {
       const date = $('chEdDate').value || iso(today);
       const ed = fallbackEdition(CATALOG, date);
-      $('chEdition').innerHTML = ed.map(row).join('');
+      $('chEdition').innerHTML = ed.map((a, i) => row(a, i, 'ed')).join('');
       wire($('chEdition'));
       $('chEdNote').textContent = `Édition du ${date} : ${ed.length} textes sur ${CATALOG.length}, choisis par empreinte de la date, les mêmes sur chaque appareil.`;
     });
@@ -494,21 +547,22 @@
       const q = $('chQ').value;
       const sec = $('chSec').value;
       const found = filterArticles(CATALOG, q, sec);
-      $('chResults').innerHTML = found.length ? found.map(row).join('') : '<li class="empty">Aucun texte. Essayez un autre mot, avec ou sans accent.</li>';
+      $('chResults').innerHTML = found.length ? found.map((a, i) => row(a, i, 'res')).join('') : '<li class="empty">Aucun texte. Essayez un autre mot, avec ou sans accent.</li>';
       wire($('chResults'));
       $('chQn').textContent = q.trim() ? `Requête normalisée : « ${normalizeQuery(q)} » · ${found.length} texte${found.length > 1 ? 's' : ''}` : `${found.length} textes`;
     });
     const renderClasseur = () => keepFocus(() => {
       const list = [...clips].map(byId).filter(Boolean);
-      $('chClips').innerHTML = list.length ? list.map(row).join('') : '<li class="empty">Aucune coupure. Découpez un texte dans l’Édition ou les Rubriques.</li>';
+      $('chClips').innerHTML = list.length ? list.map((a, i) => row(a, i, 'clip')).join('') : '<li class="empty">Aucune coupure. Découpez un texte dans l’Édition ou les Rubriques.</li>';
       wire($('chClips'));
       $('chNotes').innerHTML = feuilles.length
-        ? feuilles.map((n, i) => `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><h4>${esc(n.title.trim() || 'Sans titre')}</h4><p class="dek">${esc(n.body)}</p><div class="acts"><button class="btn small" type="button" data-rm="${i}">Retirer</button></div></li>`).join('')
+        ? feuilles.map((n, i) => { const a = n.articleId ? byId(n.articleId) : null; return `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><h4>${esc(n.title.trim() || 'Sans titre')}</h4>${a ? `<p class="meta">En marge de : ${esc(a.title)}</p>` : ''}<p class="dek">${esc(n.body)}</p><div class="acts"><button class="btn small" type="button" id="chrm-${i}" data-rm="${i}" aria-label="Retirer la feuille : ${esc(n.title.trim() || 'Sans titre')}">Retirer</button></div></li>`; }).join('')
         : '<li class="empty">Aucune feuille. Écrivez-en une ci-dessous.</li>';
       $('chNotes').querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', () => {
-        feuilles.splice(Number(b.dataset.rm), 1);
-        const saved = store.set('zln-feuilles', feuilles);
-        $('chNStatus').textContent = saved ? 'Feuille retirée.' : 'Feuille retirée pour cette visite seulement : le navigateur refuse le stockage local.';
+        const gone = feuilles[Number(b.dataset.rm)];
+        const r = writeFeuilles(cur => { const k = cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, feuilles.filter(n => !sameFeuille(n, gone)));
+        feuilles = r.saved ? readFeuilles(r.next) : feuilles.filter(n => !sameFeuille(n, gone));
+        $('chNStatus').textContent = r.saved ? 'Feuille retirée.' : 'Feuille retirée pour cette visite seulement : le navigateur refuse le stockage local.';
         renderAll();
       }));
       $('chCount').textContent = String(clips.size + feuilles.length);
@@ -530,16 +584,18 @@
       if (!body) { showChErr('Une feuille vide ne s’enregistre pas : écrivez au moins une ligne.'); $('chNBody').focus(); return; }
       if (feuilles.length >= 60) { showChErr('Soixante feuilles, c’est un classeur plein. Retirez-en avant d’en ajouter.'); return; }
       showChErr('');
-      feuilles.push({ title: title.slice(0, 120), body: body.slice(0, 2000) });
-      const saved = store.set('zln-feuilles', feuilles);
+      const note = cleanFeuille({ title, body, articleId: pendingArticle || undefined });
+      const r = writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), feuilles);
+      feuilles = r.saved ? readFeuilles(r.next) : feuilles.concat([note]);
+      pendingArticle = null;
       $('chNTitle').value = ''; $('chNBody').value = '';
-      $('chNStatus').textContent = saved ? 'Feuille enregistrée dans votre navigateur.' : 'Feuille gardée pour cette visite seulement : le navigateur refuse le stockage local.';
+      $('chNStatus').textContent = r.saved ? 'Feuille enregistrée dans votre navigateur.' : 'Feuille gardée pour cette visite seulement : le navigateur refuse le stockage local.';
       renderClasseur();
       $('chNTitle').focus();
     });
     $('chNBody').addEventListener('input', () => { if (!chErr.hidden && $('chNBody').value.trim()) showChErr(''); });
     $('chMd').addEventListener('click', () => {
-      $('chMdOut').value = renderFeuillesMarkdown(feuilles, new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }));
+      $('chMdOut').value = renderClasseurMarkdown({ notes: feuilles, bookmarks: [...clips].map(articleId => ({ articleId })), articles: CATALOG, exportedAt: new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }) });
       $('chMdOut').hidden = false;
       $('chMdOut').focus();
     });
@@ -558,6 +614,7 @@
       renderAll();
       $('chResetMsg').textContent = 'Coupures et réglages remis à zéro. Vos feuilles restent dans votre navigateur.';
     });
+    onOtherTab(() => { feuilles = readFeuilles(feuilles); renderClasseur(); });
     renderAll();
   }
 
@@ -977,10 +1034,7 @@
     { title: 'Clôture volontaire', body: 'Observé : une édition a une fin.\nInférence : le fil n’en a pas.\nÀ valider : est-ce que dix textes me suffisent une semaine ?' },
     { title: 'Hors article', body: 'Une feuille libre n’a pas besoin d’une coupure. Le classeur n’est pas un bookmark manager.' },
   ];
-  const stored = store.get('zln-feuilles');
-  let notes = Array.isArray(stored)
-    ? stored.filter(n => n && typeof n === 'object' && typeof n.title === 'string' && typeof n.body === 'string').map(n => ({ title: n.title.slice(0, 120), body: n.body.slice(0, 2000) })).slice(0, 60)
-    : SEED.slice();
+  let notes = readFeuilles(SEED.slice());
   const renderMd = () => {
     const ta = $('mdOut');
     ta.value = renderFeuillesMarkdown(notes, new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }));
@@ -992,8 +1046,10 @@
       ? notes.map((n, i) => `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${esc(n.title.trim() || 'Sans titre')}</span><button class="x" type="button" id="nx-${i}" data-i="${i}" aria-label="Retirer la note ${esc(n.title.trim() || 'sans titre')}">×</button></li>`).join('')
       : '<li class="empty">Aucune note. Écrivez-en une.</li>';
     ul.querySelectorAll('.x').forEach(b => b.addEventListener('click', () => {
-      notes.splice(Number(b.dataset.i), 1);
-      const saved = store.set('zln-feuilles', notes);
+      const gone = notes[Number(b.dataset.i)];
+      const r = writeFeuilles(cur => { const k = cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, notes.filter(n => !sameFeuille(n, gone)));
+      const saved = r.saved;
+      notes = saved ? readFeuilles(r.next) : notes.filter(n => !sameFeuille(n, gone));
       renderNotes();
       $('nStatus').textContent = saved ? 'Note retirée.' : 'Note retirée pour cette visite seulement : le navigateur refuse le stockage local.';
     }));
@@ -1008,8 +1064,10 @@
     if (!body) { showNErr('Une note vide ne s’enregistre pas : écrivez au moins une ligne.'); $('nBody').focus(); return; }
     if (notes.length >= 60) { showNErr('Soixante notes, c’est un classeur plein. Retirez-en avant d’en ajouter.'); return; }
     showNErr('');
-    notes.push({ title: title.slice(0, 120), body: body.slice(0, 2000) });
-    const saved = store.set('zln-feuilles', notes);
+    const note = cleanFeuille({ title, body });
+    const r = writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), notes);
+    const saved = r.saved;
+    notes = saved ? readFeuilles(r.next) : notes.concat([note]);
     $('nTitle').value = '';
     $('nBody').value = '';
     renderNotes();
@@ -1017,6 +1075,7 @@
     $('nTitle').focus();
   });
   $('nBody').addEventListener('input', () => { if (!nErr.hidden && $('nBody').value.trim()) showNErr(''); });
+  onOtherTab(() => { notes = readFeuilles(notes); renderNotes(); });
   renderNotes();
   $('mdCopy').addEventListener('click', copyWith($('mdCopy'), $('mdMsg'), () => $('mdOut').value, 'Copié dans le presse-papiers.'));
 })();
