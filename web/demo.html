@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Démo · Zacharie L. Nolet</title>
+<meta name="description" content="Essayez le cahier de lecture de Zacharie L. Nolet directement dans votre navigateur : une édition de dix textes, des coupures, des feuilles, un cabinet. Le même code que l’application iPhone.">
+<meta name="author" content="Zacharie L. Nolet">
+<meta name="theme-color" content="#F3EDE0">
+<link rel="canonical" href="https://zacharienoletgit.github.io/zacharie-l-nolet/demo.html">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_CA">
+<meta property="og:site_name" content="Zacharie L. Nolet">
+<meta property="og:title" content="Démo · Zacharie L. Nolet">
+<meta property="og:description" content="Essayez le cahier de lecture de Zacharie L. Nolet directement dans votre navigateur : une édition de dix textes, des coupures, des feuilles, un cabinet. Le même code que l’application iPhone.">
+<meta property="og:url" content="https://zacharienoletgit.github.io/zacharie-l-nolet/demo.html">
+<meta property="og:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zacharie L. Nolet, portrait et nom sur fond d’encre">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Démo · Zacharie L. Nolet">
+<meta name="twitter:description" content="Essayez le cahier de lecture de Zacharie L. Nolet directement dans votre navigateur : une édition de dix textes, des coupures, des feuilles, un cabinet. Le même code que l’application iPhone.">
+<meta name="twitter:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<a class="skip" href="#main">Aller au contenu</a>
+
+<div class="topbar">
+  <nav aria-label="Pages">
+    <a class="brand" href="./">Z. L. Nolet</a>
+    <a href="./">Accueil</a>
+    <a href="parcours.html">Parcours</a>
+    <a href="preuves.html">Preuves</a>
+    <a href="demo.html" aria-current="page">Démo</a>
+    <a href="engagement.html">Travailler ensemble</a>
+    <a href="coulisses.html">Coulisses</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</div>
+<header class="page-head">
+  <p class="kicker"><b>Démo</b> · Mon application, à ma manière</p>
+  <h1>Essayez le cahier, ici</h1>
+  <p class="lede">Une édition de dix textes, un classeur, des feuilles. Tout tourne dans votre navigateur avec les fonctions de mon application iPhone, sans serveur.</p>
+</header>
+
+<main id="main">
+  <section id="cahier-section">
+    <div class="cahier" id="cahier" data-size="lecture">
+      <div class="cahier-top"><span class="cahier-brand">Le cahier</span><span class="cahier-date" id="chDate"></span></div>
+      <div class="cahier-tabs" role="tablist" aria-label="Onglets du cahier">
+        <button role="tab" type="button" id="tab-edition" aria-controls="pan-edition" aria-selected="true">Édition</button>
+        <button role="tab" type="button" id="tab-rubriques" aria-controls="pan-rubriques" aria-selected="false" tabindex="-1">Rubriques</button>
+        <button role="tab" type="button" id="tab-classeur" aria-controls="pan-classeur" aria-selected="false" tabindex="-1">Classeur<span class="badge" id="chCount" aria-label="éléments dans le classeur">0</span></button>
+        <button role="tab" type="button" id="tab-cabinet" aria-controls="pan-cabinet" aria-selected="false" tabindex="-1">Cabinet</button>
+      </div>
+
+      <div role="tabpanel" id="pan-edition" aria-labelledby="tab-edition" tabindex="0">
+        <p class="panel-lede">Dix textes, choisis pour la date, puis l’édition se ferme. Pas de fil sans fin : quand c’est lu, c’est lu.</p>
+        <div class="field"><label for="chEdDate">Date de l’édition</label><input type="date" id="chEdDate"></div>
+        <p class="out mt-8" id="chEdNote" role="status"></p>
+        <ol class="cahier-list mt-8" id="chEdition"></ol>
+        <p class="cahier-close">L’édition est close.</p>
+      </div>
+
+      <div role="tabpanel" id="pan-rubriques" aria-labelledby="tab-rubriques" tabindex="0" hidden>
+        <p class="panel-lede">Cherchez avec ou sans accents, avec ou sans majuscules. Les rubriques sont celles du catalogue technique.</p>
+        <div class="row">
+          <div class="field grow"><label for="chQ">Recherche</label><input type="search" id="chQ" placeholder="Ex. : etoile, ratio, netari" autocomplete="off"></div>
+          <div class="field"><label for="chSec">Rubrique</label><select id="chSec"><option value="">Toutes</option><option value="informatique">Informatique</option><option value="programmation">Programmation</option><option value="intelligence_affaires">Intelligence d'affaires</option><option value="domaine_informatique">Domaine de l'informatique</option><option value="sage_x3">Sage X3</option><option value="nectari">Nectari</option><option value="jitterbit">Jitterbit</option><option value="cpq">CPQ</option><option value="power_bi">Power BI</option></select></div>
+        </div>
+        <p class="out mt-8" id="chQn" role="status"></p>
+        <ol class="cahier-list mt-8" id="chResults"></ol>
+      </div>
+
+      <div role="tabpanel" id="pan-classeur" aria-labelledby="tab-classeur" tabindex="0" hidden>
+        <p class="panel-lede">Vos coupures et vos feuilles. Les feuilles restent dans votre navigateur, même hors ligne ; rien ne part vers un serveur.</p>
+        <h3>Coupures</h3>
+        <ol class="cahier-list" id="chClips"></ol>
+        <h3>Feuilles</h3>
+        <ol class="cahier-list" id="chNotes"></ol>
+        <form id="chNoteForm" class="demo mt-16" novalidate>
+          <div class="field"><label for="chNTitle">Titre</label><input id="chNTitle" maxlength="120" placeholder="Ex. : Ce que je retiens"></div>
+          <div class="field"><label for="chNBody">Feuille</label><textarea id="chNBody" rows="3" maxlength="2000" placeholder="Écrivez ce que vous voulez garder." aria-describedby="chNErr"></textarea><p class="error" id="chNErr" role="alert" hidden></p></div>
+          <div class="row"><button class="btn primary" type="submit">Enregistrer</button><button class="btn" type="button" id="chMd">Exporter en Markdown</button><span class="status" id="chNStatus" role="status"></span></div>
+        </form>
+        <label class="lbl-ui mt-12" for="chMdOut">Export</label>
+        <textarea id="chMdOut" class="mono" rows="7" readonly hidden aria-label="Export Markdown du classeur"></textarea>
+      </div>
+
+      <div role="tabpanel" id="pan-cabinet" aria-labelledby="tab-cabinet" tabindex="0" hidden>
+        <p class="panel-lede">Le cabinet règle le cahier. Trois corps de texte, un rappel de l’accueil, un compte de ce que vous gardez.</p>
+        <fieldset class="field"><legend class="lbl-ui">Corps du texte</legend>
+          <div class="row">
+            <label class="opt"><input type="radio" name="chSize" value="lecture" checked> Lecture</label>
+            <label class="opt"><input type="radio" name="chSize" value="large"> Large</label>
+            <label class="opt"><input type="radio" name="chSize" value="tres-large"> Très large</label>
+          </div>
+        </fieldset>
+        <dl class="kv mt-16">
+          <dt>Textes au catalogue</dt><dd id="chKvTextes">0</dd>
+          <dt>Coupures</dt><dd id="chKvClips">0</dd>
+          <dt>Feuilles</dt><dd id="chKvNotes">0</dd>
+        </dl>
+        <div class="row mt-16"><button class="btn" type="button" id="chWelcomeBtn" aria-expanded="false" aria-controls="chWelcome">Revoir l’accueil</button><button class="btn" type="button" id="chReset">Remettre à zéro</button><span class="out" id="chResetMsg" role="status"></span></div>
+        <div class="cahier-welcome" id="chWelcome" hidden>
+          <p>Ce cahier n’est pas un fil. Il a une fin.</p>
+          <p>Dix textes par jour, choisis pour la date, les mêmes partout.</p>
+          <p>Découpez ce qui compte. Écrivez une feuille. Tout reste chez vous.</p>
+          <p>Quand c’est lu, c’est lu. Fermez le cahier.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="montre">
+    <div class="sec-head">
+      <p class="kicker"><b>Ce que cette démo montre</b> · Avec la preuve</p>
+      <h2>Le même produit, du téléphone au navigateur</h2>
+    </div>
+    <ul class="filets two">
+      <li><h3>Les fonctions de l’application, pas une imitation</h3><p>L’édition, la recherche et l’export Markdown appellent les mêmes fonctions que l’application iPhone, copiées telles quelles depuis le dépôt.</p><span class="ref">Preuve : <a href="preuves.html#p1">recherche</a>, <a href="preuves.html#p2">édition</a> et <a href="preuves.html#p6">export</a> affichent ce code sur la page Preuves.</span></li>
+      <li><h3>Un produit avec un point de vue</h3><p>Une édition qui se ferme, des coupures plutôt que des favoris, des feuilles plutôt que des notes, un cabinet plutôt que des réglages. Pas de fil infini, pas de cœurs.</p><span class="ref">Preuve : le document de conception <span class="mono">docs/DESIGN.md</span> du dépôt, appliqué ici mot pour mot.</span></li>
+      <li><h3>Accessible au clavier et aux lecteurs d’écran</h3><p>Les onglets se parcourent avec les flèches, chaque résultat est annoncé, chaque erreur est reliée à son champ, tout se lit en trois corps de texte.</p><span class="ref">Preuve : appuyez sur Tab puis sur les flèches ; changez la date ou la recherche avec un lecteur d’écran actif.</span></li>
+      <li><h3>Hors ligne par défaut</h3><p>Les feuilles sont gardées dans votre navigateur. Coupez le réseau, rechargez : elles sont encore là. Aucun serveur, aucun compte.</p><span class="ref">Preuve : la <a href="confidentialite.html">politique de confidentialité</a> nomme la seule valeur conservée, <span class="mono">zln-feuilles</span>, partagée avec la page Preuves.</span></li>
+    </ul>
+    <div class="row mt-24"><a class="btn primary" href="contact.html">Me contacter</a><a class="btn" href="preuves.html">Voir le code qui tourne</a></div>
+  </section>
+</main>
+
+<footer>
+  <span>Zacharie L. Nolet · Techniques de l’informatique, Cégep de Victoriaville · <a href="mailto:2012487@etudiant.cegepvicto.ca?subject=Mandat%2C%20stage%20ou%20contrat">2012487@etudiant.cegepvicto.ca</a></span>
+  <span>Site fait à la main, sans traceur ni outil externe. Les démonstrations exécutent le code de mon projet <span class="mono">zacharie-l-nolet</span>.</span>
+  <nav class="footer-nav" aria-label="Pages légales et liens">
+    <a href="confidentialite.html">Confidentialité</a>
+    <a href="conditions.html">Conditions d’utilisation</a>
+    <a href="sitemap.xml">Plan du site</a>
+    <a href="https://github.com/zacharienoletGit/zacharie-l-nolet" rel="noopener">Dépôt GitHub</a>
+    <a href="#top" id="toTop">Haut de page</a>
+  </nav>
+</footer>
+
+<div class="notice" id="notice" hidden role="region" aria-label="Avis sur les données">
+  <p>Ce site n’utilise aucun témoin ni traceur. Il garde seulement dans votre navigateur vos notes d’essai, votre brouillon de courriel et le fait que vous avez vu cet avis. <a href="confidentialite.html">Détails</a></p>
+  <button class="btn small" type="button" id="noticeOk">Compris</button>
+</div>
+
+<div class="sticky-cta" id="stickyCta" hidden>
+  <a class="btn primary" href="contact.html">Me contacter</a>
+  <a class="btn" href="preuves.html">Mon travail</a>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

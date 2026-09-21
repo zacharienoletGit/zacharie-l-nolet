@@ -224,7 +224,6 @@
   }
 
 
-  if (!$('q')) return;
 
   /* Catalogue de démonstration : seulement les textes techniques du dépôt (11 sur 22). */
   const CATALOG = [{"id":"a-02","slug":"local-first-memoire","title":"Local-first, ou la mémoire qui t’appartient","dek":"Un carnet hors-ligne n’est pas un repli. C’est une architecture.","section":"informatique","source":"Atelier","region":"TECH","min":7,"rank":2,"keywords":["local-first","sync","architecture","notes"]},{"id":"a-03","slug":"grain-avant-abstraction","title":"Le grain avant l’abstraction","dek":"Un écran de trop, une table de trop : le code commence par ce que tu comptes.","section":"programmation","source":"Atelier","region":"TECH","min":8,"rank":3,"keywords":["grain","modèle","react-native","contrat"]},{"id":"a-04","slug":"la-source-nest-pas-le-rapport","title":"La source n’est pas le rapport","dek":"Un tableau de bord qui se prend pour l’usine ment deux fois : au métier, et à lui-même.","section":"intelligence_affaires","source":"Décision","region":"TECH","min":7,"rank":4,"keywords":["grain","source","mart","méthode"]},{"id":"a-05","slug":"operationnel-pas-une-copie","title":"L’opérationnel n’est pas une copie","dek":"Un ERP vivant n’est pas un export. Le traiter comme un fichier, c’est déjà se tromper de grain.","section":"sage_x3","source":"Décision","region":"TECH","min":6,"rank":5,"keywords":["sage","erp","opérationnel","grain"]},{"id":"a-06","slug":"cloner-ne-pas-inventer","title":"Cloner, ne pas inventer","dek":"Un champ déjà certifié en production n’est pas une suggestion. C’est une frontière.","section":"nectari","source":"Décision","region":"TECH","min":6,"rank":6,"keywords":["nectari","netari","certifié","mesure"]},{"id":"a-07","slug":"horloge-pas-le-metier","title":"L’horloge n’est pas le métier","dek":"Jitterbit cadence. Il ne décide pas ce qu’est une commande, un lot, une vérité.","section":"jitterbit","source":"Décision","region":"TECH","min":6,"rank":7,"keywords":["jitterbit","intégration","idempotence","contrat"]},{"id":"a-08","slug":"un-ratio-ne-se-somme-pas","title":"Un ratio ne se somme pas","dek":"Power BI n’est pas coupable. La somme d’un pourcentage, si.","section":"power_bi","source":"Décision","region":"TECH","min":6,"rank":8,"keywords":["power bi","ratio","grain","étoile"]},{"id":"a-11","slug":"cpq-regles-avant-ecran","title":"CPQ : les règles avant l’écran","dek":"Configurer un prix n’est pas un formulaire. C’est un graphe de contraintes.","section":"cpq","source":"Atelier","region":"TECH","min":7,"keywords":["cpq","règles","devis","contraintes"]},{"id":"a-12","slug":"vocabulaire-du-domaine","title":"Le vocabulaire est le domaine","dek":"Tant que « produit », « article » et « item » veulent trois choses, le logiciel mentira poliment.","section":"domaine_informatique","source":"Atelier","region":"TECH","min":6,"keywords":["domaine","vocabulaire","clé","modèle"]},{"id":"a-19","slug":"tests-avant-le-theme","title":"Les tests avant le thème","dek":"Un écran beau et non testé redevient un fil : on ne sait plus ce qui a cassé.","section":"programmation","source":"Atelier","region":"TECH","min":6,"keywords":["tests","contrat","react-native"]},{"id":"a-21","slug":"modele-etoile-sans-poster","title":"Le modèle en étoile, sans le poster","dek":"Une dimension n’est pas un filtre joli. C’est une clé que tu peux défendre.","section":"power_bi","source":"Décision","region":"TECH","min":6,"keywords":["étoile","dimension","fait","réconciliation"]}];
@@ -421,6 +420,148 @@
     }
     return `${lines.join('\n').trim()}\n`;
   }
+
+
+  /* ---------- Démo : le cahier, en version web, avec les fonctions de l’application ---------- */
+  if ($('cahier')) {
+    const cahier = $('cahier');
+    const tabs = [...cahier.querySelectorAll('[role="tab"]')];
+    const panels = tabs.map(t => $(t.getAttribute('aria-controls')));
+    const select = (tab, focus) => {
+      tabs.forEach((t, i) => {
+        const on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        panels[i].hidden = !on;
+      });
+      if (focus) tab.focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t, false));
+      t.addEventListener('keydown', (e) => {
+        const k = e.key;
+        let j = null;
+        if (k === 'ArrowRight') j = (i + 1) % tabs.length;
+        else if (k === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
+        else if (k === 'Home') j = 0;
+        else if (k === 'End') j = tabs.length - 1;
+        if (j !== null) { e.preventDefault(); select(tabs[j], true); }
+      });
+    });
+
+    const clips = new Set();
+    const storedNotes = store.get('zln-feuilles');
+    let feuilles = Array.isArray(storedNotes)
+      ? storedNotes.filter(n => n && typeof n === 'object' && typeof n.title === 'string' && typeof n.body === 'string').map(n => ({ title: n.title.slice(0, 120), body: n.body.slice(0, 2000) })).slice(0, 60)
+      : [];
+    const byId = (id) => CATALOG.find(a => a.id === id);
+    const today = new Date();
+    const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    $('chEdDate').value = iso(today);
+    $('chDate').textContent = today.toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+    const row = (a, i) => `<li>
+      <span class="n">${String(i + 1).padStart(2, '0')}</span>
+      <h4>${esc(a.title)}</h4>
+      <p class="dek">${esc(a.dek)}</p>
+      <p class="meta">${esc(SECTIONS[a.section] || a.section)} · ${esc(a.source)} · ${a.min} min</p>
+      <div class="acts">
+        <button class="btn small" type="button" data-clip="${esc(a.id)}" aria-pressed="${clips.has(a.id)}">${clips.has(a.id) ? 'Découpé' : 'Découper'}</button>
+        <button class="btn small" type="button" data-feuille="${esc(a.id)}">Feuille</button>
+      </div>
+    </li>`;
+    const wire = (root) => {
+      root.querySelectorAll('[data-clip]').forEach(b => b.addEventListener('click', () => {
+        const id = b.dataset.clip;
+        if (clips.has(id)) clips.delete(id); else clips.add(id);
+        renderAll();
+      }));
+      root.querySelectorAll('[data-feuille]').forEach(b => b.addEventListener('click', () => {
+        const a = byId(b.dataset.feuille);
+        $('chNTitle').value = a ? a.title : '';
+        select($('tab-classeur'), false);
+        $('chNBody').focus();
+      }));
+    };
+    const renderEdition = () => keepFocus(() => {
+      const date = $('chEdDate').value || iso(today);
+      const ed = fallbackEdition(CATALOG, date);
+      $('chEdition').innerHTML = ed.map(row).join('');
+      wire($('chEdition'));
+      $('chEdNote').textContent = `Édition du ${date} : ${ed.length} textes sur ${CATALOG.length}, choisis par empreinte de la date, les mêmes sur chaque appareil.`;
+    });
+    const renderResults = () => keepFocus(() => {
+      const q = $('chQ').value;
+      const sec = $('chSec').value;
+      const found = filterArticles(CATALOG, q, sec);
+      $('chResults').innerHTML = found.length ? found.map(row).join('') : '<li class="empty">Aucun texte. Essayez un autre mot, avec ou sans accent.</li>';
+      wire($('chResults'));
+      $('chQn').textContent = q.trim() ? `Requête normalisée : « ${normalizeQuery(q)} » · ${found.length} texte${found.length > 1 ? 's' : ''}` : `${found.length} textes`;
+    });
+    const renderClasseur = () => keepFocus(() => {
+      const list = [...clips].map(byId).filter(Boolean);
+      $('chClips').innerHTML = list.length ? list.map(row).join('') : '<li class="empty">Aucune coupure. Découpez un texte dans l’Édition ou les Rubriques.</li>';
+      wire($('chClips'));
+      $('chNotes').innerHTML = feuilles.length
+        ? feuilles.map((n, i) => `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><h4>${esc(n.title.trim() || 'Sans titre')}</h4><p class="dek">${esc(n.body)}</p><div class="acts"><button class="btn small" type="button" data-rm="${i}">Retirer</button></div></li>`).join('')
+        : '<li class="empty">Aucune feuille. Écrivez-en une ci-dessous.</li>';
+      $('chNotes').querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', () => {
+        feuilles.splice(Number(b.dataset.rm), 1);
+        const saved = store.set('zln-feuilles', feuilles);
+        $('chNStatus').textContent = saved ? 'Feuille retirée.' : 'Feuille retirée pour cette visite seulement : le navigateur refuse le stockage local.';
+        renderAll();
+      }));
+      $('chCount').textContent = String(clips.size + feuilles.length);
+      $('chKvTextes').textContent = String(CATALOG.length);
+      $('chKvClips').textContent = String(clips.size);
+      $('chKvNotes').textContent = String(feuilles.length);
+    });
+    const renderAll = () => { renderEdition(); renderResults(); renderClasseur(); };
+
+    $('chEdDate').addEventListener('change', renderEdition);
+    $('chQ').addEventListener('input', renderResults);
+    $('chSec').addEventListener('change', renderResults);
+    const chErr = $('chNErr');
+    const showChErr = (msg) => { chErr.textContent = msg; chErr.hidden = !msg; $('chNBody').setAttribute('aria-invalid', String(Boolean(msg))); };
+    $('chNoteForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = $('chNTitle').value.trim();
+      const body = $('chNBody').value.trim();
+      if (!body) { showChErr('Une feuille vide ne s’enregistre pas : écrivez au moins une ligne.'); $('chNBody').focus(); return; }
+      if (feuilles.length >= 60) { showChErr('Soixante feuilles, c’est un classeur plein. Retirez-en avant d’en ajouter.'); return; }
+      showChErr('');
+      feuilles.push({ title: title.slice(0, 120), body: body.slice(0, 2000) });
+      const saved = store.set('zln-feuilles', feuilles);
+      $('chNTitle').value = ''; $('chNBody').value = '';
+      $('chNStatus').textContent = saved ? 'Feuille enregistrée dans votre navigateur.' : 'Feuille gardée pour cette visite seulement : le navigateur refuse le stockage local.';
+      renderClasseur();
+      $('chNTitle').focus();
+    });
+    $('chNBody').addEventListener('input', () => { if (!chErr.hidden && $('chNBody').value.trim()) showChErr(''); });
+    $('chMd').addEventListener('click', () => {
+      $('chMdOut').value = renderFeuillesMarkdown(feuilles, new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }));
+      $('chMdOut').hidden = false;
+      $('chMdOut').focus();
+    });
+    cahier.querySelectorAll('input[name="chSize"]').forEach(r => r.addEventListener('change', () => { cahier.dataset.size = r.value; }));
+    $('chWelcomeBtn').addEventListener('click', () => {
+      const w = $('chWelcome');
+      w.hidden = !w.hidden;
+      $('chWelcomeBtn').setAttribute('aria-expanded', String(!w.hidden));
+    });
+    $('chReset').addEventListener('click', () => {
+      clips.clear();
+      $('chQ').value = ''; $('chSec').value = '';
+      $('chEdDate').value = iso(today);
+      cahier.dataset.size = 'lecture';
+      cahier.querySelector('input[name="chSize"][value="lecture"]').checked = true;
+      renderAll();
+      $('chResetMsg').textContent = 'Coupures et réglages remis à zéro. Vos feuilles restent dans votre navigateur.';
+    });
+    renderAll();
+  }
+
+  if (!$('q')) return;
 
   /* ---------- Sources affichées : le code montré est le code exécuté ---------- */
   const show = (id, fns, note) => {
