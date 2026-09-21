@@ -213,15 +213,16 @@ for (const f of pages) {
       await page.evaluate(() => localStorage.clear());
       // Un autre onglet vide le stockage pendant qu’une feuille attend d’être écrite : elle reste affichée une seule fois, puis est écrite une seule fois.
       await page.reload({ waitUntil: 'load' }); await page.click('#tab-classeur');
+      await page.fill('#chNBody', 'Stockée'); await submit('#chNoteForm button[type=submit]');
       await page.evaluate(() => { window.__setItem = Storage.prototype.setItem; Storage.prototype.setItem = function () { throw new Error('quota'); }; });
       await page.fill('#chNBody', 'En attente'); await submit('#chNoteForm button[type=submit]');
       const wiper = await ctx.newPage(); await wiper.goto(page.url(), { waitUntil: 'load' }); await wiper.evaluate(() => localStorage.clear()); await wiper.close();
-      await page.waitForTimeout(100);
+      await page.waitForTimeout(150);
       expect((await text('#chNotes')).split('En attente').length - 1 === 1, 'cahier : une feuille en attente est affichée en double après un vidage du stockage par un autre onglet');
       await page.evaluate(() => { Storage.prototype.setItem = window.__setItem; });
       await page.fill('#chNBody', 'Après le vidage'); await submit('#chNoteForm button[type=submit]');
       const afterWipe = await page.evaluate(() => JSON.parse(localStorage.getItem('zln-feuilles')).map(n => n.body));
-      expect(afterWipe.join('|') === 'En attente|Après le vidage', 'cahier : une feuille en attente est écrite en double après un vidage du stockage');
+      expect(afterWipe.join('|') === 'Stockée|En attente|Après le vidage', 'cahier : une feuille en attente est écrite en double après un vidage du stockage');
       await page.evaluate(() => localStorage.clear());
       // Stockage illisible dès le départ et deux feuilles identiques : retirer une ligne n’en retire qu’une.
       await page.reload({ waitUntil: 'load' }); await page.click('#tab-classeur');
