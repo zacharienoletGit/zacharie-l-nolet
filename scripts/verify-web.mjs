@@ -103,16 +103,20 @@ for (const f of pages) {
   if (wideMobile) fail(f, 'débordement horizontal à 400 px');
   if (d.noAlt) fail(f, `${d.noAlt} image(s) sans attribut alt`);
   if (d.dup.length) fail(f, 'identifiants en double : ' + d.dup.join(', '));
+  // Un chemin résolu hors de web/ n’existe pas une fois le site déployé, même si le fichier est dans le dépôt.
+  const inside = (t) => t === root || t.startsWith(root + path.sep);
   const resolve = (l) => {
     const fromRoot = l.startsWith('/');
     const rel = l.replace(/^\//, '');
     const t = path.normalize(path.join(root, fromRoot ? '' : pageDir, rel === '' || rel === './' ? 'index.html' : rel));
+    if (!inside(t)) return null;
     return fs.existsSync(t) && fs.statSync(t).isDirectory() ? path.join(t, 'index.html') : t;
   };
-  for (const l of d.links) if (!fs.existsSync(resolve(l))) fail(f, `lien interne cassé : ${l}`);
+  for (const l of d.links) { const t = resolve(l); if (!t) fail(f, `lien qui sort du site : ${l}`); else if (!fs.existsSync(t)) fail(f, `lien interne cassé : ${l}`); }
   for (const id of d.missingHere) fail(f, `ancre absente sur la page : #${id}`);
   for (const a of d.assets) {
     const target = resolve(a);
+    if (!target) { fail(f, `ressource hors du site : ${a}`); continue; }
     if (!fs.existsSync(target)) { fail(f, `ressource absente : ${a}`); continue; }
     if (a.endsWith('.webmanifest')) {
       try {
@@ -206,6 +210,18 @@ for (const f of pages) {
       await page.fill('#chNBody', 'Après le retrait'); await submit('#chNoteForm button[type=submit]');
       const afterRm = await page.evaluate(() => JSON.parse(localStorage.getItem('zln-feuilles')).map(n => n.body));
       expect(afterRm.length === 1 && afterRm[0] === 'Après le retrait' && !/Feuille en mémoire/.test(await text('#chNotes')), 'cahier : une feuille retirée pendant une panne de stockage réapparaît ensuite');
+      await page.evaluate(() => localStorage.clear());
+      // Un autre onglet vide le stockage pendant qu’une feuille attend d’être écrite : elle reste affichée une seule fois, puis est écrite une seule fois.
+      await page.reload({ waitUntil: 'load' }); await page.click('#tab-classeur');
+      await page.evaluate(() => { window.__setItem = Storage.prototype.setItem; Storage.prototype.setItem = function () { throw new Error('quota'); }; });
+      await page.fill('#chNBody', 'En attente'); await submit('#chNoteForm button[type=submit]');
+      const wiper = await ctx.newPage(); await wiper.goto(page.url(), { waitUntil: 'load' }); await wiper.evaluate(() => localStorage.clear()); await wiper.close();
+      await page.waitForTimeout(100);
+      expect((await text('#chNotes')).split('En attente').length - 1 === 1, 'cahier : une feuille en attente est affichée en double après un vidage du stockage par un autre onglet');
+      await page.evaluate(() => { Storage.prototype.setItem = window.__setItem; });
+      await page.fill('#chNBody', 'Après le vidage'); await submit('#chNoteForm button[type=submit]');
+      const afterWipe = await page.evaluate(() => JSON.parse(localStorage.getItem('zln-feuilles')).map(n => n.body));
+      expect(afterWipe.join('|') === 'En attente|Après le vidage', 'cahier : une feuille en attente est écrite en double après un vidage du stockage');
       await page.evaluate(() => localStorage.clear());
       // Stockage illisible dès le départ et deux feuilles identiques : retirer une ligne n’en retire qu’une.
       await page.reload({ waitUntil: 'load' }); await page.click('#tab-classeur');

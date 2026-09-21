@@ -663,7 +663,8 @@
       renderAll();
       $('chResetMsg').textContent = 'Coupures et réglages remis à zéro. Vos feuilles restent dans votre navigateur.';
     });
-    onOtherTab(() => { feuilles = overlay(readFeuilles(feuilles), pending); renderClasseur(); });
+    // Un autre onglet a écrit : on repart de l’état brut du stockage, avec l’écart en attente ; s’il est vide, l’écran reste tel quel.
+    onOtherTab(() => { const stored = storedFeuilles(); if (stored) feuilles = overlay(stored, pending); renderClasseur(); });
     renderAll();
   }
 
@@ -838,11 +839,8 @@
   renderCpq();
 
   /* ---------- 06 Feuilles et export Markdown ---------- */
-  const SEED = [
-    { title: 'Clôture volontaire', body: 'Observé : une édition a une fin.\nInférence : le fil n’en a pas.\nÀ valider : est-ce que dix textes me suffisent une semaine ?' },
-    { title: 'Hors article', body: 'Une feuille libre n’a pas besoin d’une coupure. Le classeur n’est pas un bookmark manager.' },
-  ];
-  let notes = readFeuilles(SEED.slice());
+  // Même point de départ que la page Démo : le classeur partagé commence vide, rien n’est écrit sans geste de l’utilisateur.
+  let notes = readFeuilles([]);
   let pending = noPending();
   const renderMd = () => {
     const ta = $('mdOut');
@@ -892,7 +890,7 @@
     $('nTitle').focus();
   });
   $('nBody').addEventListener('input', () => { if (!nErr.hidden && $('nBody').value.trim()) showNErr(''); });
-  onOtherTab(() => { notes = overlay(readFeuilles(notes), pending); renderNotes(); });
+  onOtherTab(() => { const stored = storedFeuilles(); if (stored) notes = overlay(stored, pending); renderNotes(); });
   renderNotes();
   $('mdCopy').addEventListener('click', copyWith($('mdCopy'), $('mdMsg'), () => $('mdOut').value, 'Copié dans le presse-papiers.'));
 })();
