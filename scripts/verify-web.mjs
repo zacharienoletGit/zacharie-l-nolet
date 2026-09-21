@@ -105,13 +105,15 @@ for (const f of pages) {
   if (d.dup.length) fail(f, 'identifiants en double : ' + d.dup.join(', '));
   // Un chemin résolu hors de web/ n’existe pas une fois le site déployé, même si le fichier est dans le dépôt.
   const inside = (t) => t === root || t.startsWith(root + path.sep);
-  const resolve = (l) => {
+  const resolveFrom = (dir, l) => {
     const fromRoot = l.startsWith('/');
     const rel = l.replace(/^\//, '');
-    const t = path.normalize(path.join(root, fromRoot ? '' : pageDir, rel === '' || rel === './' ? 'index.html' : rel));
+    const t = path.normalize(path.join(root, fromRoot ? '' : dir, rel === '' || rel === './' ? 'index.html' : rel));
     if (!inside(t)) return null;
     return fs.existsSync(t) && fs.statSync(t).isDirectory() ? path.join(t, 'index.html') : t;
   };
+  const resolve = (l) => resolveFrom(pageDir, l);
+  const isFile = (t) => t && fs.existsSync(t) && fs.statSync(t).isFile();
   for (const l of d.links) { const t = resolve(l); if (!t) fail(f, `lien qui sort du site : ${l}`); else if (!fs.existsSync(t)) fail(f, `lien interne cassé : ${l}`); }
   for (const id of d.missingHere) fail(f, `ancre absente sur la page : #${id}`);
   for (const a of d.assets) {
@@ -121,7 +123,9 @@ for (const f of pages) {
     if (a.endsWith('.webmanifest')) {
       try {
         const man = JSON.parse(fs.readFileSync(target, 'utf8'));
-        for (const icon of man.icons || []) if (!fs.existsSync(path.join(path.dirname(target), icon.src))) fail(f, `icône du manifeste absente : ${icon.src}`);
+        // Les icônes se résolvent depuis le dossier du manifeste, sous web/, et doivent être des fichiers.
+        const manDir = path.relative(root, path.dirname(target));
+        for (const icon of man.icons || []) { const t = typeof icon.src === 'string' ? resolveFrom(manDir, icon.src) : null; if (!t) fail(f, `icône du manifeste hors du site : ${icon.src}`); else if (!isFile(t)) fail(f, `icône du manifeste absente : ${icon.src}`); }
       } catch (e) { fail(f, `manifeste illisible : ${a}`); }
     }
   }
@@ -149,6 +153,9 @@ for (const f of pages) {
       await page.fill('#r2a', '0.5'); expect(!(await page.isHidden('#ratioErr')) && (await page.getAttribute('#r2a', 'aria-invalid')) === 'true' && (await page.getAttribute('#r2b', 'aria-invalid')) === 'false', 'ratio : une valeur fractionnaire passe, ou le mauvais champ est marqué');
       await page.fill('#r2a', '17000'); await page.fill('#r1a', ''); await page.fill('#r2b', '');
       expect((await page.getAttribute('#r1b', 'aria-invalid')) === 'false' && (await page.getAttribute('#r2b', 'aria-invalid')) === 'true', 'ratio : deux lignes invalides ne sont pas marquées case par case');
+      await page.fill('#r1a', '17000'); await page.fill('#r2b', '100'); await page.fill('#r2a', '101');
+      expect((await page.getAttribute('#r2a', 'aria-invalid')) === 'true' && (await page.getAttribute('#r2b', 'aria-invalid')) === 'false', 'ratio : le total valide est marqué invalide quand les livraisons à temps le dépassent');
+      await page.fill('#r2b', '20000');
       await page.fill('#r1a', '95'); await page.fill('#r2b', '20000');
       const total0 = await text('#cpqTotal'); await page.click('#cpq-plateau'); expect((await text('#cpqTotal')) !== total0 && !(await page.isChecked('#cpq-tiroir')), 'CPQ : le plateau ne fait pas tomber le tiroir');
       await submit('#nForm button[type=submit]'); expect(!(await page.isHidden('#nErr')), 'notes : une note vide passe sans erreur');
@@ -223,6 +230,19 @@ for (const f of pages) {
       await page.fill('#chNBody', 'Après le vidage'); await submit('#chNoteForm button[type=submit]');
       const afterWipe = await page.evaluate(() => JSON.parse(localStorage.getItem('zln-feuilles')).map(n => n.body));
       expect(afterWipe.join('|') === 'Stockée|En attente|Après le vidage', 'cahier : une feuille en attente est écrite en double après un vidage du stockage');
+      await page.evaluate(() => localStorage.clear());
+      // Un autre onglet remplit les soixante places pendant qu’une feuille attend : elle reste affichée, et un retrait la fait entrer.
+      await page.reload({ waitUntil: 'load' }); await page.click('#tab-classeur');
+      await page.evaluate(() => { window.__setItem = Storage.prototype.setItem; Storage.prototype.setItem = function () { throw new Error('quota'); }; });
+      await page.fill('#chNBody', 'En attente'); await submit('#chNoteForm button[type=submit]');
+      const filler = await ctx.newPage(); await filler.goto(page.url(), { waitUntil: 'load' });
+      await filler.evaluate(() => localStorage.setItem('zln-feuilles', JSON.stringify(Array.from({ length: 60 }, (_, i) => ({ title: 'Feuille ' + i, body: 'Corps ' + i })))));
+      await filler.close(); await page.waitForTimeout(150);
+      expect(/En attente/.test(await text('#chNotes')), 'cahier : une feuille en attente disparaît quand un autre onglet remplit le classeur');
+      await page.evaluate(() => { Storage.prototype.setItem = window.__setItem; });
+      await page.click('#chrm-0'); await settled();
+      const afterFill = await page.evaluate(() => JSON.parse(localStorage.getItem('zln-feuilles')).map(n => n.body));
+      expect(afterFill.length === 60 && afterFill[59] === 'En attente', 'cahier : la feuille en attente n’entre pas dans le classeur quand une place se libère');
       await page.evaluate(() => localStorage.clear());
       // Stockage illisible dès le départ et deux feuilles identiques : retirer une ligne n’en retire qu’une.
       await page.reload({ waitUntil: 'load' }); await page.click('#tab-classeur');

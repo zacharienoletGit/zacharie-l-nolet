@@ -190,7 +190,7 @@
      Chaque mutation repart du stockage avec cet écart appliqué ; une écriture réussie le solde. */
   const diffOnce = (a, b) => { const rest = b.slice(); return a.filter(n => { const k = rest.findIndex(m => sameFeuille(m, n)); if (k >= 0) { rest.splice(k, 1); return false; } return true; }); };
   const noPending = () => ({ added: [], removed: [] });
-  const overlay = (list, pending) => diffOnce(list, pending.removed).concat(pending.added).slice(0, 60);
+  const overlay = (list, pending) => diffOnce(list, pending.removed).concat(pending.added);
   /* Deux onglets peuvent lire le même classeur puis écrire l’un après l’autre : la seconde écriture effacerait la première.
      Les mutations sont donc mises en file avec un verrou partagé entre onglets (Web Locks) ; sans verrou disponible
      (contexte non sécurisé), la mutation s’exécute directement, relecture comprise. */
@@ -202,7 +202,9 @@
     const stored = storedFeuilles();
     const before = stored ? overlay(stored, pending) : local;
     const next = mutate(before);
-    const saved = store.set(FEUILLES_KEY, next);
+    // Au-delà de soixante (classeur rempli par un autre onglet pendant qu’une feuille attendait), rien n’est écrit :
+    // une écriture serait relue tronquée et perdrait la feuille en attente. L’ajout est refusé, le retrait libère la place.
+    const saved = next.length <= 60 && store.set(FEUILLES_KEY, next);
     const kept = saved ? readFeuilles(next) : next;
     const base = saved ? kept : (stored || []);
     return { saved, next: kept, applied: next.length !== before.length, pending: saved ? noPending() : { added: diffOnce(kept, base), removed: diffOnce(base, kept) } };
@@ -775,7 +777,7 @@
     const count = (v, min) => Number.isInteger(v) && v >= min && v <= 1000000;
     const invalid = raw.map(r => ({
       onTime: !count(r.onTime, 0) || (count(r.total, 1) && r.onTime > r.total),
-      total: !count(r.total, 1) || (count(r.onTime, 0) && r.onTime > r.total),
+      total: !count(r.total, 1),
     }));
     ratioIds.forEach(([a, b], i) => { $(a).setAttribute('aria-invalid', String(invalid[i].onTime)); $(b).setAttribute('aria-invalid', String(invalid[i].total)); });
     const badRow = invalid.findIndex(x => x.onTime || x.total);
