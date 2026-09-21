@@ -177,23 +177,31 @@
      une feuille écrite par un autre onglet ; l’événement storage rafraîchit l’affichage. */
   const FEUILLES_KEY = 'zln-feuilles';
   const cleanFeuille = (n) => ({ title: n.title.slice(0, 120), body: n.body.slice(0, 2000), ...(typeof n.articleId === 'string' ? { articleId: n.articleId.slice(0, 40) } : {}) });
-  const readFeuilles = (fallback) => {
+  const storedFeuilles = () => {
     const stored = store.get(FEUILLES_KEY);
     return Array.isArray(stored)
       ? stored.filter(n => n && typeof n === 'object' && typeof n.title === 'string' && typeof n.body === 'string').map(cleanFeuille).slice(0, 60)
-      : (fallback || []);
+      : null;
   };
+  const readFeuilles = (fallback) => storedFeuilles() || fallback || [];
   const sameFeuille = (a, b) => a.title === b.title && a.body === b.body && (a.articleId || '') === (b.articleId || '');
+  /* Les feuilles dont l’écriture a été refusée (quota plein, stockage bloqué) vivent seulement en mémoire :
+     on les rajoute à ce que le stockage contient, pour qu’une écriture réussie plus tard ne les efface pas. */
+  const withUnsaved = (list, unsaved) => list.concat((unsaved || []).filter(u => !list.some(n => sameFeuille(n, u)))).slice(0, 60);
   /* Deux onglets peuvent lire le même classeur puis écrire l’un après l’autre : la seconde écriture effacerait la première.
      Les mutations sont donc mises en file avec un verrou partagé entre onglets (Web Locks) ; sans verrou disponible
      (contexte non sécurisé), la mutation s’exécute directement, relecture comprise. */
   const withFeuillesLock = (fn) => (navigator.locks && navigator.locks.request)
     ? navigator.locks.request(FEUILLES_KEY, () => fn())
     : Promise.resolve().then(fn);
-  const writeFeuilles = (mutate, fallback) => withFeuillesLock(() => {
-    const before = readFeuilles(fallback);
+  const writeFeuilles = (mutate, local, unsaved) => withFeuillesLock(() => {
+    const stored = storedFeuilles();
+    const before = stored ? withUnsaved(stored, unsaved) : local;
     const next = mutate(before);
-    return { saved: store.set(FEUILLES_KEY, next), next, applied: next.length !== before.length };
+    const saved = store.set(FEUILLES_KEY, next);
+    const kept = saved ? readFeuilles(next) : next;
+    const persisted = saved ? kept : (stored || []);
+    return { saved, next: kept, applied: next.length !== before.length, unsaved: kept.filter(n => !persisted.some(p => sameFeuille(p, n))) };
   });
   const onOtherTab = (fn) => window.addEventListener('storage', (e) => { if (e.key === FEUILLES_KEY || e.key === null) fn(); });
 
@@ -510,6 +518,7 @@
 
     const clips = new Set();
     let feuilles = readFeuilles([]);
+    let unsaved = [];
     let pendingArticle = null;
     const byId = (id) => CATALOG.find(a => a.id === id);
     const today = new Date();
@@ -584,8 +593,8 @@
         : '<li class="empty">Aucune feuille. Écrivez-en une ci-dessous.</li>';
       $('chNotes').querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', async () => {
         const gone = feuilles[Number(b.dataset.rm)];
-        const r = await writeFeuilles(cur => { const k = cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, feuilles.filter(n => !sameFeuille(n, gone)));
-        feuilles = r.saved ? readFeuilles(r.next) : feuilles.filter((_, j) => j !== Number(b.dataset.rm));
+        const r = await writeFeuilles(cur => { const k = cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, feuilles.filter(n => !sameFeuille(n, gone)), unsaved);
+        feuilles = r.next; unsaved = r.unsaved;
         $('chNStatus').textContent = r.saved ? 'Feuille retirée.' : 'Feuille retirée pour cette visite seulement : le navigateur refuse le stockage local.';
         const index = Number(b.dataset.rm);
         renderAll();
@@ -611,15 +620,15 @@
       if (feuilles.length >= 60) { showChErr('Soixante feuilles, c’est un classeur plein. Retirez-en avant d’en ajouter.'); return; }
       showChErr('');
       const note = cleanFeuille({ title, body, articleId: pendingArticle || undefined });
-      const r = await writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), feuilles);
-      if (r.saved && !r.applied) {
+      const r = await writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), feuilles, unsaved);
+      if (!r.applied) {
         // Un autre onglet a rempli le classeur entre-temps : rien n’est perdu, la saisie reste dans le formulaire.
-        feuilles = readFeuilles(r.next); renderClasseur();
+        feuilles = r.next; unsaved = r.unsaved; renderClasseur();
         $('chNStatus').textContent = '';
         showChErr('Soixante feuilles, c’est un classeur plein : une autre page vient de le remplir. Retirez-en avant d’en ajouter.');
         return;
       }
-      feuilles = r.saved ? readFeuilles(r.next) : feuilles.concat([note]);
+      feuilles = r.next; unsaved = r.unsaved;
       setPending(null);
       $('chNTitle').value = ''; $('chNBody').value = '';
       $('chNStatus').textContent = r.saved ? 'Feuille enregistrée dans votre navigateur.' : 'Feuille gardée pour cette visite seulement : le navigateur refuse le stockage local.';
@@ -649,7 +658,7 @@
       renderAll();
       $('chResetMsg').textContent = 'Coupures et réglages remis à zéro. Vos feuilles restent dans votre navigateur.';
     });
-    onOtherTab(() => { feuilles = readFeuilles(feuilles); renderClasseur(); });
+    onOtherTab(() => { feuilles = withUnsaved(readFeuilles(feuilles), unsaved); renderClasseur(); });
     renderAll();
   }
 
@@ -829,6 +838,7 @@
     { title: 'Hors article', body: 'Une feuille libre n’a pas besoin d’une coupure. Le classeur n’est pas un bookmark manager.' },
   ];
   let notes = readFeuilles(SEED.slice());
+  let unsaved = [];
   const renderMd = () => {
     const ta = $('mdOut');
     ta.value = renderFeuillesMarkdown(notes, new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }), CATALOG);
@@ -841,9 +851,9 @@
       : '<li class="empty">Aucune note. Écrivez-en une.</li>';
     ul.querySelectorAll('.x').forEach(b => b.addEventListener('click', async () => {
       const gone = notes[Number(b.dataset.i)];
-      const r = await writeFeuilles(cur => { const k = cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, notes.filter(n => !sameFeuille(n, gone)));
+      const r = await writeFeuilles(cur => { const k = cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, notes.filter(n => !sameFeuille(n, gone)), unsaved);
       const saved = r.saved;
-      notes = saved ? readFeuilles(r.next) : notes.filter((_, j) => j !== Number(b.dataset.i));
+      notes = r.next; unsaved = r.unsaved;
       renderNotes();
       $('nStatus').textContent = saved ? 'Note retirée.' : 'Note retirée pour cette visite seulement : le navigateur refuse le stockage local.';
       if (!document.activeElement || document.activeElement === document.body) { const left = $('nList').querySelectorAll('.x'); (left[Math.min(Number(b.dataset.i), left.length - 1)] || $('nTitle')).focus(); }
@@ -860,15 +870,15 @@
     if (notes.length >= 60) { showNErr('Soixante notes, c’est un classeur plein. Retirez-en avant d’en ajouter.'); return; }
     showNErr('');
     const note = cleanFeuille({ title, body });
-    const r = await writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), notes);
-    if (r.saved && !r.applied) {
-      notes = readFeuilles(r.next); renderNotes();
+    const r = await writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), notes, unsaved);
+    if (!r.applied) {
+      notes = r.next; unsaved = r.unsaved; renderNotes();
       $('nStatus').textContent = '';
       showNErr('Soixante notes, c’est un classeur plein : une autre page vient de le remplir. Retirez-en avant d’en ajouter.');
       return;
     }
     const saved = r.saved;
-    notes = saved ? readFeuilles(r.next) : notes.concat([note]);
+    notes = r.next; unsaved = r.unsaved;
     $('nTitle').value = '';
     $('nBody').value = '';
     renderNotes();
@@ -876,7 +886,7 @@
     $('nTitle').focus();
   });
   $('nBody').addEventListener('input', () => { if (!nErr.hidden && $('nBody').value.trim()) showNErr(''); });
-  onOtherTab(() => { notes = readFeuilles(notes); renderNotes(); });
+  onOtherTab(() => { notes = withUnsaved(readFeuilles(notes), unsaved); renderNotes(); });
   renderNotes();
   $('mdCopy').addEventListener('click', copyWith($('mdCopy'), $('mdMsg'), () => $('mdOut').value, 'Copié dans le presse-papiers.'));
 })();

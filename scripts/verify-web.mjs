@@ -188,6 +188,17 @@ for (const f of pages) {
       expect(kept.length === 60 && kept.includes('Onglet A') && kept.includes('Onglet B'), 'cahier : deux onglets qui enregistrent en même temps perdent une feuille');
       await other.close();
       await page.evaluate(() => localStorage.clear());
+      // Le stockage refuse une écriture (quota) : la feuille reste en mémoire, et une écriture réussie plus tard ne l’efface pas.
+      await page.reload({ waitUntil: 'load' }); await page.click('#tab-classeur');
+      await page.fill('#chNBody', 'Feuille stockée'); await submit('#chNoteForm button[type=submit]');
+      await page.evaluate(() => { window.__setItem = Storage.prototype.setItem; Storage.prototype.setItem = function () { throw new Error('quota'); }; });
+      await page.fill('#chNBody', 'Feuille en mémoire'); await submit('#chNoteForm button[type=submit]');
+      expect(/visite seulement/.test(await text('#chNStatus')) && (await page.locator('#chNotes li:not(.empty)').count()) === 2, 'cahier : une écriture refusée n’est pas annoncée comme gardée en mémoire');
+      await page.evaluate(() => { Storage.prototype.setItem = window.__setItem; });
+      await page.click('#chrm-0'); await settled();
+      const after = await page.evaluate(() => JSON.parse(localStorage.getItem('zln-feuilles')).map(n => n.body));
+      expect(after.length === 1 && after[0] === 'Feuille en mémoire' && /Feuille en mémoire/.test(await text('#chNotes')), 'cahier : la feuille gardée en mémoire disparaît quand une écriture réussit ensuite');
+      await page.evaluate(() => localStorage.clear());
     }
     if (f === 'donnees/index.html') {
       expect(/Corrélation r = /.test(await text('#dRegOut')), 'données : pas de corrélation calculée');
