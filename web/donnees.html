@@ -34,7 +34,7 @@
 <body>
 <a class="skip" href="#main">Aller au contenu</a>
 
-<div class="topbar">
+<div class="topbar" id="top">
   <nav aria-label="Pages">
     <a class="brand" href="./">L. Z. Nolet Gilbert</a>
     <a href="./">Accueil</a>
@@ -67,7 +67,7 @@
           <div class="table-wrap data-table"><table><thead><tr><th>Mois</th><th class="num">Publicité (k$)</th><th class="num">Ventes (k$)</th></tr></thead><tbody id="dRows"></tbody></table></div>
           <p class="error" id="dRegErr" role="alert" hidden></p>
           <div class="row mt-12"><button class="btn small" type="button" id="dOutlier" aria-pressed="false">Ajouter un mois hors norme</button>
-            <div class="field"><label for="dSpend">Si je dépense (k$)</label><input type="number" id="dSpend" value="15" min="0" max="1000" step="0.5"></div></div>
+            <div class="field"><label for="dSpend">Si je dépense (k$)</label><input type="number" id="dSpend" value="15" min="0" max="1000" step="0.5" aria-describedby="dRegErr"></div></div>
         </div>
         <p class="out" id="dRegOut" role="status"></p>
         <div class="verdict" id="dRegVerdict" role="status"></div>

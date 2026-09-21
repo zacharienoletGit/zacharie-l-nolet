@@ -1,7 +1,7 @@
 // Vérification du site web/ avant chaque mise en ligne.
 // Sert web/ localement, ouvre chaque page dans Chromium (bureau et 400 px) et refuse de publier si :
 // titre, description ou canonique manquants ; débordement horizontal ; image sans texte de remplacement ;
-// identifiant en double ; lien interne cassé ; erreur de console ou de script ; démonstrations muettes.
+// identifiant en double ; lien interne cassé (fichier ou ancre) ; erreur de console ou de script ; démonstrations muettes.
 // Il exerce aussi les démonstrations : recherche, édition, synchronisation, ratio, CPQ, notes, cahier, données, devis, formulaire de contact.
 // Usage : npm run verify:web   (Playwright est une dépendance de développement ; une fois : npx playwright install chromium ;
 // variables facultatives : PLAYWRIGHT_MODULE, CHROMIUM_PATH)
@@ -53,16 +53,17 @@ for (const f of pages) {
   const d = await page.evaluate((site) => {
     const ids = [...document.querySelectorAll('[id]')].map(e => e.id);
     const dup = ids.filter((id, i) => ids.indexOf(id) !== i);
-    const links = [...document.querySelectorAll('a[href]')].map(a => a.getAttribute('href'))
-      .filter(h => h && !/^(https?:|mailto:|#)/.test(h) || (h && h.startsWith(site)))
-      .map(h => (h.startsWith(site) ? h.slice(site.length) : h).replace(/[#?].*$/, ''));
+    const hrefs = [...document.querySelectorAll('a[href]')].map(a => a.getAttribute('href')).filter(h => h && (!/^(https?:|mailto:)/.test(h) || h.startsWith(site)));
+    const links = [...new Set(hrefs.map(h => (h.startsWith(site) ? h.slice(site.length) : h).replace(/[#?].*$/, '')).filter(Boolean))];
+    const fragments = [...new Set(hrefs.filter(h => h.includes('#')).map(h => (h.startsWith(site) ? h.slice(site.length) : h)))];
+    const missingHere = fragments.filter(h => h.startsWith('#')).map(h => h.slice(1)).filter(id => id && !document.getElementById(id));
     return {
       title: document.title, lang: document.documentElement.lang,
       description: document.querySelector('meta[name="description"]')?.content || '',
       canonical: document.querySelector('link[rel="canonical"]')?.href || '',
       wide: document.documentElement.scrollWidth > document.documentElement.clientWidth,
       noAlt: [...document.images].filter(i => !i.hasAttribute('alt')).length,
-      dup: [...new Set(dup)], links: [...new Set(links)],
+      dup: [...new Set(dup)], links, fragments, missingHere,
     };
   }, SITE);
   await page.setViewportSize({ width: 400, height: 800 });
@@ -80,6 +81,12 @@ for (const f of pages) {
   for (const l of d.links) {
     const target = l === '' || l === './' ? 'index.html' : l;
     if (!fs.existsSync(path.join(root, target))) fail(f, `lien interne cassé : ${l}`);
+  }
+  for (const id of d.missingHere) fail(f, `ancre absente sur la page : #${id}`);
+  for (const h of d.fragments.filter(x => !x.startsWith('#'))) {
+    const [file, id] = h.split('#');
+    const target = path.join(root, file === '' || file === './' ? 'index.html' : file);
+    if (id && fs.existsSync(target) && !new RegExp(`\\sid="${id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`).test(fs.readFileSync(target, 'utf8'))) fail(f, `ancre absente dans la cible : ${h}`);
   }
 
   // Les démonstrations doivent répondre : on déclenche les gestes principaux et on vérifie leurs sorties.
@@ -116,6 +123,10 @@ for (const f of pages) {
       await page.fill('#abNa', '100'); await page.fill('#abXa', '0'); await page.fill('#abNb', '100'); await page.fill('#abXb', '100');
       expect(/tient/.test(await text('#abVerdict')) && !/NaN/.test(await text('#abOut')), 'données : 0 % contre 100 % ne donne pas un verdict valide');
       await page.fill('#dx0', '4'); await page.fill('#dy0', '9999999'); expect(!(await page.isHidden('#dRegErr')), 'données : une vente hors limites passe sans erreur');
+      await page.fill('#dy0', '50'); await page.fill('#dSpend', '5000'); expect((await page.getAttribute('#dSpend', 'aria-invalid')) === 'true' && !/prévoit/.test(await text('#dRegOut')), 'données : une dépense de prévision hors limites produit une prévision');
+      await page.fill('#dSpend', '15'); await page.fill('#abNa', '5'); await page.fill('#abXa', '0'); await page.fill('#abNb', '5'); await page.fill('#abXb', '2');
+      expect(/hasard/.test(await text('#abVerdict')), 'données : 0/5 contre 2/5 est annoncé décisif');
+      await page.fill('#abXa', '11'); await page.fill('#abNa', '10'); expect((await page.getAttribute('#abXa', 'aria-invalid')) === 'true' && (await page.getAttribute('#abXb', 'aria-invalid')) === 'false', 'données : le champ valide est marqué invalide');
     }
     if (f === 'cpq.html') {
       expect(/\$/.test(await text('#cqTotal')), 'CPQ : pas de total au chargement');

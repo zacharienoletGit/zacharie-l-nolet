@@ -672,8 +672,8 @@
     const pA = a.conv / a.n, pB = b.conv / b.n;
     const [loA, hiA] = wilson(a.conv, a.n), [loB, hiB] = wilson(b.conv, b.n);
     const diff = pB - pA;
-    const low = diff - Math.sqrt((pA - loA) ** 2 + (hiB - pB) ** 2);
-    const high = diff + Math.sqrt((hiA - pA) ** 2 + (pB - loB) ** 2);
+    const low = diff - Math.sqrt((pB - loB) ** 2 + (hiA - pA) ** 2);
+    const high = diff + Math.sqrt((hiB - pB) ** 2 + (pA - loA) ** 2);
     return { pA, pB, diff, low, high, decisive: low > 0 || high < 0 };
   }
 
@@ -786,7 +786,11 @@
       $('dRegErr').textContent = bad ? 'Une case est vide ou hors limites (publicité de 0 à 1 000, ventes de 0 à 100 000) : corrigez-la pour voir le résultat.' : flat ? 'Une colonne ne varie pas : la corrélation n’existe pas. Donnez des valeurs différentes d’un mois à l’autre.' : '';
       $('dRegErr').hidden = !(bad || flat);
       if (bad || xs.length < 3 || flat) { $('dRegOut').textContent = bad ? 'Aucun résultat tant qu’une case est impossible.' : 'Aucun résultat tant qu’une colonne est constante.'; $('dRegVerdict').textContent = ''; $('dChart').innerHTML = ''; return; }
-      const spend = num('dSpend');
+      const spendRaw = num('dSpend');
+      const spendBad = $('dSpend').value.trim() !== '' && !okX(spendRaw);
+      $('dSpend').setAttribute('aria-invalid', String(spendBad));
+      if (spendBad) { $('dRegErr').textContent = 'La dépense de prévision doit être entre 0 et 1 000.'; $('dRegErr').hidden = false; }
+      const spend = spendBad ? NaN : spendRaw;
       const pred = Number.isFinite(spend) ? m.intercept + m.slope * spend : null;
       $('dRegOut').textContent = `Corrélation r = ${f1(m.r)}. Chaque tranche de 1 000 $ de publicité en plus va avec ${kd(m.slope)} de ventes en plus. R² = ${f1(m.r2)} : la publicité « explique » ${Math.round(m.r2 * 100)} % des variations` +
         (pred !== null ? `. Avec ${f1(spend)} k$ de publicité, le modèle prévoit ${kd(pred)} de ventes.` : '.');
@@ -824,12 +828,16 @@
 
     const renderAb = () => {
       const a = { n: num('abNa'), conv: num('abXa') }, b = { n: num('abNb'), conv: num('abXb') };
-      const bad = [['abNa', a.n], ['abXa', a.conv], ['abNb', b.n], ['abXb', b.conv]].filter(([id, v]) => !Number.isInteger(v) || v < 0 || v > 10000000);
+      const count = (v) => Number.isInteger(v) && v >= 0 && v <= 10000000;
+      const invalid = {
+        abNa: !count(a.n) || a.n === 0, abXa: !count(a.conv) || (count(a.n) && a.conv > a.n),
+        abNb: !count(b.n) || b.n === 0, abXb: !count(b.conv) || (count(b.n) && b.conv > b.n),
+      };
+      Object.entries(invalid).forEach(([id, bad]) => $(id).setAttribute('aria-invalid', String(bad)));
       let msg = '';
-      if (bad.length) msg = 'Indiquez les quatre nombres : des entiers, de 0 à 10 000 000.';
+      if ([a.n, a.conv, b.n, b.conv].some(v => !count(v))) msg = 'Indiquez les quatre nombres : des entiers, de 0 à 10 000 000.';
       else if (a.n === 0 || b.n === 0) msg = 'Il faut au moins un visiteur dans chaque groupe.';
       else if (a.conv > a.n || b.conv > b.n) msg = 'Les conversions ne peuvent pas dépasser les visiteurs.';
-      ['abNa', 'abXa', 'abNb', 'abXb'].forEach(id => $(id).setAttribute('aria-invalid', String(Boolean(msg) && (bad.some(([b]) => b === id) || (msg.includes('dépasser') && (id === 'abXa' || id === 'abXb')) || (msg.includes('visiteur') && (id === 'abNa' || id === 'abNb'))))));
       $('abErr').textContent = msg; $('abErr').hidden = !msg;
       if (msg) { $('abOut').textContent = 'Aucun résultat tant qu’un nombre est impossible.'; $('abVerdict').textContent = ''; return; }
       const t = abTest(a, b);
