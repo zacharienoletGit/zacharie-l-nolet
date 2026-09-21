@@ -88,6 +88,7 @@
         <ol class="cahier-list" id="chNotes"></ol>
         <form id="chNoteForm" class="demo mt-16" novalidate>
           <div class="field"><label for="chNTitle">Titre</label><input id="chNTitle" maxlength="120" placeholder="Ex. : Ce que je retiens"></div>
+          <p class="meta" id="chNLink" hidden>En marge de : <span id="chNLinkTitle"></span> <button class="btn small" type="button" id="chNUnlink">Détacher de l’article</button></p>
           <div class="field"><label for="chNBody">Feuille</label><textarea id="chNBody" rows="3" maxlength="2000" placeholder="Écrivez ce que vous voulez garder." aria-describedby="chNErr"></textarea><p class="error" id="chNErr" role="alert" hidden></p></div>
           <div class="row"><button class="btn primary" type="submit">Enregistrer</button><button class="btn" type="button" id="chMd">Exporter en Markdown</button><span class="status" id="chNStatus" role="status"></span></div>
         </form>

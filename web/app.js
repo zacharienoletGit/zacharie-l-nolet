@@ -511,7 +511,15 @@
     const today = new Date();
     const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     $('chEdDate').value = iso(today);
-    $('chDate').textContent = today.toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    // L’en-tête du cahier affiche la date de l’édition choisie, pas la date d’ouverture.
+    const civil = (s) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : today; };
+    const showDate = (s) => { $('chDate').textContent = civil(s).toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); };
+    // La feuille en cours peut être liée à un article : le lien est affiché et se détache d’un clic.
+    const setPending = (a) => {
+      pendingArticle = a ? a.id : null;
+      $('chNLink').hidden = !a;
+      $('chNLinkTitle').textContent = a ? a.title : '';
+    };
 
     const row = (a, i, list) => `<li>
       <span class="n">${String(i + 1).padStart(2, '0')}</span>
@@ -541,7 +549,7 @@
       }));
       root.querySelectorAll('[data-feuille]').forEach(b => b.addEventListener('click', () => {
         const a = byId(b.dataset.feuille);
-        pendingArticle = a ? a.id : null;
+        setPending(a);
         $('chNTitle').value = a ? a.title : '';
         select($('tab-classeur'), false);
         $('chNBody').focus();
@@ -549,6 +557,7 @@
     };
     const renderEdition = () => keepFocus(() => {
       const date = $('chEdDate').value || iso(today);
+      showDate(date);
       const ed = fallbackEdition(CATALOG, date);
       $('chEdition').innerHTML = ed.map((a, i) => row(a, i, 'ed')).join('');
       wire($('chEdition'));
@@ -607,13 +616,14 @@
         return;
       }
       feuilles = r.saved ? readFeuilles(r.next) : feuilles.concat([note]);
-      pendingArticle = null;
+      setPending(null);
       $('chNTitle').value = ''; $('chNBody').value = '';
       $('chNStatus').textContent = r.saved ? 'Feuille enregistrée dans votre navigateur.' : 'Feuille gardée pour cette visite seulement : le navigateur refuse le stockage local.';
       renderClasseur();
       $('chNTitle').focus();
     });
     $('chNBody').addEventListener('input', () => { if (!chErr.hidden && $('chNBody').value.trim()) showChErr(''); });
+    $('chNUnlink').addEventListener('click', () => { setPending(null); $('chNStatus').textContent = 'Feuille détachée de l’article : elle sera enregistrée comme feuille libre.'; $('chNBody').focus(); });
     $('chMd').addEventListener('click', () => {
       $('chMdOut').value = renderClasseurMarkdown({ notes: feuilles, bookmarks: [...clips].map(articleId => ({ articleId })), articles: CATALOG, exportedAt: new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }) });
       $('chMdOut').hidden = false;
@@ -629,6 +639,7 @@
       clips.clear();
       $('chQ').value = ''; $('chSec').value = '';
       $('chEdDate').value = iso(today);
+      setPending(null);
       cahier.dataset.size = 'lecture';
       cahier.querySelector('input[name="chSize"][value="lecture"]').checked = true;
       renderAll();

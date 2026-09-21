@@ -155,7 +155,16 @@ for (const f of pages) {
       await page.click('#tab-classeur'); await page.fill('#chNBody', 'Feuille de vérification.'); await page.click('#chNoteForm button[type=submit]');
       expect((await page.locator('#chNotes li:not(.empty)').count()) === 1, 'cahier : la feuille n’est pas dans le classeur');
       await page.click('#chMd'); const md = await page.inputValue('#chMdOut'); expect(/## Coupures/.test(md) && /Feuille de vérification/.test(md), 'cahier : l’export omet les coupures ou la feuille');
+      // Une feuille liée à un article se détache d’un clic : enregistrée libre, sans « En marge de ».
+      await page.click('#tab-edition'); await page.click('#chEdition li:nth-child(2) [data-feuille]');
+      expect(!(await page.isHidden('#chNLink')) && (await page.inputValue('#chNTitle')) !== '', 'cahier : l’article lié à la feuille n’est pas affiché');
+      await page.click('#chNUnlink'); await page.fill('#chNBody', 'Feuille libre.'); await page.click('#chNoteForm button[type=submit]');
+      expect((await page.isHidden('#chNLink')) && !/En marge de/.test(await text('#chNotes')), 'cahier : une feuille détachée reste liée à l’article');
+      // L’en-tête du cahier suit la date de l’édition choisie.
+      await page.click('#tab-edition'); await page.fill('#chEdDate', '2025-03-14'); await page.dispatchEvent('#chEdDate', 'change');
+      expect(/14 mars 2025/.test(await text('#chDate')) && /2025-03-14/.test(await text('#chEdNote')), 'cahier : l’en-tête n’affiche pas la date de l’édition choisie');
       await page.click('#tab-cabinet'); await page.click('#chReset'); expect((await text('#chKvClips')) === '0', 'cahier : la remise à zéro ne vide pas les coupures');
+      expect(!/14 mars 2025/.test(await text('#chDate')), 'cahier : la remise à zéro ne ramène pas la date du jour');
       // Un autre onglet remplit le classeur : l’ajout doit être refusé sans perdre la saisie.
       await page.evaluate(() => localStorage.setItem('zln-feuilles', JSON.stringify(Array.from({ length: 60 }, (_, i) => ({ title: 'Feuille ' + i, body: 'Corps ' + i })))));
       await page.click('#tab-classeur'); await page.fill('#chNBody', 'Soixante et unième'); await page.click('#chNoteForm button[type=submit]');
