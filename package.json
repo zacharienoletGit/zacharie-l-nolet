@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
+    "verify:web": "node scripts/verify-web.mjs",
     "backend": "php -S 127.0.0.1:8080 backend/php/router.php",
     "export-catalog": "node scripts/export-catalog.cjs"
   },

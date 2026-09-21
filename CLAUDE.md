@@ -114,6 +114,6 @@ Pour la page web statique : pas de style ni de script en ligne (la CSP est `styl
 
 ## Comment vérifier avant de livrer
 
-- `web/` : ouvrir les neuf pages ; vérifier les listes B, C, D ; aucun débordement horizontal à 400 px ; aucune erreur console ; photos ≤ 105 Ko avec variante 480 px (`srcset`).
+- `web/` : `npm run verify:web` (Chromium sur toutes les pages, bureau et 400 px ; le déploiement l’exécute aussi et refuse de publier en cas d’échec) ; ouvrir les pages ; vérifier les listes B, C, D ; aucun débordement horizontal à 400 px ; aucune erreur console ; photos ≤ 105 Ko avec variante 480 px (`srcset`).
 - App : `npm test` doit rester vert ; `npm audit` sans vulnérabilité haute ou critique.
 - Relire la liste A une dernière fois sur une capture d’écran : si une page pourrait être celle de n’importe qui, elle n’est pas finie.
