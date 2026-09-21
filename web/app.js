@@ -216,11 +216,11 @@
     $('metaContrast').textContent = `Texte courant sur le fond : ${f(r1)}. Texte secondaire sur le fond : ${f(r2)}.`;
 
     const reducedNow = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const vt = 'startViewTransition' in document;
+    const vt = 'startViewTransition' in document && 'onpagereveal' in window;
     $('metaMotion').textContent = (reducedNow
       ? 'Vous avez demandé moins d’animations : les deux sont coupées sur ce site.'
       : 'Vos réglages permettent les animations : les deux du site sont actives.') +
-      (vt ? ' Votre navigateur sait faire glisser le nom d’une page à l’autre.' : ' Votre navigateur ne fait pas encore les transitions de vue : il fait un fondu simple.');
+      (vt ? ' Votre navigateur connaît les transitions de vue entre pages : le nom devrait glisser de l’accueil à la barre de navigation.' : ' Votre navigateur ne connaît pas encore les transitions de vue entre pages : la page change sans animation.');
   }
 
 
