@@ -522,11 +522,21 @@
         <button class="btn small" type="button" id="${list}-feuille-${esc(a.id)}" data-feuille="${esc(a.id)}" aria-label="Écrire une feuille sur : ${esc(a.title)}">Feuille</button>
       </div>
     </li>`;
+    // Après un retrait dans le Classeur, le bouton activé disparaît : le focus va au bouton voisin, sinon au titre de la liste.
+    const focusAfterRemoval = (listId, titleId, selector, index) => {
+      if (document.activeElement && document.activeElement !== document.body) return;
+      const buttons = [...$(listId).querySelectorAll(selector)];
+      const target = buttons[Math.min(index, buttons.length - 1)] || $(titleId);
+      if (target) target.focus();
+    };
     const wire = (root) => {
       root.querySelectorAll('[data-clip]').forEach(b => b.addEventListener('click', () => {
         const id = b.dataset.clip;
+        const inClasseur = root === $('chClips');
+        const index = inClasseur ? [...root.querySelectorAll('[data-clip]')].indexOf(b) : -1;
         if (clips.has(id)) clips.delete(id); else clips.add(id);
         renderAll();
+        if (inClasseur) focusAfterRemoval('chClips', 'chClipsTitle', '[data-clip]', index);
       }));
       root.querySelectorAll('[data-feuille]').forEach(b => b.addEventListener('click', () => {
         const a = byId(b.dataset.feuille);
@@ -563,7 +573,9 @@
         const r = writeFeuilles(cur => { const k = cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, feuilles.filter(n => !sameFeuille(n, gone)));
         feuilles = r.saved ? readFeuilles(r.next) : feuilles.filter(n => !sameFeuille(n, gone));
         $('chNStatus').textContent = r.saved ? 'Feuille retirée.' : 'Feuille retirée pour cette visite seulement : le navigateur refuse le stockage local.';
+        const index = Number(b.dataset.rm);
         renderAll();
+        focusAfterRemoval('chNotes', 'chNotesTitle', '[data-rm]', index);
       }));
       $('chCount').textContent = String(clips.size + feuilles.length);
       $('chKvTextes').textContent = String(CATALOG.length);
@@ -799,9 +811,9 @@
 
     const renderAb = () => {
       const a = { n: num('abNa'), conv: num('abXa') }, b = { n: num('abNb'), conv: num('abXb') };
-      const bad = [['abNa', a.n], ['abXa', a.conv], ['abNb', b.n], ['abXb', b.conv]].filter(([id, v]) => !Number.isFinite(v) || v < 0);
+      const bad = [['abNa', a.n], ['abXa', a.conv], ['abNb', b.n], ['abXb', b.conv]].filter(([id, v]) => !Number.isInteger(v) || v < 0 || v > 10000000);
       let msg = '';
-      if (bad.length) msg = 'Indiquez les quatre nombres pour voir le verdict.';
+      if (bad.length) msg = 'Indiquez les quatre nombres : des entiers, de 0 à 10 000 000.';
       else if (a.n === 0 || b.n === 0) msg = 'Il faut au moins un visiteur dans chaque groupe.';
       else if (a.conv > a.n || b.conv > b.n) msg = 'Les conversions ne peuvent pas dépasser les visiteurs.';
       ['abNa', 'abXa', 'abNb', 'abXb'].forEach(id => $(id).setAttribute('aria-invalid', String(Boolean(msg) && (bad.some(([b]) => b === id) || (msg.includes('dépasser') && (id === 'abXa' || id === 'abXb')) || (msg.includes('visiteur') && (id === 'abNa' || id === 'abNb'))))));
@@ -1052,6 +1064,7 @@
       notes = saved ? readFeuilles(r.next) : notes.filter(n => !sameFeuille(n, gone));
       renderNotes();
       $('nStatus').textContent = saved ? 'Note retirée.' : 'Note retirée pour cette visite seulement : le navigateur refuse le stockage local.';
+      if (!document.activeElement || document.activeElement === document.body) { const left = $('nList').querySelectorAll('.x'); (left[Math.min(Number(b.dataset.i), left.length - 1)] || $('nTitle')).focus(); }
     }));
     renderMd();
   });
