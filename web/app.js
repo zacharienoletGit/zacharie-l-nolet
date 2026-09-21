@@ -1001,10 +1001,16 @@
   const renderRatio = () => {
     const err = $('ratioErr');
     const raw = ratioIds.map(([a, b]) => ({ onTime: readNum(a), total: readNum(b) }));
-    const badRow = raw.findIndex(r => !Number.isFinite(r.onTime) || !Number.isFinite(r.total) || r.onTime < 0 || r.total <= 0 || r.onTime > r.total || r.total > 1000000);
-    ratioIds.forEach(([a, b], i) => { $(a).setAttribute('aria-invalid', String(i === badRow)); $(b).setAttribute('aria-invalid', String(i === badRow)); });
+    // Des dénombrements : entiers, bornés, et jamais plus de livraisons à temps que de livraisons. Chaque case est jugée seule.
+    const count = (v, min) => Number.isInteger(v) && v >= min && v <= 1000000;
+    const invalid = raw.map(r => ({
+      onTime: !count(r.onTime, 0) || (count(r.total, 1) && r.onTime > r.total),
+      total: !count(r.total, 1) || (count(r.onTime, 0) && r.onTime > r.total),
+    }));
+    ratioIds.forEach(([a, b], i) => { $(a).setAttribute('aria-invalid', String(invalid[i].onTime)); $(b).setAttribute('aria-invalid', String(invalid[i].total)); });
+    const badRow = invalid.findIndex(x => x.onTime || x.total);
     if (badRow >= 0) {
-      err.textContent = 'Une ligne est incomplète ou impossible : les deux nombres sont requis, le total doit être entre 1 et 1 000 000 et au moins égal aux livraisons à temps.';
+      err.textContent = 'Une ligne est incomplète ou impossible : des nombres entiers, un total entre 1 et 1 000 000 et au moins égal aux livraisons à temps.';
       err.hidden = false;
       document.querySelectorAll('#ratioTable [data-rate]').forEach(c => { c.textContent = '—'; });
       $('rAvg').textContent = '—';

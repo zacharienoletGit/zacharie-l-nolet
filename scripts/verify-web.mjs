@@ -101,6 +101,10 @@ for (const f of pages) {
       await page.fill('#tLocal', '08:30'); expect(/gagne/.test(await text('#mergeOut')), 'synchronisation : aucun verdict après saisie');
       await page.fill('#r2b', ''); expect(/impossible/.test(await text('#rVerdict')), 'ratio : case vide sans verdict d’attente');
       await page.fill('#r2b', '20000'); await page.fill('#r2a', '17000'); expect(/points?|%/.test(await text('#rVerdict')), 'ratio : aucun verdict après saisie');
+      await page.fill('#r2a', '0.5'); expect(!(await page.isHidden('#ratioErr')) && (await page.getAttribute('#r2a', 'aria-invalid')) === 'true' && (await page.getAttribute('#r2b', 'aria-invalid')) === 'false', 'ratio : une valeur fractionnaire passe, ou le mauvais champ est marqué');
+      await page.fill('#r2a', '17000'); await page.fill('#r1a', ''); await page.fill('#r2b', '');
+      expect((await page.getAttribute('#r1b', 'aria-invalid')) === 'false' && (await page.getAttribute('#r2b', 'aria-invalid')) === 'true', 'ratio : deux lignes invalides ne sont pas marquées case par case');
+      await page.fill('#r1a', '95'); await page.fill('#r2b', '20000');
       const total0 = await text('#cpqTotal'); await page.click('#cpq-plateau'); expect((await text('#cpqTotal')) !== total0 && !(await page.isChecked('#cpq-tiroir')), 'CPQ : le plateau ne fait pas tomber le tiroir');
       await page.click('#nForm button[type=submit]'); expect(!(await page.isHidden('#nErr')), 'notes : une note vide passe sans erreur');
       await page.fill('#nBody', 'Feuille de vérification.'); await page.click('#nForm button[type=submit]'); expect(/enregistrée|visite/.test(await text('#nStatus')), 'notes : aucun accusé d’enregistrement');
