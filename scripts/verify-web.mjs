@@ -130,6 +130,9 @@ for (const f of pages) {
   // Les démonstrations doivent répondre : on déclenche les gestes principaux et on vérifie leurs sorties.
   const expect = (cond, msg) => { if (!cond) fail(f, msg); };
   const text = (sel) => page.textContent(sel).then(t => (t || '').trim());
+  // Les écritures du classeur passent par un verrou entre onglets : on attend qu’il soit libre avant de lire l’état.
+  const settled = (p = page) => p.evaluate(() => navigator.locks ? navigator.locks.request('zln-feuilles', () => undefined) : undefined);
+  const submit = async (sel) => { await page.click(sel); await settled(); };
   try {
     await page.setViewportSize({ width: 1280, height: 900 });
     if (f === 'preuves.html') {
@@ -144,21 +147,26 @@ for (const f of pages) {
       expect((await page.getAttribute('#r1b', 'aria-invalid')) === 'false' && (await page.getAttribute('#r2b', 'aria-invalid')) === 'true', 'ratio : deux lignes invalides ne sont pas marquées case par case');
       await page.fill('#r1a', '95'); await page.fill('#r2b', '20000');
       const total0 = await text('#cpqTotal'); await page.click('#cpq-plateau'); expect((await text('#cpqTotal')) !== total0 && !(await page.isChecked('#cpq-tiroir')), 'CPQ : le plateau ne fait pas tomber le tiroir');
-      await page.click('#nForm button[type=submit]'); expect(!(await page.isHidden('#nErr')), 'notes : une note vide passe sans erreur');
-      await page.fill('#nBody', 'Feuille de vérification.'); await page.click('#nForm button[type=submit]'); expect(/enregistrée|visite/.test(await text('#nStatus')), 'notes : aucun accusé d’enregistrement');
+      await submit('#nForm button[type=submit]'); expect(!(await page.isHidden('#nErr')), 'notes : une note vide passe sans erreur');
+      await page.fill('#nBody', 'Feuille de vérification.'); await submit('#nForm button[type=submit]'); expect(/enregistrée|visite/.test(await text('#nStatus')), 'notes : aucun accusé d’enregistrement');
       expect(/Feuille de vérification/.test(await page.inputValue('#mdOut')), 'export : la note n’apparaît pas dans le Markdown');
+      // Une feuille liée à un article, écrite depuis la page Démo, garde son « En marge de » dans cet export aussi.
+      await page.evaluate(() => localStorage.setItem('zln-feuilles', JSON.stringify([{ title: 'Liée', body: 'Corps', articleId: 'a-08' }])));
+      await page.reload({ waitUntil: 'load' });
+      expect(/En marge de : Un ratio ne se somme pas/.test(await page.inputValue('#mdOut')), 'export : l’article lié à une feuille est perdu');
+      await page.evaluate(() => localStorage.clear());
     }
     if (f === 'demo.html') {
       expect((await page.locator('#chEdition li').count()) === 10, 'cahier : l’édition n’a pas 10 textes');
       await page.click('#chEdition li:nth-child(1) [data-clip]'); expect((await text('#chCount')) === '1', 'cahier : découper ne compte pas la coupure');
       await page.click('#tab-rubriques'); await page.fill('#chQ', 'etoile'); expect(/2 textes/.test(await text('#chQn')), 'cahier : la recherche ne trouve pas 2 textes');
-      await page.click('#tab-classeur'); await page.fill('#chNBody', 'Feuille de vérification.'); await page.click('#chNoteForm button[type=submit]');
+      await page.click('#tab-classeur'); await page.fill('#chNBody', 'Feuille de vérification.'); await submit('#chNoteForm button[type=submit]');
       expect((await page.locator('#chNotes li:not(.empty)').count()) === 1, 'cahier : la feuille n’est pas dans le classeur');
       await page.click('#chMd'); const md = await page.inputValue('#chMdOut'); expect(/## Coupures/.test(md) && /Feuille de vérification/.test(md), 'cahier : l’export omet les coupures ou la feuille');
       // Une feuille liée à un article se détache d’un clic : enregistrée libre, sans « En marge de ».
       await page.click('#tab-edition'); await page.click('#chEdition li:nth-child(2) [data-feuille]');
       expect(!(await page.isHidden('#chNLink')) && (await page.inputValue('#chNTitle')) !== '', 'cahier : l’article lié à la feuille n’est pas affiché');
-      await page.click('#chNUnlink'); await page.fill('#chNBody', 'Feuille libre.'); await page.click('#chNoteForm button[type=submit]');
+      await page.click('#chNUnlink'); await page.fill('#chNBody', 'Feuille libre.'); await submit('#chNoteForm button[type=submit]');
       expect((await page.isHidden('#chNLink')) && !/En marge de/.test(await text('#chNotes')), 'cahier : une feuille détachée reste liée à l’article');
       // L’en-tête du cahier suit la date de l’édition choisie.
       await page.click('#tab-edition'); await page.fill('#chEdDate', '2025-03-14'); await page.dispatchEvent('#chEdDate', 'change');
@@ -167,8 +175,18 @@ for (const f of pages) {
       expect(!/14 mars 2025/.test(await text('#chDate')), 'cahier : la remise à zéro ne ramène pas la date du jour');
       // Un autre onglet remplit le classeur : l’ajout doit être refusé sans perdre la saisie.
       await page.evaluate(() => localStorage.setItem('zln-feuilles', JSON.stringify(Array.from({ length: 60 }, (_, i) => ({ title: 'Feuille ' + i, body: 'Corps ' + i })))));
-      await page.click('#tab-classeur'); await page.fill('#chNBody', 'Soixante et unième'); await page.click('#chNoteForm button[type=submit]');
+      await page.click('#tab-classeur'); await page.fill('#chNBody', 'Soixante et unième'); await submit('#chNoteForm button[type=submit]');
       expect(!(await page.isHidden('#chNErr')) && (await page.inputValue('#chNBody')) === 'Soixante et unième' && !/enregistrée/.test(await text('#chNStatus')), 'cahier : une feuille refusée par la limite est annoncée enregistrée ou perdue');
+      // Deux onglets enregistrent en même temps : les deux feuilles survivent (écritures sérialisées par le verrou).
+      await page.evaluate(() => localStorage.setItem('zln-feuilles', JSON.stringify(Array.from({ length: 58 }, (_, i) => ({ title: 'Feuille ' + i, body: 'Corps ' + i })))));
+      await page.reload({ waitUntil: 'load' });
+      const other = await ctx.newPage(); await other.goto(page.url(), { waitUntil: 'load' });
+      for (const [p, label] of [[page, 'Onglet A'], [other, 'Onglet B']]) { await p.click('#tab-classeur'); await p.fill('#chNBody', label); }
+      await Promise.all([page.click('#chNoteForm button[type=submit]'), other.click('#chNoteForm button[type=submit]')]);
+      await settled(); await settled(other);
+      const kept = await page.evaluate(() => JSON.parse(localStorage.getItem('zln-feuilles')).map(n => n.body));
+      expect(kept.length === 60 && kept.includes('Onglet A') && kept.includes('Onglet B'), 'cahier : deux onglets qui enregistrent en même temps perdent une feuille');
+      await other.close();
       await page.evaluate(() => localStorage.clear());
     }
     if (f === 'donnees/index.html') {

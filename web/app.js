@@ -184,11 +184,17 @@
       : (fallback || []);
   };
   const sameFeuille = (a, b) => a.title === b.title && a.body === b.body && (a.articleId || '') === (b.articleId || '');
-  const writeFeuilles = (mutate, fallback) => {
+  /* Deux onglets peuvent lire le même classeur puis écrire l’un après l’autre : la seconde écriture effacerait la première.
+     Les mutations sont donc mises en file avec un verrou partagé entre onglets (Web Locks) ; sans verrou disponible
+     (contexte non sécurisé), la mutation s’exécute directement, relecture comprise. */
+  const withFeuillesLock = (fn) => (navigator.locks && navigator.locks.request)
+    ? navigator.locks.request(FEUILLES_KEY, () => fn())
+    : Promise.resolve().then(fn);
+  const writeFeuilles = (mutate, fallback) => withFeuillesLock(() => {
     const before = readFeuilles(fallback);
     const next = mutate(before);
     return { saved: store.set(FEUILLES_KEY, next), next, applied: next.length !== before.length };
-  };
+  });
   const onOtherTab = (fn) => window.addEventListener('storage', (e) => { if (e.key === FEUILLES_KEY || e.key === null) fn(); });
 
   /* ---------- Coulisses : la page se mesure elle-même ---------- */
@@ -457,7 +463,8 @@
     return `${lines.join('\n').trim()}\n`;
   }
 
-  function renderFeuillesMarkdown(notes, exportedAt) {
+  function renderFeuillesMarkdown(notes, exportedAt, articles) {
+    const byId = new Map((articles || []).map(a => [a.id, a]));
     const lines = [
       '# Classeur — Ludovic Zacharie Nolet Gilbert',
       '',
@@ -469,10 +476,7 @@
     if (!notes.length) {
       lines.push('## Notes', '', '_Aucune feuille._');
     }
-    for (const note of notes) {
-      const title = note.title.trim() || 'Sans titre';
-      lines.push(`### ${title}`, '', note.body.trim() || '_Feuille vide._', '');
-    }
+    for (const note of notes) lines.push(noteBlock(note, note.articleId ? byId.get(note.articleId) : undefined));
     return `${lines.join('\n').trim()}\n`;
   }
 
@@ -578,9 +582,9 @@
       $('chNotes').innerHTML = feuilles.length
         ? feuilles.map((n, i) => { const a = n.articleId ? byId(n.articleId) : null; return `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><h4>${esc(n.title.trim() || 'Sans titre')}</h4>${a ? `<p class="meta">En marge de : ${esc(a.title)}</p>` : ''}<p class="dek">${esc(n.body)}</p><div class="acts"><button class="btn small" type="button" id="chrm-${i}" data-rm="${i}" aria-label="Retirer la feuille : ${esc(n.title.trim() || 'Sans titre')}">Retirer</button></div></li>`; }).join('')
         : '<li class="empty">Aucune feuille. Écrivez-en une ci-dessous.</li>';
-      $('chNotes').querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', () => {
+      $('chNotes').querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', async () => {
         const gone = feuilles[Number(b.dataset.rm)];
-        const r = writeFeuilles(cur => { const k = cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, feuilles.filter(n => !sameFeuille(n, gone)));
+        const r = await writeFeuilles(cur => { const k = cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, feuilles.filter(n => !sameFeuille(n, gone)));
         feuilles = r.saved ? readFeuilles(r.next) : feuilles.filter((_, j) => j !== Number(b.dataset.rm));
         $('chNStatus').textContent = r.saved ? 'Feuille retirée.' : 'Feuille retirée pour cette visite seulement : le navigateur refuse le stockage local.';
         const index = Number(b.dataset.rm);
@@ -599,7 +603,7 @@
     $('chSec').addEventListener('change', renderResults);
     const chErr = $('chNErr');
     const showChErr = (msg) => { chErr.textContent = msg; chErr.hidden = !msg; $('chNBody').setAttribute('aria-invalid', String(Boolean(msg))); };
-    $('chNoteForm').addEventListener('submit', (e) => {
+    $('chNoteForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const title = $('chNTitle').value.trim();
       const body = $('chNBody').value.trim();
@@ -607,7 +611,7 @@
       if (feuilles.length >= 60) { showChErr('Soixante feuilles, c’est un classeur plein. Retirez-en avant d’en ajouter.'); return; }
       showChErr('');
       const note = cleanFeuille({ title, body, articleId: pendingArticle || undefined });
-      const r = writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), feuilles);
+      const r = await writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), feuilles);
       if (r.saved && !r.applied) {
         // Un autre onglet a rempli le classeur entre-temps : rien n’est perdu, la saisie reste dans le formulaire.
         feuilles = readFeuilles(r.next); renderClasseur();
@@ -663,7 +667,7 @@
   show('src3', [enqueue, entityKey, mergeNotes]);
   show('src4', [rateOfSums, averageOfRates]);
   show('src5', [configure], '// CPQ : base, 4 options, 3 règles (voir la trace à droite)');
-  show('src6', [renderFeuillesMarkdown]);
+  show('src6', [noteBlock, renderFeuillesMarkdown]);
 
   /* ---------- 01 Recherche ---------- */
   const qs = $('qs');
@@ -827,7 +831,7 @@
   let notes = readFeuilles(SEED.slice());
   const renderMd = () => {
     const ta = $('mdOut');
-    ta.value = renderFeuillesMarkdown(notes, new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }));
+    ta.value = renderFeuillesMarkdown(notes, new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }), CATALOG);
     flash(ta);
   };
   const renderNotes = () => keepFocus(() => {
@@ -835,9 +839,9 @@
     ul.innerHTML = notes.length
       ? notes.map((n, i) => `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${esc(n.title.trim() || 'Sans titre')}</span><button class="x" type="button" id="nx-${i}" data-i="${i}" aria-label="Retirer la note ${esc(n.title.trim() || 'sans titre')}">×</button></li>`).join('')
       : '<li class="empty">Aucune note. Écrivez-en une.</li>';
-    ul.querySelectorAll('.x').forEach(b => b.addEventListener('click', () => {
+    ul.querySelectorAll('.x').forEach(b => b.addEventListener('click', async () => {
       const gone = notes[Number(b.dataset.i)];
-      const r = writeFeuilles(cur => { const k = cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, notes.filter(n => !sameFeuille(n, gone)));
+      const r = await writeFeuilles(cur => { const k = cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, notes.filter(n => !sameFeuille(n, gone)));
       const saved = r.saved;
       notes = saved ? readFeuilles(r.next) : notes.filter((_, j) => j !== Number(b.dataset.i));
       renderNotes();
@@ -848,7 +852,7 @@
   });
   const nErr = $('nErr');
   const showNErr = (msg) => { nErr.textContent = msg; nErr.hidden = !msg; $('nBody').setAttribute('aria-invalid', String(Boolean(msg))); };
-  $('nForm').addEventListener('submit', (e) => {
+  $('nForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const title = $('nTitle').value.trim();
     const body = $('nBody').value.trim();
@@ -856,7 +860,7 @@
     if (notes.length >= 60) { showNErr('Soixante notes, c’est un classeur plein. Retirez-en avant d’en ajouter.'); return; }
     showNErr('');
     const note = cleanFeuille({ title, body });
-    const r = writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), notes);
+    const r = await writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), notes);
     if (r.saved && !r.applied) {
       notes = readFeuilles(r.next); renderNotes();
       $('nStatus').textContent = '';
