@@ -185,23 +185,27 @@
   };
   const readFeuilles = (fallback) => storedFeuilles() || fallback || [];
   const sameFeuille = (a, b) => a.title === b.title && a.body === b.body && (a.articleId || '') === (b.articleId || '');
-  /* Les feuilles dont l’écriture a été refusée (quota plein, stockage bloqué) vivent seulement en mémoire :
-     on les rajoute à ce que le stockage contient, pour qu’une écriture réussie plus tard ne les efface pas. */
-  const withUnsaved = (list, unsaved) => list.concat((unsaved || []).filter(u => !list.some(n => sameFeuille(n, u)))).slice(0, 60);
+  /* Quand une écriture est refusée (quota plein, stockage bloqué), l’écart entre l’écran et le stockage est gardé
+     en attente : feuilles ajoutées et feuilles retirées, une copie à la fois (deux feuilles identiques restent distinctes).
+     Chaque mutation repart du stockage avec cet écart appliqué ; une écriture réussie le solde. */
+  const diffOnce = (a, b) => { const rest = b.slice(); return a.filter(n => { const k = rest.findIndex(m => sameFeuille(m, n)); if (k >= 0) { rest.splice(k, 1); return false; } return true; }); };
+  const noPending = () => ({ added: [], removed: [] });
+  const overlay = (list, pending) => diffOnce(list, pending.removed).concat(pending.added).slice(0, 60);
   /* Deux onglets peuvent lire le même classeur puis écrire l’un après l’autre : la seconde écriture effacerait la première.
      Les mutations sont donc mises en file avec un verrou partagé entre onglets (Web Locks) ; sans verrou disponible
      (contexte non sécurisé), la mutation s’exécute directement, relecture comprise. */
   const withFeuillesLock = (fn) => (navigator.locks && navigator.locks.request)
     ? navigator.locks.request(FEUILLES_KEY, () => fn())
     : Promise.resolve().then(fn);
-  const writeFeuilles = (mutate, local, unsaved) => withFeuillesLock(() => {
+  /* `local` est la liste affichée, non modifiée : elle sert de point de départ quand le stockage est illisible. */
+  const writeFeuilles = (mutate, local, pending) => withFeuillesLock(() => {
     const stored = storedFeuilles();
-    const before = stored ? withUnsaved(stored, unsaved) : local;
+    const before = stored ? overlay(stored, pending) : local;
     const next = mutate(before);
     const saved = store.set(FEUILLES_KEY, next);
     const kept = saved ? readFeuilles(next) : next;
-    const persisted = saved ? kept : (stored || []);
-    return { saved, next: kept, applied: next.length !== before.length, unsaved: kept.filter(n => !persisted.some(p => sameFeuille(p, n))) };
+    const base = saved ? kept : (stored || []);
+    return { saved, next: kept, applied: next.length !== before.length, pending: saved ? noPending() : { added: diffOnce(kept, base), removed: diffOnce(base, kept) } };
   });
   const onOtherTab = (fn) => window.addEventListener('storage', (e) => { if (e.key === FEUILLES_KEY || e.key === null) fn(); });
 
@@ -518,7 +522,7 @@
 
     const clips = new Set();
     let feuilles = readFeuilles([]);
-    let unsaved = [];
+    let pending = noPending();
     let pendingArticle = null;
     const byId = (id) => CATALOG.find(a => a.id === id);
     const today = new Date();
@@ -592,11 +596,12 @@
         ? feuilles.map((n, i) => { const a = n.articleId ? byId(n.articleId) : null; return `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><h4>${esc(n.title.trim() || 'Sans titre')}</h4>${a ? `<p class="meta">En marge de : ${esc(a.title)}</p>` : ''}<p class="dek">${esc(n.body)}</p><div class="acts"><button class="btn small" type="button" id="chrm-${i}" data-rm="${i}" aria-label="Retirer la feuille : ${esc(n.title.trim() || 'Sans titre')}">Retirer</button></div></li>`; }).join('')
         : '<li class="empty">Aucune feuille. Écrivez-en une ci-dessous.</li>';
       $('chNotes').querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', async () => {
-        const gone = feuilles[Number(b.dataset.rm)];
-        const r = await writeFeuilles(cur => { const k = cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, feuilles.filter(n => !sameFeuille(n, gone)), unsaved);
-        feuilles = r.next; unsaved = r.unsaved;
-        $('chNStatus').textContent = r.saved ? 'Feuille retirée.' : 'Feuille retirée pour cette visite seulement : le navigateur refuse le stockage local.';
         const index = Number(b.dataset.rm);
+        const gone = feuilles[index];
+        // Une seule copie est retirée : celle du bouton activé si elle est encore à sa place, sinon la première identique.
+        const r = await writeFeuilles(cur => { const k = cur[index] && sameFeuille(cur[index], gone) ? index : cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, feuilles, pending);
+        feuilles = r.next; pending = r.pending;
+        $('chNStatus').textContent = r.saved ? 'Feuille retirée.' : 'Feuille retirée pour cette visite seulement : le navigateur refuse le stockage local.';
         renderAll();
         focusAfterRemoval('chNotes', 'chNotesTitle', '[data-rm]', index);
       }));
@@ -620,15 +625,15 @@
       if (feuilles.length >= 60) { showChErr('Soixante feuilles, c’est un classeur plein. Retirez-en avant d’en ajouter.'); return; }
       showChErr('');
       const note = cleanFeuille({ title, body, articleId: pendingArticle || undefined });
-      const r = await writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), feuilles, unsaved);
+      const r = await writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), feuilles, pending);
       if (!r.applied) {
         // Un autre onglet a rempli le classeur entre-temps : rien n’est perdu, la saisie reste dans le formulaire.
-        feuilles = r.next; unsaved = r.unsaved; renderClasseur();
+        feuilles = r.next; pending = r.pending; renderClasseur();
         $('chNStatus').textContent = '';
         showChErr('Soixante feuilles, c’est un classeur plein : une autre page vient de le remplir. Retirez-en avant d’en ajouter.');
         return;
       }
-      feuilles = r.next; unsaved = r.unsaved;
+      feuilles = r.next; pending = r.pending;
       setPending(null);
       $('chNTitle').value = ''; $('chNBody').value = '';
       $('chNStatus').textContent = r.saved ? 'Feuille enregistrée dans votre navigateur.' : 'Feuille gardée pour cette visite seulement : le navigateur refuse le stockage local.';
@@ -658,7 +663,7 @@
       renderAll();
       $('chResetMsg').textContent = 'Coupures et réglages remis à zéro. Vos feuilles restent dans votre navigateur.';
     });
-    onOtherTab(() => { feuilles = withUnsaved(readFeuilles(feuilles), unsaved); renderClasseur(); });
+    onOtherTab(() => { feuilles = overlay(readFeuilles(feuilles), pending); renderClasseur(); });
     renderAll();
   }
 
@@ -838,7 +843,7 @@
     { title: 'Hors article', body: 'Une feuille libre n’a pas besoin d’une coupure. Le classeur n’est pas un bookmark manager.' },
   ];
   let notes = readFeuilles(SEED.slice());
-  let unsaved = [];
+  let pending = noPending();
   const renderMd = () => {
     const ta = $('mdOut');
     ta.value = renderFeuillesMarkdown(notes, new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }), CATALOG);
@@ -850,10 +855,11 @@
       ? notes.map((n, i) => `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${esc(n.title.trim() || 'Sans titre')}</span><button class="x" type="button" id="nx-${i}" data-i="${i}" aria-label="Retirer la note ${esc(n.title.trim() || 'sans titre')}">×</button></li>`).join('')
       : '<li class="empty">Aucune note. Écrivez-en une.</li>';
     ul.querySelectorAll('.x').forEach(b => b.addEventListener('click', async () => {
-      const gone = notes[Number(b.dataset.i)];
-      const r = await writeFeuilles(cur => { const k = cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, notes.filter(n => !sameFeuille(n, gone)), unsaved);
+      const index = Number(b.dataset.i);
+      const gone = notes[index];
+      const r = await writeFeuilles(cur => { const k = cur[index] && sameFeuille(cur[index], gone) ? index : cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, notes, pending);
       const saved = r.saved;
-      notes = r.next; unsaved = r.unsaved;
+      notes = r.next; pending = r.pending;
       renderNotes();
       $('nStatus').textContent = saved ? 'Note retirée.' : 'Note retirée pour cette visite seulement : le navigateur refuse le stockage local.';
       if (!document.activeElement || document.activeElement === document.body) { const left = $('nList').querySelectorAll('.x'); (left[Math.min(Number(b.dataset.i), left.length - 1)] || $('nTitle')).focus(); }
@@ -870,15 +876,15 @@
     if (notes.length >= 60) { showNErr('Soixante notes, c’est un classeur plein. Retirez-en avant d’en ajouter.'); return; }
     showNErr('');
     const note = cleanFeuille({ title, body });
-    const r = await writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), notes, unsaved);
+    const r = await writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), notes, pending);
     if (!r.applied) {
-      notes = r.next; unsaved = r.unsaved; renderNotes();
+      notes = r.next; pending = r.pending; renderNotes();
       $('nStatus').textContent = '';
       showNErr('Soixante notes, c’est un classeur plein : une autre page vient de le remplir. Retirez-en avant d’en ajouter.');
       return;
     }
     const saved = r.saved;
-    notes = r.next; unsaved = r.unsaved;
+    notes = r.next; pending = r.pending;
     $('nTitle').value = '';
     $('nBody').value = '';
     renderNotes();
@@ -886,7 +892,7 @@
     $('nTitle').focus();
   });
   $('nBody').addEventListener('input', () => { if (!nErr.hidden && $('nBody').value.trim()) showNErr(''); });
-  onOtherTab(() => { notes = withUnsaved(readFeuilles(notes), unsaved); renderNotes(); });
+  onOtherTab(() => { notes = overlay(readFeuilles(notes), pending); renderNotes(); });
   renderNotes();
   $('mdCopy').addEventListener('click', copyWith($('mdCopy'), $('mdMsg'), () => $('mdOut').value, 'Copié dans le presse-papiers.'));
 })();

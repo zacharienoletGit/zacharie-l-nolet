@@ -198,7 +198,22 @@ for (const f of pages) {
       await page.click('#chrm-0'); await settled();
       const after = await page.evaluate(() => JSON.parse(localStorage.getItem('zln-feuilles')).map(n => n.body));
       expect(after.length === 1 && after[0] === 'Feuille en mémoire' && /Feuille en mémoire/.test(await text('#chNotes')), 'cahier : la feuille gardée en mémoire disparaît quand une écriture réussit ensuite');
+      // Un retrait refusé par le stockage est retenu lui aussi : la feuille ne réapparaît pas à l’écriture suivante.
+      await page.evaluate(() => { Storage.prototype.setItem = function () { throw new Error('quota'); }; });
+      await page.click('#chrm-0'); await settled();
+      expect(/visite seulement/.test(await text('#chNStatus')) && (await page.locator('#chNotes li:not(.empty)').count()) === 0, 'cahier : un retrait refusé n’est pas annoncé comme provisoire');
+      await page.evaluate(() => { Storage.prototype.setItem = window.__setItem; });
+      await page.fill('#chNBody', 'Après le retrait'); await submit('#chNoteForm button[type=submit]');
+      const afterRm = await page.evaluate(() => JSON.parse(localStorage.getItem('zln-feuilles')).map(n => n.body));
+      expect(afterRm.length === 1 && afterRm[0] === 'Après le retrait' && !/Feuille en mémoire/.test(await text('#chNotes')), 'cahier : une feuille retirée pendant une panne de stockage réapparaît ensuite');
       await page.evaluate(() => localStorage.clear());
+      // Stockage illisible dès le départ et deux feuilles identiques : retirer une ligne n’en retire qu’une.
+      await page.reload({ waitUntil: 'load' }); await page.click('#tab-classeur');
+      await page.evaluate(() => { window.__getItem = Storage.prototype.getItem; Storage.prototype.getItem = function () { throw new Error('bloqué'); }; Storage.prototype.setItem = function () { throw new Error('bloqué'); }; });
+      for (let i = 0; i < 2; i++) { await page.fill('#chNBody', 'Double'); await submit('#chNoteForm button[type=submit]'); }
+      await page.click('#chrm-0'); await settled();
+      expect((await page.locator('#chNotes li:not(.empty)').count()) === 1, 'cahier : retirer une feuille en double les retire toutes quand le stockage est bloqué');
+      await page.evaluate(() => { Storage.prototype.getItem = window.__getItem; Storage.prototype.setItem = window.__setItem; localStorage.clear(); });
     }
     if (f === 'donnees/index.html') {
       expect(/Corrélation r = /.test(await text('#dRegOut')), 'données : pas de corrélation calculée');
