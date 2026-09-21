@@ -281,9 +281,17 @@ for (const f of pages) {
       const totals = await page.$$eval('#cqTotals dd', ds => ds.map(d => d.textContent));
       const sum = amount(totals[1]) + totals.slice(2).reduce((acc, t) => acc + amount(t), 0);
       expect(Math.abs(sum - amount(await text('#cqTotal'))) < 0.005, 'CPQ : le total n’est pas la somme des montants affichés');
-      await page.fill('#cqW', '160'); await page.click('#cq-second'); await page.fill('#cqW', ''); await page.fill('#cqW', '180');
+      // Une option cochée pendant qu’une dimension est invalide garde la priorité quand la dimension redevient valide.
+      await page.click('#cq-lampe'); await page.fill('#cqW', ''); await page.click('#cq-inclinable'); await page.fill('#cqW', '160');
+      expect((await page.isChecked('#cq-inclinable')) && !(await page.isChecked('#cq-tiroir')), 'CPQ : l’option cochée pendant une largeur invalide perd sa priorité');
+      await page.click('#cq-second'); await page.fill('#cqW', ''); await page.fill('#cqW', '180');
       expect(await page.isChecked('#cq-second'), 'CPQ : effacer puis retaper la largeur perd le deuxième plateau');
       await page.fill('#cqW', '300'); expect(!(await page.isHidden('#cqErr')) && (await text('#cqTotal')) === '—' && (await page.isDisabled('#cqCopy')), 'CPQ : une largeur impossible laisse un total ou un bouton de copie actif');
+      // Une copie encore en attente ne réactive pas le bouton si le devis est devenu invalide entre-temps.
+      await page.fill('#cqW', '180');
+      await page.evaluate(() => { Object.defineProperty(navigator.clipboard, 'writeText', { value: () => new Promise(r => { window.__resolveCopy = r; }), configurable: true }); });
+      await page.click('#cqCopy'); await page.fill('#cqW', '300'); await page.evaluate(() => window.__resolveCopy()); await page.waitForTimeout(50);
+      expect(await page.isDisabled('#cqCopy'), 'CPQ : la fin d’une copie réactive le bouton alors que le devis est invalide');
     }
     if (f === 'contact.html') {
       await page.click('#cSend'); expect((await page.getAttribute('#cName', 'aria-invalid')) === 'true', 'contact : le nom vide n’est pas signalé');

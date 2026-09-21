@@ -14,7 +14,8 @@
     $(id).textContent = (note ? note + '\n\n' : '') + fns.map(f => f.toString().replace(/\n {2}/g, '\n')).join('\n\n');
   };
 
-  const copyWith = (btn, msg, getText, done) => async () => {
+  /* `canEnable` dit si le bouton peut redevenir actif à la fin : le formulaire a pu devenir invalide pendant la copie. */
+  const copyWith = (btn, msg, getText, done, canEnable) => async () => {
     btn.setAttribute('aria-busy', 'true');
     btn.disabled = true;
     try {
@@ -24,7 +25,7 @@
       msg.textContent = 'Le presse-papiers est bloqué ici : sélectionnez le texte et copiez-le au clavier.';
     } finally {
       btn.removeAttribute('aria-busy');
-      btn.disabled = false;
+      btn.disabled = canEnable ? !canEnable() : false;
     }
     setTimeout(() => { msg.textContent = ''; }, 3000);
   };
@@ -117,9 +118,13 @@
       $('cqOpts').innerHTML = Object.entries(CQ.options).map(([k, o]) => `<label class="opt"><input type="checkbox" id="cq-${k}" data-opt="${k}" ${picked.has(k) ? 'checked' : ''}> ${esc(o.label)}<span class="price">+ ${money(o.price)}</span></label>`).join('');
       $('cqOpts').querySelectorAll('input').forEach(el => el.addEventListener('change', () => { const k = el.dataset.opt; if (el.checked) selected.add(k); else selected.delete(k); render(k); }));
     });
+    // La dernière option cochée garde la priorité entre options incompatibles jusqu’à la première résolution valide,
+    // même si une dimension était invalide au moment du clic.
+    let lastChanged = null;
     const render = (changed) => {
-      const q = buildQuote(CQ, readInput(), changed || null);
-      if (!q.errors.length) selected = new Set(q.picked);
+      if (changed) lastChanged = changed;
+      const q = buildQuote(CQ, readInput(), lastChanged);
+      if (!q.errors.length) { selected = new Set(q.picked); lastChanged = null; }
       renderOptions(q.picked);
       ['width', 'depth', 'qty'].forEach(f => $({ width: 'cqW', depth: 'cqD', qty: 'cqQty' }[f]).setAttribute('aria-invalid', String(q.errors.some(e => e.field === f))));
       $('cqErr').textContent = q.errors.map(e => e.text).join(' ');
@@ -148,7 +153,7 @@
     ['cqW', 'cqD', 'cqQty'].forEach(id => $(id).addEventListener('input', () => render(null)));
     $('cqShip').addEventListener('change', () => render(null));
     document.querySelectorAll('input[name="cqMat"]').forEach(r => r.addEventListener('change', () => render(null)));
-    const copyQuote = copyWith($('cqCopy'), $('cqMsg'), quoteText, 'Devis copié dans le presse-papiers.');
+    const copyQuote = copyWith($('cqCopy'), $('cqMsg'), quoteText, 'Devis copié dans le presse-papiers.', () => Boolean(lastQuote));
     $('cqCopy').addEventListener('click', () => { if (!lastQuote) { $('cqMsg').textContent = 'Aucun devis à copier : corrigez d’abord les champs en erreur.'; return; } copyQuote(); });
     render(null);
     show('srcCq', [resolveOptions, buildQuote], '// CQ : plateau au cm², trois matériaux, six options, quatre règles, paliers de remise, livraison, TPS et TVQ');
