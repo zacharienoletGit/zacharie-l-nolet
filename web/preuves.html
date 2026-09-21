@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Mon travail en direct · Zacharie L. Nolet</title>
+<meta name="description" content="Six morceaux du code de Zacharie L. Nolet qui tournent dans votre navigateur : recherche, synchronisation hors ligne, calculs de tableau de bord, configurateur de prix, export de données.">
+<meta name="author" content="Zacharie L. Nolet">
+<meta name="theme-color" content="#FAFAF7">
+<link rel="canonical" href="https://zacharienoletgit.github.io/zacharie-l-nolet/preuves.html">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_CA">
+<meta property="og:site_name" content="Zacharie L. Nolet">
+<meta property="og:title" content="Mon travail en direct · Zacharie L. Nolet">
+<meta property="og:description" content="Six morceaux du code de Zacharie L. Nolet qui tournent dans votre navigateur : recherche, synchronisation hors ligne, calculs de tableau de bord, configurateur de prix, export de données.">
+<meta property="og:url" content="https://zacharienoletgit.github.io/zacharie-l-nolet/preuves.html">
+<meta property="og:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zacharie L. Nolet, portrait et nom sur fond d’encre">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mon travail en direct · Zacharie L. Nolet">
+<meta name="twitter:description" content="Six morceaux du code de Zacharie L. Nolet qui tournent dans votre navigateur : recherche, synchronisation hors ligne, calculs de tableau de bord, configurateur de prix, export de données.">
+<meta name="twitter:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<a class="skip" href="#main">Aller au contenu</a>
+
+<div class="topbar">
+  <nav aria-label="Pages">
+    <a class="brand" href="./">Z. L. Nolet</a>
+    <a href="./">Accueil</a>
+    <a href="parcours.html">Parcours</a>
+    <a href="preuves.html" aria-current="page">Preuves</a>
+    <a href="engagement.html">Travailler ensemble</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</div>
+<header class="page-head">
+  <p class="kicker"><b>Mon travail en direct</b> · Six démonstrations</p>
+  <h1>Le code affiché est le code qui tourne</h1>
+  <p class="lede">À gauche, mon code. À droite, il s’exécute : changez les valeurs. Les trois premières démonstrations viennent de mon application iPhone, les trois autres ont été écrites pour ce site.</p>
+</header>
+
+<main id="main">
+  <section id="liste">
+
+    <article class="proof" id="p1">
+      <header>
+        <span class="rank">01</span>
+        <h3>Une recherche qui tolère les accents</h3>
+        <p class="what"><strong>En clair :</strong> vos utilisateurs tapent « etoile » ou « ETOILE » sans accent, et trouvent quand même « étoile ». Une faute fréquente comme « Netari » peut aussi être prévue et mener à Nectari.</p>
+        <p class="what">La requête et les textes sont ramenés à une forme sans accent ni majuscule avant d’être comparés. <span class="claim">Un test automatique vérifie que « Netari », faute fréquente inscrite comme mot-clé, trouve bien Nectari.</span> Le catalogue de démonstration contient les textes techniques du projet.</p>
+      </header>
+      <div class="src">
+        <span class="kicker">Le code qui tourne</span>
+        <pre id="src1" tabindex="0"></pre>
+        <p class="ref">Tiré tel quel de l’application iPhone (src/domain/search.ts) et de son test</p>
+      </div>
+      <div class="demo">
+        <figure class="video">
+  <video id="v-demo-recherche" controls muted playsinline preload="none" poster="video/demo-recherche.jpg" width="1280" height="720" aria-label="La recherche tolère les accents et les majuscules, en 10 secondes">
+    <source src="video/demo-recherche.mp4" type="video/mp4">
+    <track kind="captions" src="video/demo-recherche.fr.vtt" srclang="fr" label="Français" default>
+    Votre navigateur ne lit pas cette vidéo. <a href="video/demo-recherche.mp4">Télécharger le clip (MP4)</a>.
+  </video>
+  <figcaption>Regardez d’abord : « etoile », « ETOILE », « Netari », « ratio ».</figcaption>
+</figure>
+        <span class="kicker">Essayez</span>
+        <div class="field"><label for="q">Tapez une recherche</label><input type="search" id="q" value="etoile" autocomplete="off" spellcheck="false" maxlength="80"></div>
+        <div class="field"><label for="qs">Rubrique</label><select id="qs"><option value="">Toutes</option></select></div>
+        <p class="out" id="qn" role="status"></p>
+        <ol class="list" id="qout"></ol>
+      </div>
+    </article>
+
+    <article class="proof" id="p2">
+      <header>
+        <span class="rank">02</span>
+        <h3>Le même résultat sur tous les appareils</h3>
+        <p class="what"><strong>En clair :</strong> quand il faut choisir dix textes pour une journée, chaque téléphone fait le même choix sans se parler. Aucun tirage au sort, donc aucune surprise et des bogues faciles à reproduire.</p>
+        <p class="what">Une empreinte numérique (FNV-1a) est calculée à partir de la date et de l’identifiant de chaque texte ; on garde les dix plus petites. <span class="claim">Même date, même liste, partout. Changez la date : la liste change, puis revient à l’identique.</span></p>
+      </header>
+      <div class="src">
+        <span class="kicker">Le code qui tourne</span>
+        <pre id="src2" tabindex="0"></pre>
+        <p class="ref">Tiré tel quel de l’application iPhone (src/domain/edition.ts) et de son test</p>
+      </div>
+      <div class="demo">
+        
+        <span class="kicker">Essayez</span>
+        <div class="row">
+          <div class="field grow"><label for="ed">Date</label><input type="date" id="ed"></div>
+          <button class="btn" type="button" id="edPrev">Veille</button>
+          <button class="btn" type="button" id="edNext">Lendemain</button>
+        </div>
+        <p class="out" id="edhash"></p>
+        <ol class="list" id="edout"></ol>
+      </div>
+    </article>
+
+    <article class="proof" id="p3">
+      <header>
+        <span class="rank">03</span>
+        <h3>Travailler sans internet, puis synchroniser sans rien perdre</h3>
+        <p class="what"><strong>En clair :</strong> votre employé continue de travailler dans le métro. Quand le réseau revient, ses modifications partent au serveur une seule fois, et la version la plus récente gagne. Pas de doublon, pas d’écrasement.</p>
+        <p class="what">Chaque geste devient une opération en file d’attente ; refaire le même geste remplace l’opération au lieu de l’ajouter. À la synchronisation, la note la plus récemment modifiée l’emporte, qu’elle vienne du téléphone ou du serveur. <span class="claim">Cliquez deux fois « Découper a-01 » : la file n’a toujours qu’une opération.</span></p>
+      </header>
+      <div class="src">
+        <span class="kicker">Le code qui tourne</span>
+        <pre id="src3" tabindex="0"></pre>
+        <p class="ref">Tiré tel quel de l’application iPhone (src/domain/syncQueue.ts) et de son test</p>
+      </div>
+      <div class="demo">
+        <figure class="video">
+  <video id="v-demo-sync" controls muted playsinline preload="none" poster="video/demo-sync.jpg" width="1280" height="720" aria-label="Travailler hors ligne puis synchroniser, en 9 secondes">
+    <source src="video/demo-sync.mp4" type="video/mp4">
+    <track kind="captions" src="video/demo-sync.fr.vtt" srclang="fr" label="Français" default>
+    Votre navigateur ne lit pas cette vidéo. <a href="video/demo-sync.mp4">Télécharger le clip (MP4)</a>.
+  </video>
+  <figcaption>Regardez d’abord : trois clics, une seule opération ; puis la version la plus récente gagne.</figcaption>
+</figure>
+        <span class="kicker">Essayez</span>
+        <div class="row">
+          <button class="btn primary" type="button" id="opCut">Découper a-01</button>
+          <button class="btn" type="button" id="opCut2">Découper a-05</button>
+          <button class="btn" type="button" id="opNote">Annoter a-01</button>
+          <button class="btn small" type="button" id="opClear">Vider</button>
+        </div>
+        <p class="out" id="qcount" aria-live="polite"></p>
+        <ul class="list" id="qops"></ul>
+        <span class="kicker mt-8">Qui gagne à la synchronisation ?</span>
+        <div class="row">
+          <div class="field grow-sm"><label for="tLocal">Note sur le téléphone, modifiée à</label><input type="time" id="tLocal" value="08:14" step="60"></div>
+          <div class="field grow-sm"><label for="tRemote">Même note sur le serveur, modifiée à</label><input type="time" id="tRemote" value="08:20" step="60"></div>
+        </div>
+        <div class="verdict" id="mergeOut" role="status"></div>
+      </div>
+    </article>
+
+    <article class="proof" id="p4">
+      <header>
+        <span class="rank">04</span>
+        <h3>Une moyenne qui ment, et la bonne façon de calculer</h3>
+        <p class="what"><strong>En clair :</strong> faire la moyenne de trois pourcentages donne un chiffre faux dès qu’une région pèse plus que les autres. Un tableau de bord mal construit vous fait prendre une décision sur un mauvais nombre. Je sais l’éviter.</p>
+        <p class="what">Trois régions, un taux de livraison à temps chacune. La moyenne des taux et le taux réel (total des livraisons à temps sur total des livraisons) ne sont pas le même nombre. <span class="claim">Dans Power BI, la bonne mesure est <code class="mono">DIVIDE(SUM(à temps), SUM(total))</code>, jamais <code class="mono">AVERAGE(taux)</code>.</span> Changez un volume et regardez l’écart bouger.</p>
+      </header>
+      <div class="src">
+        <span class="kicker">Le code qui tourne</span>
+        <pre id="src4" tabindex="0"></pre>
+        <p class="ref">Écrit pour ce site, d’après mon essai « Un ratio ne se somme pas »</p>
+      </div>
+      <div class="demo">
+        <figure class="video">
+  <video id="v-demo-ratio" controls muted playsinline preload="none" poster="video/demo-ratio.jpg" width="1280" height="720" aria-label="La moyenne qui ment, en 10 secondes">
+    <source src="video/demo-ratio.mp4" type="video/mp4">
+    <track kind="captions" src="video/demo-ratio.fr.vtt" srclang="fr" label="Français" default>
+    Votre navigateur ne lit pas cette vidéo. <a href="video/demo-ratio.mp4">Télécharger le clip (MP4)</a>.
+  </video>
+  <figcaption>Regardez d’abord : Montréal passe à 20 000 livraisons et l’écart apparaît.</figcaption>
+</figure>
+        <span class="kicker">Essayez</span>
+        <div class="table-wrap" tabindex="0">
+          <table id="ratioTable">
+            <thead><tr><th scope="col">Région</th><th class="num" scope="col">À temps</th><th class="num" scope="col">Total</th><th class="num" scope="col">Taux</th></tr></thead>
+            <tbody>
+              <tr><td>Centre-du-Québec</td><td class="num"><input type="number" id="r1a" value="95" min="0" max="1000000" aria-label="Centre-du-Québec, livraisons à temps"></td><td class="num"><input type="number" id="r1b" value="100" min="1" max="1000000" aria-label="Centre-du-Québec, livraisons totales"></td><td class="num" data-rate>95,0 %</td></tr>
+              <tr><td>Montréal</td><td class="num"><input type="number" id="r2a" value="1700" min="0" max="1000000" aria-label="Montréal, livraisons à temps"></td><td class="num"><input type="number" id="r2b" value="2000" min="1" max="1000000" aria-label="Montréal, livraisons totales"></td><td class="num" data-rate>85,0 %</td></tr>
+              <tr><td>Estrie</td><td class="num"><input type="number" id="r3a" value="45" min="0" max="1000000" aria-label="Estrie, livraisons à temps"></td><td class="num"><input type="number" id="r3b" value="50" min="1" max="1000000" aria-label="Estrie, livraisons totales"></td><td class="num" data-rate>90,0 %</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="error" id="ratioErr" role="alert" hidden></p>
+        <dl class="kv">
+          <dt>Moyenne des taux (faux)</dt><dd id="rAvg" class="big"></dd>
+          <dt>Taux réel (juste)</dt><dd id="rTrue" class="big"></dd>
+          <dt>Écart</dt><dd id="rGap"></dd>
+        </dl>
+        <div class="verdict" id="rVerdict" role="status"></div>
+      </div>
+    </article>
+
+    <article class="proof" id="p5">
+      <header>
+        <span class="rank">05</span>
+        <h3>Un prix calculé par des règles, jamais tapé à la main</h3>
+        <p class="what"><strong>En clair :</strong> vos règles d’affaires (« la lampe exige le tiroir », « le plateau incliné est incompatible avec le tiroir », « remise à partir de deux options ») sont écrites une fois et appliquées à chaque devis. Fini les prix erronés dans les soumissions.</p>
+        <p class="what">Un configurateur d’exemple avec des prix fictifs. Les règles se vérifient dans l’ordre et chacune affiche ce qu’elle a fait. <span class="claim">Cochez le plateau incliné : la lampe disparaît, parce que le tiroir qu’elle exige devient impossible.</span></p>
+      </header>
+      <div class="src">
+        <span class="kicker">Le code qui tourne</span>
+        <pre id="src5" tabindex="0"></pre>
+        <p class="ref">Écrit pour ce site, d’après mon essai « CPQ : les règles avant l’écran »</p>
+      </div>
+      <div class="demo">
+        <figure class="video">
+  <video id="v-demo-cpq" controls muted playsinline preload="none" poster="video/demo-cpq.jpg" width="1280" height="720" aria-label="Le prix calculé par des règles, en 9 secondes">
+    <source src="video/demo-cpq.mp4" type="video/mp4">
+    <track kind="captions" src="video/demo-cpq.fr.vtt" srclang="fr" label="Français" default>
+    Votre navigateur ne lit pas cette vidéo. <a href="video/demo-cpq.mp4">Télécharger le clip (MP4)</a>.
+  </video>
+  <figcaption>Regardez d’abord : le plateau incliné fait tomber la lampe, la trace l’explique.</figcaption>
+</figure>
+        <span class="kicker">Essayez</span>
+        <div class="opts" id="cpqOpts"></div>
+        <dl class="kv">
+          <dt>Base</dt><dd id="cpqBase"></dd>
+          <dt>Options</dt><dd id="cpqOptions"></dd>
+          <dt>Remise</dt><dd id="cpqDisc"></dd>
+          <dt>Prix</dt><dd id="cpqTotal" class="big" aria-live="polite"></dd>
+        </dl>
+        <span class="lbl-ui">Ce que chaque règle a fait</span>
+        <ul class="rules" id="cpqRules"></ul>
+      </div>
+    </article>
+
+    <article class="proof" id="p6">
+      <header>
+        <span class="rank">06</span>
+        <h3>Vos données restent lisibles sans mon logiciel</h3>
+        <p class="what"><strong>En clair :</strong> tout ce qu’un utilisateur écrit dans l’application peut être exporté en texte simple, lisible dans n’importe quel éditeur, aujourd’hui comme dans dix ans. Vous n’êtes jamais prisonnier d’un format.</p>
+        <p class="what">Le classeur de l’application s’exporte en Markdown, un format texte ouvert. Ici, la même idée s’applique aux notes que vous écrivez : ajoutez-en une, retirez-en une, le texte se réécrit. <span class="claim">Vos notes restent dans votre navigateur et ne sont envoyées nulle part.</span></p>
+      </header>
+      <div class="src">
+        <span class="kicker">Le code qui tourne</span>
+        <pre id="src6" tabindex="0"></pre>
+        <p class="ref">Écrit pour ce site, d’après le module d’export de l’application (src/domain/classeurMarkdown.ts)</p>
+      </div>
+      <div class="demo">
+        
+        <span class="kicker">Essayez</span>
+        <form id="nForm" novalidate>
+          <div class="field"><label for="nTitle">Titre</label><input type="text" id="nTitle" maxlength="120" autocomplete="off" placeholder="Ex. : Points à vérifier"></div>
+          <div class="field mt-8"><label for="nBody">Note</label><textarea id="nBody" rows="3" maxlength="2000" aria-describedby="nErr" placeholder="Écrivez ce que vous voulez : c’est votre navigateur qui la garde."></textarea></div>
+          <p class="error mt-6" id="nErr" role="alert" hidden></p>
+          <div class="row mt-8"><button class="btn primary" type="submit">Enregistrer</button><span class="status" id="nStatus" role="status"></span></div>
+        </form>
+        <ol class="list" id="nList"></ol>
+        <textarea id="mdOut" class="mono" rows="12" readonly aria-label="Texte exporté"></textarea>
+        <div class="row"><button class="btn" type="button" id="mdCopy">Copier</button><span class="out" id="mdMsg" role="status"></span></div>
+      </div>
+    </article>
+  </section>
+  <section id="suite">
+    <div class="sec-head">
+      <h2>Convaincu ? Parlons de votre projet.</h2>
+      <p class="lede">Un courriel suffit. Je réponds moi-même.</p>
+    </div>
+    <div class="row"><a class="btn primary" href="contact.html">Me contacter</a><a class="btn" href="parcours.html">Voir mon parcours</a></div>
+  </section>
+</main>
+
+<footer>
+  <span>Zacharie L. Nolet · Techniques de l’informatique, Cégep de Victoriaville · <a href="mailto:2012487@etudiant.cegepvicto.ca?subject=Mandat%2C%20stage%20ou%20contrat">2012487@etudiant.cegepvicto.ca</a></span>
+  <span>Site fait à la main, sans traceur ni outil externe. Les démonstrations exécutent le code de mon projet <span class="mono">zacharie-l-nolet</span>.</span>
+  <nav class="footer-nav" aria-label="Pages légales et liens">
+    <a href="confidentialite.html">Confidentialité</a>
+    <a href="conditions.html">Conditions d’utilisation</a>
+    <a href="sitemap.xml">Plan du site</a>
+    <a href="https://github.com/zacharienoletGit/zacharie-l-nolet" rel="noopener">Dépôt GitHub</a>
+    <a href="#top" id="toTop">Haut de page</a>
+  </nav>
+</footer>
+
+<div class="notice" id="notice" hidden role="region" aria-label="Avis sur les données">
+  <p>Ce site n’utilise aucun témoin ni traceur. Il garde seulement dans votre navigateur vos notes d’essai, votre brouillon de courriel et le fait que vous avez vu cet avis. <a href="confidentialite.html">Détails</a></p>
+  <button class="btn small" type="button" id="noticeOk">Compris</button>
+</div>
+
+<div class="sticky-cta" id="stickyCta" hidden>
+  <a class="btn primary" href="contact.html">Me contacter</a>
+  <a class="btn" href="preuves.html">Mon travail</a>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

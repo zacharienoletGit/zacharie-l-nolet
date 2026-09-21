@@ -1,0 +1,13 @@
+WEBVTT
+
+00:00.300 --> 00:02.400
+Recherche : l’utilisateur tape « etoile » sans accent.
+
+00:02.400 --> 00:04.600
+Le texte sur le modèle en étoile est trouvé quand même.
+
+00:04.600 --> 00:06.800
+« ETOILE » en majuscules donne le même résultat.
+
+00:06.800 --> 00:09.500
+« Netari », faute fréquente prévue comme mot-clé, mène à Nectari.

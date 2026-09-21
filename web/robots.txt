@@ -1,0 +1,5 @@
+# Lu par les robots seulement à la racine d’un domaine. Sous un sous-chemin GitHub Pages, la page 404 porte déjà noindex.
+User-agent: *
+Allow: /
+
+Sitemap: https://zacharienoletgit.github.io/zacharie-l-nolet/sitemap.xml
