@@ -16,7 +16,8 @@ const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 
 
 const server = http.createServer((req, res) => {
   const p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
-  const f = path.join(root, p === '/' ? 'index.html' : p);
+  let f = path.join(root, p === '/' ? 'index.html' : p);
+  if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, 'index.html'); // comme GitHub Pages : un dossier sert son index.html
   if (!f.startsWith(root) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); res.end(); return; }
   res.writeHead(200, { 'Content-Type': types[path.extname(f)] || 'application/octet-stream' });
   fs.createReadStream(f).pipe(res);
@@ -30,7 +31,12 @@ catch (e) { console.error('Playwright introuvable. Installez les dépendances de
 const browser = await pw.chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 const failures = [];
 const fail = (page, msg) => failures.push(`${page} : ${msg}`);
-const pages = fs.readdirSync(root).filter(f => f.endsWith('.html')).sort();
+const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(path.join(dir, e.name)) : (e.name.endsWith('.html') ? [path.relative(root, path.join(dir, e.name))] : []));
+const pages = walk(root).map(p => p.split(path.sep).join('/')).sort();
+// Les sites distincts portent une copie de la feuille de style principale : elle doit rester identique.
+for (const sub of fs.readdirSync(root, { withFileTypes: true }).filter(e => e.isDirectory() && fs.existsSync(path.join(root, e.name, 'style.css')))) {
+  if (fs.readFileSync(path.join(root, sub.name, 'style.css'), 'utf8') !== fs.readFileSync(path.join(root, 'style.css'), 'utf8')) failures.push(`${sub.name}/style.css : diffère de style.css (relancer le générateur des sites)`);
+}
 
 for (const f of pages) {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -43,19 +49,23 @@ for (const f of pages) {
   // on les sert depuis web/ pour vérifier qu’ils existent sans dépendre du réseau.
   await page.route(SITE + '**', (route) => {
     const rel = decodeURIComponent(new URL(route.request().url()).pathname).slice(new URL(SITE).pathname.length);
-    const file = path.join(root, rel || 'index.html');
+    let file = path.join(root, rel || 'index.html');
+    if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html');
     if (file.startsWith(root) && fs.existsSync(file) && !fs.statSync(file).isDirectory()) route.fulfill({ path: file, contentType: types[path.extname(file)] || 'application/octet-stream' });
     else route.fulfill({ status: 404, body: '' });
   });
   page.on('response', r => { if (r.url().startsWith(SITE) && r.status() === 404) noise.push('fichier manquant : ' + r.url().slice(SITE.length)); });
+  const pageDir = path.dirname(f);
   await page.goto(base + f, { waitUntil: 'load' });
   await page.waitForTimeout(600);
   const d = await page.evaluate((site) => {
     const ids = [...document.querySelectorAll('[id]')].map(e => e.id);
     const dup = ids.filter((id, i) => ids.indexOf(id) !== i);
     const hrefs = [...document.querySelectorAll('a[href]')].map(a => a.getAttribute('href')).filter(h => h && (!/^(https?:|mailto:)/.test(h) || h.startsWith(site)));
-    const links = [...new Set(hrefs.map(h => (h.startsWith(site) ? h.slice(site.length) : h).replace(/[#?].*$/, '')).filter(Boolean))];
-    const fragments = [...new Set(hrefs.filter(h => h.includes('#')).map(h => (h.startsWith(site) ? h.slice(site.length) : h)))];
+    // Un lien absolu vers le site est ramené à la racine (préfixe « / ») ; un lien relatif se résout depuis la page.
+    const rootify = (h) => (h.startsWith(site) ? '/' + h.slice(site.length) : h);
+    const links = [...new Set(hrefs.map(h => rootify(h).replace(/[#?].*$/, '')).filter(Boolean))];
+    const fragments = [...new Set(hrefs.filter(h => h.includes('#')).map(rootify))];
     const missingHere = fragments.filter(h => h.startsWith('#')).map(h => h.slice(1)).filter(id => id && !document.getElementById(id));
     return {
       title: document.title, lang: document.documentElement.lang,
@@ -78,14 +88,17 @@ for (const f of pages) {
   if (wideMobile) fail(f, 'débordement horizontal à 400 px');
   if (d.noAlt) fail(f, `${d.noAlt} image(s) sans attribut alt`);
   if (d.dup.length) fail(f, 'identifiants en double : ' + d.dup.join(', '));
-  for (const l of d.links) {
-    const target = l === '' || l === './' ? 'index.html' : l;
-    if (!fs.existsSync(path.join(root, target))) fail(f, `lien interne cassé : ${l}`);
-  }
+  const resolve = (l) => {
+    const fromRoot = l.startsWith('/');
+    const rel = l.replace(/^\//, '');
+    const t = path.normalize(path.join(root, fromRoot ? '' : pageDir, rel === '' || rel === './' ? 'index.html' : rel));
+    return fs.existsSync(t) && fs.statSync(t).isDirectory() ? path.join(t, 'index.html') : t;
+  };
+  for (const l of d.links) if (!fs.existsSync(resolve(l))) fail(f, `lien interne cassé : ${l}`);
   for (const id of d.missingHere) fail(f, `ancre absente sur la page : #${id}`);
   for (const h of d.fragments.filter(x => !x.startsWith('#'))) {
     const [file, id] = h.split('#');
-    const target = path.join(root, file === '' || file === './' ? 'index.html' : file);
+    const target = resolve(file);
     if (id && fs.existsSync(target) && !new RegExp(`\\sid="${id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`).test(fs.readFileSync(target, 'utf8'))) fail(f, `ancre absente dans la cible : ${h}`);
   }
 
@@ -119,7 +132,7 @@ for (const f of pages) {
       await page.click('#chMd'); const md = await page.inputValue('#chMdOut'); expect(/## Coupures/.test(md) && /Feuille de vérification/.test(md), 'cahier : l’export omet les coupures ou la feuille');
       await page.click('#tab-cabinet'); await page.click('#chReset'); expect((await text('#chKvClips')) === '0', 'cahier : la remise à zéro ne vide pas les coupures');
     }
-    if (f === 'donnees.html') {
+    if (f === 'donnees/index.html') {
       expect(/Corrélation r = /.test(await text('#dRegOut')), 'données : pas de corrélation calculée');
       await page.click('#dOutlier'); expect(/hors norme/.test(await text('#dRegVerdict')) && (await page.locator('#dChart .hot').count()) === 1, 'données : le mois hors norme n’apparaît pas');
       await page.fill('#abXb', '5200'); await page.fill('#abNb', '100000'); await page.fill('#abNa', '100000'); await page.fill('#abXa', '4800');
@@ -132,7 +145,7 @@ for (const f of pages) {
       expect(/hasard/.test(await text('#abVerdict')), 'données : 0/5 contre 2/5 est annoncé décisif');
       await page.fill('#abXa', '11'); await page.fill('#abNa', '10'); expect((await page.getAttribute('#abXa', 'aria-invalid')) === 'true' && (await page.getAttribute('#abXb', 'aria-invalid')) === 'false', 'données : le champ valide est marqué invalide');
     }
-    if (f === 'cpq.html') {
+    if (f === 'cpq/index.html') {
       expect(/\$/.test(await text('#cqTotal')), 'CPQ : pas de total au chargement');
       await page.click('#cq-inclinable'); expect(!(await page.isChecked('#cq-tiroir')) && (await page.isChecked('#cq-inclinable')), 'CPQ : le plateau inclinable ne retire pas le tiroir');
       await page.fill('#cqQty', '10'); expect(/Remise 10 %/.test(await text('#cqTotals')), 'CPQ : la remise de 10 % ne se déclenche pas à 10');

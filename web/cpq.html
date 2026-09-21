@@ -2,131 +2,18 @@
 <html lang="fr-CA">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
-<meta name="referrer" content="strict-origin-when-cross-origin">
-<title>CPQ · Ludovic Zacharie Nolet Gilbert</title>
-<meta name="description" content="Configurateur de prix et de devis (CPQ) qui tourne dans votre navigateur : dimensions, matériaux, options, règles d’incompatibilité, remises par quantité, livraison, TPS et TVQ. Par Ludovic Zacharie Nolet Gilbert.">
-<meta name="author" content="Ludovic Zacharie Nolet Gilbert">
-<meta name="theme-color" content="#F3EDE0">
-<link rel="canonical" href="https://zacharienoletgit.github.io/zacharie-l-nolet/cpq.html">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="fr_CA">
-<meta property="og:site_name" content="Ludovic Zacharie Nolet Gilbert">
-<meta property="og:title" content="CPQ · Ludovic Zacharie Nolet Gilbert">
-<meta property="og:description" content="Configurateur de prix et de devis (CPQ) qui tourne dans votre navigateur : dimensions, matériaux, options, règles d’incompatibilité, remises par quantité, livraison, TPS et TVQ. Par Ludovic Zacharie Nolet Gilbert.">
-<meta property="og:url" content="https://zacharienoletgit.github.io/zacharie-l-nolet/cpq.html">
-<meta property="og:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Ludovic Zacharie Nolet Gilbert, portrait et nom sur fond d’encre">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="CPQ · Ludovic Zacharie Nolet Gilbert">
-<meta name="twitter:description" content="Configurateur de prix et de devis (CPQ) qui tourne dans votre navigateur : dimensions, matériaux, options, règles d’incompatibilité, remises par quantité, livraison, TPS et TVQ. Par Ludovic Zacharie Nolet Gilbert.">
-<meta name="twitter:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
-<link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
-<link rel="manifest" href="site.webmanifest">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta http-equiv="refresh" content="0; url=cpq/">
+<meta name="robots" content="noindex">
+<title>CPQ a déménagé · Ludovic Zacharie Nolet Gilbert</title>
+<meta name="description" content="Le site CPQ de Ludovic Zacharie Nolet Gilbert a sa propre adresse : https://zacharienoletgit.github.io/zacharie-l-nolet/cpq/">
+<link rel="canonical" href="https://zacharienoletgit.github.io/zacharie-l-nolet/cpq/">
 <link rel="stylesheet" href="style.css">
-
 </head>
 <body>
-<a class="skip" href="#main">Aller au contenu</a>
-
-<div class="topbar" id="top">
-  <nav aria-label="Pages">
-    <a class="brand" href="./">L. Z. Nolet Gilbert</a>
-    <a href="./">Accueil</a>
-    <a href="parcours.html">Parcours</a>
-    <a href="preuves.html">Preuves</a>
-    <a href="demo.html">Démo</a>
-    <a href="donnees.html">Données</a>
-    <a href="cpq.html" aria-current="page">CPQ</a>
-    <a href="engagement.html">Travailler ensemble</a>
-    <a href="contact.html">Contact</a>
-  </nav>
-</div>
-<header class="page-head">
-  <p class="kicker"><b>CPQ</b> · Configurer, tarifer, soumettre</p>
-  <h1>Un devis juste, calculé par des règles</h1>
-  <p class="lede">Configurez un poste de travail. Le prix, les remises et les incompatibilités sont décidés par des règles écrites une fois, pas par la personne qui vend.</p>
-</header>
-
-<main id="main">
-  <section id="configurateur">
-    <div class="sec-head">
-      <p class="kicker"><b>Démonstration</b> · Un produit d’exemple, de vraies règles</p>
-      <h2>Poste de travail sur mesure</h2>
-      <p class="lede">En clair : CPQ veut dire configurer, tarifer, soumettre. Chaque choix passe par les règles, le devis se recalcule, la trace explique chaque décision.</p>
-    </div>
-    <div class="cols" id="cq">
-      <form class="cq-form" novalidate>
-        <div class="row">
-          <div class="field"><label for="cqW">Largeur (cm)</label><input type="number" id="cqW" value="120" min="80" max="200" aria-describedby="cqErr"></div>
-          <div class="field"><label for="cqD">Profondeur (cm)</label><input type="number" id="cqD" value="70" min="50" max="90" aria-describedby="cqErr"></div>
-          <div class="field"><label for="cqQty">Quantité</label><input type="number" id="cqQty" value="1" min="1" max="50" aria-describedby="cqErr"></div>
-        </div>
-        <fieldset class="field"><legend class="lbl-ui">Matériau du plateau</legend><div class="row"><label class="opt"><input type="radio" name="cqMat" value="erable" checked> Érable</label><label class="opt"><input type="radio" name="cqMat" value="noyer"> Noyer</label><label class="opt"><input type="radio" name="cqMat" value="stratifie"> Stratifié</label></div></fieldset>
-        <fieldset class="field"><legend class="lbl-ui">Options</legend><div class="opts" id="cqOpts"></div></fieldset>
-        <div class="field"><label for="cqShip">Livraison</label><select id="cqShip"><option value="retrait">Retrait à l’atelier</option><option value="quebec">Livraison au Québec (60 $)</option><option value="hors">Livraison hors Québec (140 $)</option></select></div>
-        <p class="error" id="cqErr" role="alert" hidden></p>
-        <div>
-          <p class="lbl-ui">Ce que les règles ont décidé</p>
-          <ul class="rules" id="cqTrace"></ul>
-        </div>
-      </form>
-      <div class="stack">
-        <div class="quote" aria-live="polite">
-          <p class="kicker"><b>Devis</b> · Exemple, taxes du Québec</p>
-          <div class="table-wrap"><table><tbody id="cqLines"></tbody></table></div>
-          <dl class="kv mt-12" id="cqTotals"></dl>
-          <div class="total"><span>Total</span><strong id="cqTotal">—</strong></div>
-          <div class="row mt-12"><button class="btn" type="button" id="cqCopy">Copier le devis</button><span class="out" id="cqMsg" role="status"></span></div>
-        </div>
-        <details class="src"><summary>Le code qui vient de tourner</summary><pre id="srcCq"></pre></details>
-      </div>
-    </div>
-  </section>
-
-  <section id="pourquoi-cpq">
-    <div class="sec-head">
-      <p class="kicker"><b>Pourquoi des règles</b> · Et pas un tableur</p>
-      <h2>Ce qu’un configurateur change pour vous</h2>
-    </div>
-    <ul class="filets two">
-      <li><h3>Le prix ne dépend plus de qui vend</h3><p>Les tarifs, remises et taxes sont écrits une fois. Deux vendeurs, deux régions, le même devis.</p><span class="ref">Preuve : changez la quantité ci-dessus, la remise se déclenche seule aux paliers 5, 10 et 25.</span></li>
-      <li><h3>Les incompatibilités sont attrapées avant la commande</h3><p>Une option qui en exclut une autre, une option qui en exige une autre, une dimension minimale : la règle tranche et l’explique.</p><span class="ref">Preuve : cochez le plateau inclinable avec le tiroir, ou le deuxième plateau sous 140 cm.</span></li>
-      <li><h3>Chaque décision a une trace</h3><p>Le devis liste les règles appliquées, en français. Le client comprend, le service à la clientèle aussi.</p><span class="ref">Preuve : la liste « Ce que les règles ont décidé », copiée avec le devis.</span></li>
-      <li><h3>Le même moteur, dans votre outil</h3><p>Ces règles vivent dans une fonction sans dépendance ; elles se branchent sur un site, une application, un ERP (Sage X3) ou une API.</p><span class="ref">Preuve : le code affiché sous le devis est celui qui vient de calculer votre total ; voir aussi la <a href="preuves.html#p5">démonstration 05</a>.</span></li>
-    </ul>
-    <div class="row mt-24"><a class="btn primary" href="contact.html">Me contacter</a><a class="btn" href="engagement.html">Configurateur : ce que je livre</a></div>
-  </section>
+<main class="page" id="main">
+  <p>Le site CPQ a sa propre adresse. Si rien ne se passe, suivez ce lien : <a href="cpq/">https://zacharienoletgit.github.io/zacharie-l-nolet/cpq/</a></p>
 </main>
-
-<footer>
-  <span>Ludovic Zacharie Nolet Gilbert · Techniques de l’informatique, Cégep de Victoriaville · <a href="mailto:2012487@etudiant.cegepvicto.ca?subject=Mandat%2C%20stage%20ou%20contrat">2012487@etudiant.cegepvicto.ca</a></span>
-  <span>Site fait à la main, sans traceur ni outil externe. Les démonstrations exécutent le code de mon projet <span class="mono">zacharie-l-nolet</span>.</span>
-  <nav class="footer-nav" aria-label="Pages légales et liens">
-    <a href="confidentialite.html">Confidentialité</a>
-    <a href="conditions.html">Conditions d’utilisation</a>
-    <a href="coulisses.html">Coulisses du site</a>
-    <a href="sitemap.xml">Plan du site</a>
-    <a href="https://github.com/zacharienoletGit/zacharie-l-nolet" rel="noopener">Dépôt GitHub</a>
-    <a href="#top" id="toTop">Haut de page</a>
-  </nav>
-</footer>
-
-<div class="notice" id="notice" hidden role="region" aria-label="Avis sur les données">
-  <p>Ce site n’utilise aucun témoin ni traceur. Il garde seulement dans votre navigateur vos notes d’essai, votre brouillon de courriel et le fait que vous avez vu cet avis. <a href="confidentialite.html">Détails</a></p>
-  <button class="btn small" type="button" id="noticeOk">Compris</button>
-</div>
-
-<div class="sticky-cta" id="stickyCta" hidden>
-  <a class="btn primary" href="contact.html">Me contacter</a>
-  <a class="btn" href="preuves.html">Mon travail</a>
-</div>
-
-<script src="app.js"></script>
 </body>
 </html>

@@ -41,8 +41,6 @@
     <a href="parcours.html">Parcours</a>
     <a href="preuves.html">Preuves</a>
     <a href="demo.html">Démo</a>
-    <a href="donnees.html">Données</a>
-    <a href="cpq.html">CPQ</a>
     <a href="engagement.html">Travailler ensemble</a>
     <a href="contact.html">Contact</a>
   </nav>
@@ -73,8 +71,8 @@
       <h2>Huit décisions, expliquées simplement</h2>
     </div>
     <ul class="filets two">
-      <li><h3>Aucun outil de construction</h3><p>HTML, CSS et JavaScript écrits à la main, sans cadriciel ni dépendance. Le code que vous lisez sur la page Preuves est celui qui s’exécute.</p><span class="ref">Preuve : 50 fichiers en tout, une feuille de style de 23 Ko, un script de 67 Ko.</span></li>
-      <li><h3>Léger dès l’accueil</h3><p>Sur un téléphone, l’accueil charge 7 fichiers (page, style, script, photo réduite, affiche de la vidéo, icône, manifeste) pour 206 Ko en tout. La vidéo d’introduction (373 Ko) ne se télécharge qu’à la lecture.</p><span class="ref">Preuve : somme des fichiers que l’accueil référence, calculée à la génération de cette page ; <span class="mono">preload="none"</span> sur chaque vidéo. La page Coulisses mesure en haut ce que votre navigateur a vraiment chargé.</span></li>
+      <li><h3>Aucun outil de construction</h3><p>HTML, CSS et JavaScript écrits à la main, sans cadriciel ni dépendance. Le code que vous lisez sur la page Preuves est celui qui s’exécute.</p><span class="ref">Preuve : 48 fichiers en tout, une feuille de style de 23 Ko, un script de 47 Ko.</span></li>
+      <li><h3>Léger dès l’accueil</h3><p>Sur un téléphone, l’accueil charge 7 fichiers (page, style, script, photo réduite, affiche de la vidéo, icône, manifeste) pour 186 Ko en tout. La vidéo d’introduction (373 Ko) ne se télécharge qu’à la lecture.</p><span class="ref">Preuve : somme des fichiers que l’accueil référence, calculée à la génération de cette page ; <span class="mono">preload="none"</span> sur chaque vidéo. La page Coulisses mesure en haut ce que votre navigateur a vraiment chargé.</span></li>
       <li><h3>Sécurité par défaut</h3><p>Aucun script ni style en ligne, aucune connexion sortante, aucun objet embarqué : la page le déclare et le navigateur l’applique. Tout texte affiché par le script est d’abord échappé.</p><span class="ref">Preuve : la politique lue ci-dessus, présente dans chaque page, et la fonction <span class="mono">esc()</span> de <span class="mono">app.js</span>. Le fichier <span class="mono">_headers</span> ajoute HSTS, X-Frame-Options et Referrer-Policy sur un hébergeur qui le lit (Netlify, Cloudflare Pages) ; GitHub Pages ne l’applique pas, seule la politique dans la page compte alors.</span></li>
       <li><h3>Accessible sans exception</h3><p>Lien d’évitement, focus visible, chaque résultat annoncé aux lecteurs d’écran, chaque erreur reliée à son champ, contraste élevé, animations coupées sur demande.</p><span class="ref">Preuve : appuyez sur Tab dès l’ouverture ; le contraste mesuré ci-dessus ; <span class="mono">role="status"</span> sur chaque résultat de la page Preuves.</span></li>
       <li><h3>Deux animations, pas une de plus</h3><p>L’ouverture de l’accueil (deux secondes, en CSS) et le nom qui glisse vers la barre de navigation d’une page à l’autre. Rien ne se révèle ni ne glisse au défilement.</p><span class="ref">Preuve : <span class="mono">style.css</span>, sections « Animation 1 » et « Animation 2 ». Dans <span class="mono">app.js</span>, deux observateurs de visibilité existent, sans mouvement : l’un lance les compteurs de l’accueil quand ils sont à l’écran, l’autre met la vidéo d’introduction en pause hors écran.</span></li>

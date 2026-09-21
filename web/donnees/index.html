@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Données · Ludovic Zacharie Nolet Gilbert</title>
+<meta name="description" content="Science des données en clair : régression et corrélation, test A/B et taille d’échantillon, calculés en direct sur des données d’exemple que vous pouvez changer. Par Ludovic Zacharie Nolet Gilbert.">
+<meta name="author" content="Ludovic Zacharie Nolet Gilbert">
+<meta name="theme-color" content="#F3EDE0">
+<link rel="canonical" href="https://zacharienoletgit.github.io/zacharie-l-nolet/donnees/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_CA">
+<meta property="og:site_name" content="Données · Ludovic Zacharie Nolet Gilbert">
+<meta property="og:title" content="Données · Ludovic Zacharie Nolet Gilbert">
+<meta property="og:description" content="Science des données en clair : régression et corrélation, test A/B et taille d’échantillon, calculés en direct sur des données d’exemple que vous pouvez changer. Par Ludovic Zacharie Nolet Gilbert.">
+<meta property="og:url" content="https://zacharienoletgit.github.io/zacharie-l-nolet/donnees/">
+<meta property="og:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/donnees/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Données, Science des données, en clair, par Ludovic Zacharie Nolet Gilbert, sur fond d’encre">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Données · Ludovic Zacharie Nolet Gilbert">
+<meta name="twitter:description" content="Science des données en clair : régression et corrélation, test A/B et taille d’échantillon, calculés en direct sur des données d’exemple que vous pouvez changer. Par Ludovic Zacharie Nolet Gilbert.">
+<meta name="twitter:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/donnees/og-image.jpg">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Aller au contenu</a>
+
+<div class="topbar" id="top">
+  <nav aria-label="Pages">
+    <a class="brand" href="./" aria-current="page">Données · L. Z. Nolet Gilbert</a>
+    <a href="#d1">Régression</a>
+    <a href="#d2">Test A/B</a>
+    <a href="#methode-donnees">Méthode</a>
+    <a href="../contact.html">Contact</a>
+    <a href="../">Site principal</a>
+  </nav>
+</div>
+<header class="page-head">
+  <p class="kicker"><b>Données</b> · Science des données, en clair</p>
+  <h1>Des chiffres qui disent la vérité</h1>
+  <p class="lede">Deux questions qu’un gestionnaire se pose, résolues devant vous. Les données sont des exemples : changez-les, le résultat suit.</p>
+</header>
+
+<main id="main">
+  <section id="d1">
+    <div class="sec-head">
+      <p class="kicker"><b>01</b> · Régression et corrélation</p>
+      <h2>Est-ce que la publicité fait vendre ?</h2>
+      <p class="lede">En clair : on cherche si deux colonnes bougent ensemble, de combien, et si on peut prévoir l’une avec l’autre.</p>
+    </div>
+    <div class="cols">
+      <div class="stack">
+        <div>
+          <p class="lbl-ui">Données d’exemple, en milliers de dollars par mois</p>
+          <div class="table-wrap data-table"><table><thead><tr><th>Mois</th><th class="num">Publicité (k$)</th><th class="num">Ventes (k$)</th></tr></thead><tbody id="dRows"></tbody></table></div>
+          <p class="error" id="dRegErr" role="alert" hidden></p>
+          <div class="row mt-12"><button class="btn small" type="button" id="dOutlier" aria-pressed="false">Ajouter un mois hors norme</button>
+            <div class="field"><label for="dSpend">Si je dépense (k$)</label><input type="number" id="dSpend" value="15" min="0" max="1000" step="0.5" aria-describedby="dRegErr"></div></div>
+        </div>
+        <p class="out" id="dRegOut" role="status"></p>
+        <div class="verdict" id="dRegVerdict" role="status"></div>
+      </div>
+      <div class="stack">
+        <div class="chart-wrap" id="dChart" aria-live="off"></div>
+        <details class="src"><summary>Le code qui vient de tourner</summary><pre id="srcD1"></pre></details>
+      </div>
+    </div>
+  </section>
+
+  <section id="d2">
+    <div class="sec-head">
+      <p class="kicker"><b>02</b> · Test A/B et taille d’échantillon</p>
+      <h2>Cette variante est-elle vraiment meilleure ?</h2>
+      <p class="lede">En clair : un écart de quelques points sur peu de visiteurs, c’est souvent du bruit. Le calcul dit à partir de combien c’est un signal.</p>
+    </div>
+    <div class="cols">
+      <div class="stack">
+        <div class="row">
+          <div class="field"><label for="abNa">Visiteurs A</label><input type="number" id="abNa" value="1000" min="0" max="10000000" aria-describedby="abErr"></div>
+          <div class="field"><label for="abXa">Conversions A</label><input type="number" id="abXa" value="48" min="0" max="10000000" aria-describedby="abErr"></div>
+          <div class="field"><label for="abNb">Visiteurs B</label><input type="number" id="abNb" value="1000" min="0" max="10000000" aria-describedby="abErr"></div>
+          <div class="field"><label for="abXb">Conversions B</label><input type="number" id="abXb" value="52" min="0" max="10000000" aria-describedby="abErr"></div>
+        </div>
+        <p class="error" id="abErr" role="alert" hidden></p>
+        <p class="out" id="abOut" role="status"></p>
+        <div class="verdict" id="abVerdict" role="status"></div>
+        <p class="note">Essayez 100 000 visiteurs de chaque côté avec les mêmes taux : le même écart devient un signal.</p>
+      </div>
+      <div class="stack">
+        <details class="src" open><summary>Le code qui vient de tourner</summary><pre id="srcD2"></pre></details>
+      </div>
+    </div>
+  </section>
+
+  <section id="methode-donnees">
+    <div class="sec-head">
+      <p class="kicker"><b>Ma méthode en données</b> · Avec la preuve</p>
+      <h2>Ce que je fais avant de montrer un chiffre</h2>
+    </div>
+    <ul class="filets two">
+      <li><h3>Partir de la source, pas du rapport</h3><p>Le chiffre vient du système de gestion (Sage X3, Nectari, Jitterbit), avec sa définition écrite. Un tableau de bord qui se prend pour l’usine ment deux fois.</p><span class="ref">Preuve : <a href="../preuves.html#p4">la moyenne qui ment</a>, et les textes techniques de mon catalogue sur la page <a href="../demo.html">Démo</a>.</span></li>
+      <li><h3>Un modèle en étoile, expliqué</h3><p>Des faits (ventes, livraisons) reliés à des dimensions (temps, région, produit). En clair : chaque chiffre sait d’où il vient et par quoi on peut le découper.</p><span class="ref">Preuve : les ratios de la démonstration 04 sont calculés au bon niveau, jamais en moyenne de moyennes.</span></li>
+      <li><h3>Corrélation n’est pas cause</h3><p>Je montre le nuage de points, pas seulement le coefficient, et je nomme ce qui pourrait expliquer les deux colonnes à la fois.</p><span class="ref">Preuve : la démonstration 01 ci-dessus, avec son mois hors norme.</span></li>
+      <li><h3>Assez de données avant de trancher</h3><p>Avant d’annoncer qu’une variante gagne, je calcule la marge d’incertitude et le nombre de cas nécessaires.</p><span class="ref">Preuve : la démonstration 02 ci-dessus.</span></li>
+    </ul>
+    <div class="row mt-24"><a class="btn primary" href="../contact.html">Me contacter</a><a class="btn" href="../engagement.html">Tableau de bord Power BI : ce que je livre</a></div>
+  </section>
+</main>
+
+<footer>
+  <span>Ludovic Zacharie Nolet Gilbert · Techniques de l’informatique, Cégep de Victoriaville · <a href="mailto:2012487@etudiant.cegepvicto.ca?subject=Mandat%2C%20stage%20ou%20contrat">2012487@etudiant.cegepvicto.ca</a></span>
+  <span>Site Données : fait à la main, sans traceur ni outil externe, sans serveur. Les calculs tournent dans votre navigateur.</span>
+  <nav class="footer-nav" aria-label="Pages légales et liens">
+    <a href="confidentialite.html">Confidentialité</a>
+    <a href="conditions.html">Conditions d’utilisation</a>
+    <a href="sitemap.xml">Plan du site</a>
+    <a href="../">Site principal</a>
+    <a href="https://github.com/zacharienoletGit/zacharie-l-nolet" rel="noopener">Dépôt GitHub</a>
+    <a href="#top">Haut de page</a>
+  </nav>
+</footer>
+
+<div class="sticky-cta" id="stickyCta" hidden>
+  <a class="btn primary" href="../contact.html">Me contacter</a>
+  <a class="btn" href="#d1">La démonstration</a>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
