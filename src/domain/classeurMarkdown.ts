@@ -20,7 +20,7 @@ export function renderClasseurMarkdown(input: {
   const days = [...new Set(input.notes.map(noteCivilDate).filter((d): d is string => Boolean(d)))].sort();
 
   const lines: string[] = [
-    '# Classeur — Zacharie L. Nolet',
+    '# Classeur — Ludovic Zacharie Nolet Gilbert',
     '',
     `Exporté le ${formatStamp(input.exportedAt)}.`,
     '',
@@ -60,7 +60,7 @@ export function renderClasseurMarkdown(input: {
 export function renderRevueMarkdown(revue: SundayRevue, articles: Article[]): string {
   const byId = new Map(articles.map(a => [a.id, a]));
   const lines: string[] = [
-    '# Revue du dimanche — Zacharie L. Nolet',
+    '# Revue du dimanche — Ludovic Zacharie Nolet Gilbert',
     '',
     `Semaine ${revue.label} (${revue.start} → ${revue.end}).`,
     revue.isSunday

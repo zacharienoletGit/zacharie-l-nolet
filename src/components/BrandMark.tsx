@@ -9,7 +9,7 @@ export function BrandMark({ size = 72 }: { size?: number }) {
   return (
     <View
       accessibilityRole="image"
-      accessibilityLabel="Marque Zacharie L. Nolet"
+      accessibilityLabel="Marque Ludovic Zacharie Nolet Gilbert"
       style={[
         styles.ring,
         {

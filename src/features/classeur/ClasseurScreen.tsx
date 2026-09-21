@@ -48,7 +48,7 @@ export function ClasseurScreen({ navigation }: ClasseurProps) {
   const marked = useMemo(() => daysWithNotes(notes), [notes]);
 
   const exportClasseur = async () => {
-    const filename = `Classeur-Zacharie-L-Nolet-${today}.md`;
+    const filename = `Classeur-Ludovic-Zacharie-Nolet-Gilbert-${today}.md`;
     try {
       const mode = await shareMarkdownFile(
         filename,

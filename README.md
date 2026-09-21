@@ -1,9 +1,9 @@
-# Zacharie L. Nolet
+# Ludovic Zacharie Nolet Gilbert
 
 Cahier de lecture iPhone — **pas un réseau social**.  
 React Native 0.87, workflow **bare** (Xcode / CocoaPods). Une édition de **dix textes** par jour, des rubriques, un classeur local (coupures + notes), sync PHP optionnelle.
 
-Marque : *Zacharie L. Nolet*. Palette : encre de minuit + filet d’or. Aucun fil infini, aucun like.
+Marque : *Ludovic Zacharie Nolet Gilbert*. Palette : encre de minuit + filet d’or. Aucun fil infini, aucun like.
 
 ## Prérequis
 
@@ -42,7 +42,7 @@ xed ios/ZacharieLNolet.xcworkspace
 ```
 
 Schéma : `ZacharieLNolet`. Bundle id : `ca.zacharienolet.app`.  
-Nom sous l’icône : **Z. L. Nolet** (le nom long est dans l’app).
+Nom sous l’icône : **Nolet Gilbert** (le nom long est dans l’app).
 
 ### Si `bundle exec pod install` échoue
 
@@ -150,4 +150,4 @@ Le JS est partagé. La cible de design est **iPhone**.
 
 ## Licence
 
-Usage privé — Zacharie L. Nolet.
+Usage privé — Ludovic Zacharie Nolet Gilbert.

@@ -49,7 +49,7 @@ La revue est toujours ouvrable. Le dimanche, elle est mise en avant : clôturer,
 
 | Fichier | Contenu |
 | --- | --- |
-| `Classeur-Zacharie-L-Nolet-YYYY-MM-DD.md` | Coupures + notes classées par jour civil |
+| `Classeur-Ludovic-Zacharie-Nolet-Gilbert-YYYY-MM-DD.md` | Coupures + notes classées par jour civil |
 | `Revue-dimanche-START_END.md` | Semaine en cours, un titre par jour |
 
 iOS : feuille de partage → **Enregistrer dans Fichiers**.  

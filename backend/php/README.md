@@ -1,4 +1,4 @@
-# API PHP — Zacharie L. Nolet
+# API PHP — Ludovic Zacharie Nolet Gilbert
 
 Exemple **mobile**, pas un ETL. JSON + fichiers. PHP 8+.
 

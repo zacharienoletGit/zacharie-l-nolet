@@ -404,7 +404,7 @@
 
   function renderFeuillesMarkdown(notes, exportedAt) {
     const lines = [
-      '# Classeur — Zacharie L. Nolet',
+      '# Classeur — Ludovic Zacharie Nolet Gilbert',
       '',
       `Exporté le ${exportedAt}.`,
       '',

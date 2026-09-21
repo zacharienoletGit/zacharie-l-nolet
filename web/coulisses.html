@@ -5,24 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>Coulisses · Zacharie L. Nolet</title>
-<meta name="description" content="Comment le site de Zacharie L. Nolet est construit : sans outil de construction, léger, sécurisé, accessible, vérifié. Chaque choix expliqué simplement, avec sa preuve mesurable.">
-<meta name="author" content="Zacharie L. Nolet">
+<title>Coulisses · Ludovic Zacharie Nolet Gilbert</title>
+<meta name="description" content="Comment le site de Ludovic Zacharie Nolet Gilbert est construit : sans outil de construction, léger, sécurisé, accessible, vérifié. Chaque choix expliqué simplement, avec sa preuve mesurable.">
+<meta name="author" content="Ludovic Zacharie Nolet Gilbert">
 <meta name="theme-color" content="#F3EDE0">
 <link rel="canonical" href="https://zacharienoletgit.github.io/zacharie-l-nolet/coulisses.html">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_CA">
-<meta property="og:site_name" content="Zacharie L. Nolet">
-<meta property="og:title" content="Coulisses · Zacharie L. Nolet">
-<meta property="og:description" content="Comment le site de Zacharie L. Nolet est construit : sans outil de construction, léger, sécurisé, accessible, vérifié. Chaque choix expliqué simplement, avec sa preuve mesurable.">
+<meta property="og:site_name" content="Ludovic Zacharie Nolet Gilbert">
+<meta property="og:title" content="Coulisses · Ludovic Zacharie Nolet Gilbert">
+<meta property="og:description" content="Comment le site de Ludovic Zacharie Nolet Gilbert est construit : sans outil de construction, léger, sécurisé, accessible, vérifié. Chaque choix expliqué simplement, avec sa preuve mesurable.">
 <meta property="og:url" content="https://zacharienoletgit.github.io/zacharie-l-nolet/coulisses.html">
 <meta property="og:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Zacharie L. Nolet, portrait et nom sur fond d’encre">
+<meta property="og:image:alt" content="Ludovic Zacharie Nolet Gilbert, portrait et nom sur fond d’encre">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Coulisses · Zacharie L. Nolet">
-<meta name="twitter:description" content="Comment le site de Zacharie L. Nolet est construit : sans outil de construction, léger, sécurisé, accessible, vérifié. Chaque choix expliqué simplement, avec sa preuve mesurable.">
+<meta name="twitter:title" content="Coulisses · Ludovic Zacharie Nolet Gilbert">
+<meta name="twitter:description" content="Comment le site de Ludovic Zacharie Nolet Gilbert est construit : sans outil de construction, léger, sécurisé, accessible, vérifié. Chaque choix expliqué simplement, avec sa preuve mesurable.">
 <meta name="twitter:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
@@ -36,7 +36,7 @@
 
 <div class="topbar">
   <nav aria-label="Pages">
-    <a class="brand" href="./">Z. L. Nolet</a>
+    <a class="brand" href="./">L. Z. Nolet Gilbert</a>
     <a href="./">Accueil</a>
     <a href="parcours.html">Parcours</a>
     <a href="preuves.html">Preuves</a>
@@ -72,7 +72,7 @@
       <h2>Huit décisions, expliquées simplement</h2>
     </div>
     <ul class="filets two">
-      <li><h3>Aucun outil de construction</h3><p>HTML, CSS et JavaScript écrits à la main, sans cadriciel ni dépendance. Le code que vous lisez sur la page Preuves est celui qui s’exécute.</p><span class="ref">Preuve : 48 fichiers en tout, une feuille de style de 22 Ko, un script de 43 Ko.</span></li>
+      <li><h3>Aucun outil de construction</h3><p>HTML, CSS et JavaScript écrits à la main, sans cadriciel ni dépendance. Le code que vous lisez sur la page Preuves est celui qui s’exécute.</p><span class="ref">Preuve : 47 fichiers en tout, une feuille de style de 22 Ko, un script de 43 Ko.</span></li>
       <li><h3>Léger dès l’accueil</h3><p>Sur un téléphone, l’accueil charge 7 fichiers (page, style, script, photo réduite, affiche de la vidéo, icône, manifeste) pour 187 Ko en tout. La vidéo d’introduction (367 Ko) ne se télécharge qu’à la lecture.</p><span class="ref">Preuve : somme des fichiers que l’accueil référence, calculée à la génération de cette page ; <span class="mono">preload="none"</span> sur chaque vidéo. La page Coulisses mesure en haut ce que votre navigateur a vraiment chargé.</span></li>
       <li><h3>Sécurité par défaut</h3><p>Aucun script ni style en ligne, aucune connexion sortante, aucun objet embarqué : la page le déclare et le navigateur l’applique. Tout texte affiché par le script est d’abord échappé.</p><span class="ref">Preuve : la politique lue ci-dessus, présente dans chaque page, et la fonction <span class="mono">esc()</span> de <span class="mono">app.js</span>. Le fichier <span class="mono">_headers</span> ajoute HSTS, X-Frame-Options et Referrer-Policy sur un hébergeur qui le lit (Netlify, Cloudflare Pages) ; GitHub Pages ne l’applique pas, seule la politique dans la page compte alors.</span></li>
       <li><h3>Accessible sans exception</h3><p>Lien d’évitement, focus visible, chaque résultat annoncé aux lecteurs d’écran, chaque erreur reliée à son champ, contraste élevé, animations coupées sur demande.</p><span class="ref">Preuve : appuyez sur Tab dès l’ouverture ; le contraste mesuré ci-dessus ; <span class="mono">role="status"</span> sur chaque résultat de la page Preuves.</span></li>
@@ -86,7 +86,7 @@
 </main>
 
 <footer>
-  <span>Zacharie L. Nolet · Techniques de l’informatique, Cégep de Victoriaville · <a href="mailto:2012487@etudiant.cegepvicto.ca?subject=Mandat%2C%20stage%20ou%20contrat">2012487@etudiant.cegepvicto.ca</a></span>
+  <span>Ludovic Zacharie Nolet Gilbert · Techniques de l’informatique, Cégep de Victoriaville · <a href="mailto:2012487@etudiant.cegepvicto.ca?subject=Mandat%2C%20stage%20ou%20contrat">2012487@etudiant.cegepvicto.ca</a></span>
   <span>Site fait à la main, sans traceur ni outil externe. Les démonstrations exécutent le code de mon projet <span class="mono">zacharie-l-nolet</span>.</span>
   <nav class="footer-nav" aria-label="Pages légales et liens">
     <a href="confidentialite.html">Confidentialité</a>

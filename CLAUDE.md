@@ -1,6 +1,6 @@
 # CLAUDE.md — règles permanentes du dépôt
 
-Ces règles viennent de Zacharie L. Nolet. Elles s’appliquent à toute session, à tout fichier, sans exception, et priment sur les habitudes par défaut.
+Ces règles viennent de Ludovic Zacharie Nolet Gilbert. Elles s’appliquent à toute session, à tout fichier, sans exception, et priment sur les habitudes par défaut.
 
 ## 0. Ce que Zacharie a demandé mot pour mot
 
@@ -30,7 +30,7 @@ Ces règles viennent de Zacharie L. Nolet. Elles s’appliquent à toute session
 
 ## CV
 
-- `web/cv.html` (une page, feuille `cv.css`, impression Letter) et `web/Zacharie-L-Nolet-CV.pdf` généré avec Chromium (`page.pdf`, média print). Regénérer le PDF à chaque changement du CV. Le PDF doit tenir sur **une** page.
+- `web/cv.html` (une page, feuille `cv.css`, impression Letter) et `web/Ludovic-Zacharie-Nolet-Gilbert-CV.pdf` généré avec Chromium (`page.pdf`, média print). Regénérer le PDF à chaque changement du CV. Le PDF doit tenir sur **une** page.
 
 ## A. Ne jamais avoir l’air « vibecodé » (reel aj.on.ai, « 30 reasons your site looks vibecoded »)
 

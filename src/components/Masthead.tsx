@@ -15,7 +15,7 @@ type Props = {
 export function Masthead({
   date,
   eyebrow = 'Cahier de lecture',
-  title = 'Zacharie L. Nolet',
+  title = 'Ludovic Zacharie Nolet Gilbert',
   compact = false,
 }: Props) {
   const { colors, type } = useAppTheme();
