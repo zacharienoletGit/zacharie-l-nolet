@@ -55,9 +55,13 @@ for (const f of pages) {
     else route.fulfill({ status: 404, body: '' });
   });
   page.on('response', r => { if (r.url().startsWith(SITE) && r.status() === 404) noise.push('fichier manquant : ' + r.url().slice(SITE.length)); });
-  const pageDir = path.dirname(f);
   await page.goto(base + f, { waitUntil: 'load' });
   await page.waitForTimeout(600);
+  await page.waitForLoadState('load');
+  // Une page de renvoi (meta refresh) mène ailleurs : les liens se résolvent depuis la page réellement affichée.
+  const landedPath = decodeURIComponent(new URL(page.url()).pathname).replace(/^\//, '');
+  const landed = landedPath === '' || landedPath.endsWith('/') ? landedPath + 'index.html' : landedPath;
+  const pageDir = path.dirname(landed);
   const d = await page.evaluate((site) => {
     const ids = [...document.querySelectorAll('[id]')].map(e => e.id);
     const dup = ids.filter((id, i) => ids.indexOf(id) !== i);
