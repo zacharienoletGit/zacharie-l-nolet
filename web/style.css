@@ -351,3 +351,25 @@ footer { max-width: 64rem; margin: 0 auto; border-top: 1px solid var(--rule); pa
 .cahier h3 { font-size: 1.1em; margin-top: 18px; }
 .cahier-welcome { border-left: 2px solid var(--gold); padding-left: 14px; display: grid; gap: 6px; margin-top: 12px; }
 .cahier .panel-lede { color: var(--muted); font-size: 0.95em; margin-bottom: 12px; }
+
+/* ---------- Données : graphique en SVG, sans bibliothèque ---------- */
+.chart { width: 100%; height: auto; max-width: 560px; display: block; font: 400 12px/1 var(--ui); }
+.chart .grid { stroke: var(--rule); stroke-width: 1; }
+.chart .tick { fill: var(--muted); font-size: 11px; }
+.chart .axis { fill: var(--muted); font-size: 12px; }
+.chart .fit { stroke: var(--gold-ink); stroke-width: 2; fill: none; }
+.chart .fit-label { fill: var(--gold-ink); font-size: 12px; font-weight: 600; }
+.chart .dot { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+.chart .dot.hot { fill: var(--danger); }
+.chart .dot.pred { fill: var(--surface); stroke: var(--gold-ink); stroke-width: 2; }
+.chart .dot-label { fill: var(--text); font-size: 12px; }
+.chart-wrap { border: 1px solid var(--rule); padding: 8px 8px 4px; background: var(--surface); }
+.data-table input { width: 6.5em; }
+
+/* ---------- CPQ : devis ---------- */
+.quote { border: 1px solid var(--gold); background: var(--surface); padding: 16px 18px; }
+.quote table td:first-child { width: 70%; }
+.quote .total { display: flex; justify-content: space-between; align-items: baseline; border-top: 2px solid var(--gold); margin-top: 10px; padding-top: 10px; font: 700 1.1rem/1.2 var(--serif); }
+.quote .total strong { font-size: 1.6rem; color: var(--accent); font-variant-numeric: tabular-nums; }
+.cq-form { display: grid; gap: 14px; }
+.cq-form .row .field { min-width: 8em; }
