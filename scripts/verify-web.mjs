@@ -54,7 +54,11 @@ for (const f of pages) {
     if (file.startsWith(root) && fs.existsSync(file) && !fs.statSync(file).isDirectory()) route.fulfill({ path: file, contentType: types[path.extname(file)] || 'application/octet-stream' });
     else route.fulfill({ status: 404, body: '' });
   });
-  page.on('response', r => { if (r.url().startsWith(SITE) && r.status() === 404) noise.push('fichier manquant : ' + r.url().slice(SITE.length)); });
+  page.on('response', r => {
+    // Une réponse 404 n’est pas un échec réseau pour Playwright : on la traite comme un fichier manquant, en local comme en absolu.
+    if (r.url().startsWith(SITE) && r.status() === 404) noise.push('fichier manquant : ' + r.url().slice(SITE.length));
+    if (r.url().startsWith(base) && r.status() >= 400) noise.push(`réponse ${r.status()} : ` + r.url().slice(base.length));
+  });
   await page.goto(base + f, { waitUntil: 'load' });
   await page.waitForTimeout(600);
   await page.waitForLoadState('load');
@@ -135,6 +139,11 @@ for (const f of pages) {
       expect((await page.locator('#chNotes li:not(.empty)').count()) === 1, 'cahier : la feuille n’est pas dans le classeur');
       await page.click('#chMd'); const md = await page.inputValue('#chMdOut'); expect(/## Coupures/.test(md) && /Feuille de vérification/.test(md), 'cahier : l’export omet les coupures ou la feuille');
       await page.click('#tab-cabinet'); await page.click('#chReset'); expect((await text('#chKvClips')) === '0', 'cahier : la remise à zéro ne vide pas les coupures');
+      // Un autre onglet remplit le classeur : l’ajout doit être refusé sans perdre la saisie.
+      await page.evaluate(() => localStorage.setItem('zln-feuilles', JSON.stringify(Array.from({ length: 60 }, (_, i) => ({ title: 'Feuille ' + i, body: 'Corps ' + i })))));
+      await page.click('#tab-classeur'); await page.fill('#chNBody', 'Soixante et unième'); await page.click('#chNoteForm button[type=submit]');
+      expect(!(await page.isHidden('#chNErr')) && (await page.inputValue('#chNBody')) === 'Soixante et unième' && !/enregistrée/.test(await text('#chNStatus')), 'cahier : une feuille refusée par la limite est annoncée enregistrée ou perdue');
+      await page.evaluate(() => localStorage.clear());
     }
     if (f === 'donnees/index.html') {
       expect(/Corrélation r = /.test(await text('#dRegOut')), 'données : pas de corrélation calculée');
