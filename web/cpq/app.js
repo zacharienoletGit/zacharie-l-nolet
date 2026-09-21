@@ -123,7 +123,8 @@
       $('cqErr').textContent = q.errors.map(e => e.text).join(' ');
       $('cqErr').hidden = !q.errors.length;
       $('cqTrace').innerHTML = q.trace.map(t => `<li class="${t.state}"><span>${esc(t.rule.text)} <span class="muted">· ${esc(t.note)}</span></span></li>`).join('');
-      if (q.errors.length) { $('cqLines').innerHTML = ''; $('cqTotals').innerHTML = ''; $('cqTotal').textContent = '—'; lastQuote = null; return; }
+      $('cqCopy').disabled = Boolean(q.errors.length);
+      if (q.errors.length) { $('cqLines').innerHTML = ''; $('cqTotals').innerHTML = ''; $('cqTotal').textContent = '—'; $('cqMsg').textContent = ''; lastQuote = null; return; }
       lastQuote = q;
       $('cqLines').innerHTML = q.lines.map(l => `<tr><td>${esc(l.label)}</td><td class="num">${money(l.unit)}</td></tr>`).join('');
       const rows = [['Prix d’un poste', money(q.unitTotal)], [`× ${q.qty} poste(s)`, money(q.subtotal)]];
@@ -145,7 +146,8 @@
     ['cqW', 'cqD', 'cqQty'].forEach(id => $(id).addEventListener('input', () => render(null)));
     $('cqShip').addEventListener('change', () => render(null));
     document.querySelectorAll('input[name="cqMat"]').forEach(r => r.addEventListener('change', () => render(null)));
-    $('cqCopy').addEventListener('click', copyWith($('cqCopy'), $('cqMsg'), quoteText, 'Devis copié dans le presse-papiers.'));
+    const copyQuote = copyWith($('cqCopy'), $('cqMsg'), quoteText, 'Devis copié dans le presse-papiers.');
+    $('cqCopy').addEventListener('click', () => { if (!lastQuote) { $('cqMsg').textContent = 'Aucun devis à copier : corrigez d’abord les champs en erreur.'; return; } copyQuote(); });
     render(null);
     show('srcCq', [resolveOptions, buildQuote], '// CQ : plateau au cm², trois matériaux, six options, quatre règles, paliers de remise, livraison, TPS et TVQ');
   }

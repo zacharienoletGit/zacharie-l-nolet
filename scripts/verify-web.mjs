@@ -168,14 +168,23 @@ for (const f of pages) {
       expect(Math.abs(sum - amount(await text('#cqTotal'))) < 0.005, 'CPQ : le total n’est pas la somme des montants affichés');
       await page.fill('#cqW', '160'); await page.click('#cq-second'); await page.fill('#cqW', ''); await page.fill('#cqW', '180');
       expect(await page.isChecked('#cq-second'), 'CPQ : effacer puis retaper la largeur perd le deuxième plateau');
-      await page.fill('#cqW', '300'); expect(!(await page.isHidden('#cqErr')) && (await text('#cqTotal')) === '—', 'CPQ : une largeur impossible laisse un total');
+      await page.fill('#cqW', '300'); expect(!(await page.isHidden('#cqErr')) && (await text('#cqTotal')) === '—' && (await page.isDisabled('#cqCopy')), 'CPQ : une largeur impossible laisse un total ou un bouton de copie actif');
     }
     if (f === 'contact.html') {
       await page.click('#cSend'); expect((await page.getAttribute('#cName', 'aria-invalid')) === 'true', 'contact : le nom vide n’est pas signalé');
       await page.fill('#cName', 'Vérification'); await page.fill('#cMsg', 'Un mandat de tableau de bord pour trois régions.'); await page.click('#cSend'); await page.waitForTimeout(500);
       expect(!(await page.isHidden('#cThanks')), 'contact : pas d’état de remerciement après l’envoi');
     }
-    if (f === 'coulisses.html') { expect(/pour 1/.test(await text('#metaContrast')), 'coulisses : le contraste n’est pas mesuré'); }
+    if (f === 'coulisses.html') {
+      expect(/pour 1/.test(await text('#metaContrast')), 'coulisses : le contraste n’est pas mesuré');
+      // Les chiffres « tirés du dépôt » doivent être ceux des fichiers livrés (même formule que le générateur).
+      const ko = (n) => (n / 1000).toLocaleString('fr-CA', { maximumFractionDigits: 1 }) + ' Ko';
+      const rootFiles = fs.readdirSync(root).filter(x => fs.statSync(path.join(root, x)).isFile()).length + fs.readdirSync(path.join(root, 'video')).length;
+      const html = fs.readFileSync(path.join(root, f), 'utf8');
+      expect(html.includes(`${rootFiles} fichiers pour le site principal`), `coulisses : nombre de fichiers périmé (attendu ${rootFiles})`);
+      expect(html.includes(`un script de ${ko(fs.statSync(path.join(root, 'app.js')).size)}`), 'coulisses : taille de app.js périmée (relancer le générateur des pages)');
+      expect(html.includes(`une feuille de style de ${ko(fs.statSync(path.join(root, 'style.css')).size)}`), 'coulisses : taille de style.css périmée (relancer le générateur des pages)');
+    }
   } catch (e) { fail(f, 'interaction impossible : ' + e.message.split('\n')[0]); }
   for (const n of noise) fail(f, n);
   console.log(`${failures.some(x => x.startsWith(f + ' :')) ? '✗' : '✓'} ${f} — ${d.title}`);
