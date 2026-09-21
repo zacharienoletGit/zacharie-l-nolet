@@ -1,18 +1,20 @@
 :root {
-  --bg: #FAFAF7;
-  --surface: #FFFFFF;
-  --raised: #F1F3F6;
-  --code-bg: #F2F4F7;
-  --text: #111418;
-  --muted: #4A5561;
-  --accent: #14335C;
-  --accent-strong: #0E2440;
-  --gold: #14335C;
-  --gold-bright: #2B5A94;
-  --rule: #DDE1E6;
-  --rule-strong: #AEB6C0;
-  --chip: #EEF1F5;
-  --flash: rgba(20, 51, 92, 0.12);
+  /* Identité du cahier (docs/DESIGN.md) : papier crème, encre de minuit, or en filet. */
+  --bg: #F3EDE0;
+  --surface: #FBF7EE;
+  --raised: #EBE3D2;
+  --code-bg: #ECE5D4;
+  --text: #0B1A28;
+  --muted: #3F4B58;
+  --accent: #0B1A28;
+  --accent-strong: #04101B;
+  --gold: #C4A35A;
+  --gold-bright: #E0C378;
+  --gold-ink: #8F7230;
+  --rule: #D9CDB0;
+  --rule-strong: #C4A35A;
+  --chip: #EAE2CF;
+  --flash: rgba(196, 163, 90, 0.22);
   --danger: #A12B2B;
   --ok: #1E6B45;
   --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
@@ -82,7 +84,7 @@ section, article, [id] { scroll-margin-top: 72px; }
 }
 .btn:hover { border-color: var(--accent); }
 .btn.primary { border-color: var(--accent); color: var(--accent); }
-.btn.primary:hover { background: var(--accent); color: #fff; }
+.btn.primary:hover { background: var(--accent); color: var(--bg); }
 .btn.small { min-height: 36px; padding: 0 12px; font-size: 13px; }
 .btn[aria-pressed="true"] { background: var(--accent); color: var(--bg); border-color: var(--accent); }
 .btn:disabled { opacity: 0.5; cursor: default; }
@@ -191,7 +193,7 @@ main > section:first-child { border-top: 0; }
 /* Étapes numérotées (vraie séquence) */
 .steps { list-style: none; margin: 0; padding: 0; counter-reset: step; display: grid; gap: 14px; }
 .steps li { display: grid; grid-template-columns: 2.4em minmax(0, 1fr); gap: 12px; align-items: baseline; }
-.steps li::before { counter-increment: step; content: counter(step, decimal-leading-zero); font: 700 1.3rem/1 var(--serif); color: var(--gold); font-variant-numeric: tabular-nums; }
+.steps li::before { counter-increment: step; content: counter(step, decimal-leading-zero); font: 700 1.3rem/1 var(--serif); color: var(--gold-ink); font-variant-numeric: tabular-nums; }
 .steps h3 { font-size: 1.1rem; }
 .steps p { color: var(--muted); font-size: 0.98rem; margin-top: 2px; }
 
@@ -199,7 +201,7 @@ main > section:first-child { border-top: 0; }
 .proof { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.4rem 2.5rem; padding-block: 2.4rem; border-top: 1px solid var(--rule); }
 .proof:first-of-type { border-top: 0; padding-top: 0; }
 .proof header { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 16px; align-items: baseline; }
-.proof .rank { font: 700 1.6rem/1 var(--serif); color: var(--gold); font-variant-numeric: tabular-nums; grid-row: 1 / span 3; }
+.proof .rank { font: 700 1.6rem/1 var(--serif); color: var(--gold-ink); font-variant-numeric: tabular-nums; grid-row: 1 / span 3; }
 .proof h3 { font-size: 1.35rem; }
 .proof .what { color: var(--muted); max-width: 44em; }
 .proof .claim { font-style: italic; }
@@ -229,7 +231,7 @@ input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="
 .list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
 .list li { display: grid; grid-template-columns: 2.2em minmax(0, 1fr) auto; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--rule); font: 400 14px/1.4 var(--ui); align-items: baseline; }
 .list li.empty { display: block; }
-.list .n { font: 700 14px/1 var(--serif); color: var(--gold); font-variant-numeric: tabular-nums; }
+.list .n { font: 700 14px/1 var(--serif); color: var(--gold-ink); font-variant-numeric: tabular-nums; }
 .list .t { font-family: var(--serif); font-size: 15px; }
 .list .t-mono { font-family: var(--mono); font-size: 12.5px; overflow-wrap: anywhere; word-break: break-all; }
 .list .s { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
