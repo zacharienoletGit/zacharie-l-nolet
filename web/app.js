@@ -571,7 +571,7 @@
       $('chNotes').querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', () => {
         const gone = feuilles[Number(b.dataset.rm)];
         const r = writeFeuilles(cur => { const k = cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, feuilles.filter(n => !sameFeuille(n, gone)));
-        feuilles = r.saved ? readFeuilles(r.next) : feuilles.filter(n => !sameFeuille(n, gone));
+        feuilles = r.saved ? readFeuilles(r.next) : feuilles.filter((_, j) => j !== Number(b.dataset.rm));
         $('chNStatus').textContent = r.saved ? 'Feuille retirée.' : 'Feuille retirée pour cette visite seulement : le navigateur refuse le stockage local.';
         const index = Number(b.dataset.rm);
         renderAll();
@@ -642,7 +642,7 @@
       sxx += (xs[i] - mx) ** 2;
       syy += (ys[i] - my) ** 2;
     }
-    return sxx === 0 || syy === 0 ? 0 : sxy / Math.sqrt(sxx * syy);
+    return sxx === 0 || syy === 0 ? NaN : sxy / Math.sqrt(sxx * syy);
   }
 
   function linreg(xs, ys) {
@@ -654,17 +654,27 @@
       sxy += (xs[i] - mx) * (ys[i] - my);
       sxx += (xs[i] - mx) ** 2;
     }
-    const slope = sxx === 0 ? 0 : sxy / sxx;
+    const slope = sxx === 0 ? NaN : sxy / sxx;
     const r = pearson(xs, ys);
     return { slope, intercept: my - slope * mx, r, r2: r * r };
   }
 
+  function wilson(conv, n) {
+    // Intervalle de Wilson à 95 % pour une proportion : reste valide à 0 % et à 100 %.
+    const z = 1.96, p = conv / n, z2 = (z * z) / n;
+    const centre = (p + z2 / 2) / (1 + z2);
+    const half = (z * Math.sqrt((p * (1 - p)) / n + z2 / (4 * n))) / (1 + z2);
+    return [centre - half, centre + half];
+  }
+
   function abTest(a, b) {
+    // Différence de deux proportions, intervalle de Newcombe (à partir des bornes de Wilson).
     const pA = a.conv / a.n, pB = b.conv / b.n;
+    const [loA, hiA] = wilson(a.conv, a.n), [loB, hiB] = wilson(b.conv, b.n);
     const diff = pB - pA;
-    const se = Math.sqrt((pA * (1 - pA)) / a.n + (pB * (1 - pB)) / b.n);
-    const margin = 1.96 * se;
-    return { pA, pB, diff, low: diff - margin, high: diff + margin, decisive: se > 0 && Math.abs(diff) > margin };
+    const low = diff - Math.sqrt((pA - loA) ** 2 + (hiB - pB) ** 2);
+    const high = diff + Math.sqrt((hiA - pA) ** 2 + (pB - loB) ** 2);
+    return { pA, pB, diff, low, high, decisive: low > 0 || high < 0 };
   }
 
   function sampleSizePerGroup(pA, pB) {
@@ -730,21 +740,22 @@
     if (!Number.isFinite(d) || d < cfg.plateau.min.d || d > cfg.plateau.max.d) errors.push({ field: 'depth', text: `Profondeur entre ${cfg.plateau.min.d} et ${cfg.plateau.max.d} cm.` });
     if (!Number.isInteger(qty) || qty < 1 || qty > 50) errors.push({ field: 'qty', text: 'Quantité entre 1 et 50.' });
     const mat = cfg.materials[input.material] || cfg.materials.erable;
-    const { picked, trace } = resolveOptions(input.options, changed, Number.isFinite(w) ? w : 0, cfg);
-    if (errors.length) return { errors, picked, trace, lines: [] };
-    const plateau = Math.round(w * d * cfg.plateau.perCm2 * mat.factor * 100) / 100;
+    if (errors.length) return { errors, picked: new Set(input.options), trace: [], lines: [] };
+    const { picked, trace } = resolveOptions(input.options, changed, w, cfg);
+    const cents = (v) => Math.round(v * 100) / 100;
+    const plateau = cents(w * d * cfg.plateau.perCm2 * mat.factor);
     const lines = [{ label: `Plateau ${mat.label} ${w} × ${d} cm`, unit: plateau }];
     for (const k of picked) lines.push({ label: cfg.options[k].label, unit: cfg.options[k].price });
-    const unitTotal = lines.reduce((t, l) => t + l.unit, 0);
-    const subtotal = unitTotal * qty;
+    const unitTotal = cents(lines.reduce((t, l) => t + l.unit, 0));
+    const subtotal = cents(unitTotal * qty);
     const tier = cfg.tiers.find(([min]) => qty >= min);
     const discountRate = tier ? tier[1] : 0;
     trace.push({ rule: cfg.rules.find(r => r.type === 'tiers'), state: discountRate ? 'fire' : 'ok', note: discountRate ? `${qty} postes : ${Math.round(discountRate * 100)} %` : `${qty} poste(s) : aucune remise` });
-    const discount = subtotal * discountRate;
+    const discount = cents(subtotal * discountRate);
     const shipping = cfg.shipping[input.shipping] || cfg.shipping.retrait;
-    const taxable = subtotal - discount + shipping[1];
-    const tps = taxable * cfg.taxes.tps, tvq = taxable * cfg.taxes.tvq;
-    return { errors, picked, trace, lines, qty, unitTotal, subtotal, discountRate, discount, shipping, taxable, tps, tvq, total: taxable + tps + tvq };
+    const taxable = cents(subtotal - discount + shipping[1]);
+    const tps = cents(taxable * cfg.taxes.tps), tvq = cents(taxable * cfg.taxes.tvq);
+    return { errors, picked, trace, lines, qty, unitTotal, subtotal, discountRate, discount, shipping, taxable, tps, tvq, total: cents(taxable + tps + tvq) };
   }
 
   const show = (id, fns, note) => {
@@ -768,11 +779,13 @@
     };
     const renderReg = () => {
       const xs = [], ys = []; let bad = false;
-      rows.forEach((r, i) => { const x = num(`dx${i}`), y = num(`dy${i}`); const ok = Number.isFinite(x) && Number.isFinite(y); $(`dx${i}`).setAttribute('aria-invalid', String(!Number.isFinite(x))); $(`dy${i}`).setAttribute('aria-invalid', String(!Number.isFinite(y))); if (ok) { r.x = x; r.y = y; xs.push(x); ys.push(y); } else bad = true; });
-      $('dRegErr').textContent = bad ? 'Une case est vide ou impossible : corrigez-la pour voir le résultat.' : '';
-      $('dRegErr').hidden = !bad;
-      if (bad || xs.length < 3) { $('dRegOut').textContent = 'Aucun résultat tant qu’une case est impossible.'; $('dChart').innerHTML = ''; return; }
-      const m = linreg(xs, ys);
+      const okX = (v) => Number.isFinite(v) && v >= 0 && v <= 1000, okY = (v) => Number.isFinite(v) && v >= 0 && v <= 100000;
+      rows.forEach((r, i) => { const x = num(`dx${i}`), y = num(`dy${i}`); const ok = okX(x) && okY(y); $(`dx${i}`).setAttribute('aria-invalid', String(!okX(x))); $(`dy${i}`).setAttribute('aria-invalid', String(!okY(y))); if (ok) { r.x = x; r.y = y; xs.push(x); ys.push(y); } else bad = true; });
+      const m = bad || xs.length < 3 ? null : linreg(xs, ys);
+      const flat = m && !Number.isFinite(m.r);
+      $('dRegErr').textContent = bad ? 'Une case est vide ou hors limites (publicité de 0 à 1 000, ventes de 0 à 100 000) : corrigez-la pour voir le résultat.' : flat ? 'Une colonne ne varie pas : la corrélation n’existe pas. Donnez des valeurs différentes d’un mois à l’autre.' : '';
+      $('dRegErr').hidden = !(bad || flat);
+      if (bad || xs.length < 3 || flat) { $('dRegOut').textContent = bad ? 'Aucun résultat tant qu’une case est impossible.' : 'Aucun résultat tant qu’une colonne est constante.'; $('dRegVerdict').textContent = ''; $('dChart').innerHTML = ''; return; }
       const spend = num('dSpend');
       const pred = Number.isFinite(spend) ? m.intercept + m.slope * spend : null;
       $('dRegOut').textContent = `Corrélation r = ${f1(m.r)}. Chaque tranche de 1 000 $ de publicité en plus va avec ${kd(m.slope)} de ventes en plus. R² = ${f1(m.r2)} : la publicité « explique » ${Math.round(m.r2 * 100)} % des variations` +
@@ -831,7 +844,7 @@
     ['abNa', 'abXa', 'abNb', 'abXb'].forEach(id => $(id).addEventListener('input', renderAb));
     renderAb();
     show('srcD1', [pearson, linreg]);
-    show('srcD2', [abTest, sampleSizePerGroup]);
+    show('srcD2', [wilson, abTest, sampleSizePerGroup]);
   }
 
   /* ---------- CPQ complet : configurer, tarifer, soumettre ---------- */
@@ -850,7 +863,7 @@
     });
     const render = (changed) => {
       const q = buildQuote(CQ, readInput(), changed || null);
-      selected = new Set(q.picked);
+      if (!q.errors.length) selected = new Set(q.picked);
       renderOptions(q.picked);
       ['width', 'depth', 'qty'].forEach(f => $({ width: 'cqW', depth: 'cqD', qty: 'cqQty' }[f]).setAttribute('aria-invalid', String(q.errors.some(e => e.field === f))));
       $('cqErr').textContent = q.errors.map(e => e.text).join(' ');
@@ -1061,7 +1074,7 @@
       const gone = notes[Number(b.dataset.i)];
       const r = writeFeuilles(cur => { const k = cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, notes.filter(n => !sameFeuille(n, gone)));
       const saved = r.saved;
-      notes = saved ? readFeuilles(r.next) : notes.filter(n => !sameFeuille(n, gone));
+      notes = saved ? readFeuilles(r.next) : notes.filter((_, j) => j !== Number(b.dataset.i));
       renderNotes();
       $('nStatus').textContent = saved ? 'Note retirée.' : 'Note retirée pour cette visite seulement : le navigateur refuse le stockage local.';
       if (!document.activeElement || document.activeElement === document.body) { const left = $('nList').querySelectorAll('.x'); (left[Math.min(Number(b.dataset.i), left.length - 1)] || $('nTitle')).focus(); }

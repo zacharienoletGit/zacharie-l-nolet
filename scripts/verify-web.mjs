@@ -113,11 +113,20 @@ for (const f of pages) {
       await page.click('#dOutlier'); expect(/hors norme/.test(await text('#dRegVerdict')) && (await page.locator('#dChart .hot').count()) === 1, 'données : le mois hors norme n’apparaît pas');
       await page.fill('#abXb', '5200'); await page.fill('#abNb', '100000'); await page.fill('#abNa', '100000'); await page.fill('#abXa', '4800');
       expect(/tient/.test(await text('#abVerdict')), 'données : le test A/B ne tranche pas à 100 000 visiteurs');
+      await page.fill('#abNa', '100'); await page.fill('#abXa', '0'); await page.fill('#abNb', '100'); await page.fill('#abXb', '100');
+      expect(/tient/.test(await text('#abVerdict')) && !/NaN/.test(await text('#abOut')), 'données : 0 % contre 100 % ne donne pas un verdict valide');
+      await page.fill('#dx0', '4'); await page.fill('#dy0', '9999999'); expect(!(await page.isHidden('#dRegErr')), 'données : une vente hors limites passe sans erreur');
     }
     if (f === 'cpq.html') {
       expect(/\$/.test(await text('#cqTotal')), 'CPQ : pas de total au chargement');
       await page.click('#cq-inclinable'); expect(!(await page.isChecked('#cq-tiroir')) && (await page.isChecked('#cq-inclinable')), 'CPQ : le plateau inclinable ne retire pas le tiroir');
       await page.fill('#cqQty', '10'); expect(/Remise 10 %/.test(await text('#cqTotals')), 'CPQ : la remise de 10 % ne se déclenche pas à 10');
+      const amount = (t) => Number(t.replace(/[^\d,−-]/g, '').replace('−', '-').replace(',', '.'));
+      const totals = await page.$$eval('#cqTotals dd', ds => ds.map(d => d.textContent));
+      const sum = amount(totals[1]) + totals.slice(2).reduce((acc, t) => acc + amount(t), 0);
+      expect(Math.abs(sum - amount(await text('#cqTotal'))) < 0.005, 'CPQ : le total n’est pas la somme des montants affichés');
+      await page.fill('#cqW', '160'); await page.click('#cq-second'); await page.fill('#cqW', ''); await page.fill('#cqW', '180');
+      expect(await page.isChecked('#cq-second'), 'CPQ : effacer puis retaper la largeur perd le deuxième plateau');
       await page.fill('#cqW', '300'); expect(!(await page.isHidden('#cqErr')) && (await text('#cqTotal')) === '—', 'CPQ : une largeur impossible laisse un total');
     }
     if (f === 'contact.html') {
