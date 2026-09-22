@@ -1,0 +1,18 @@
+{
+  "name": "Zacharie L. Nolet — cahier de lecture",
+  "install": "sudo apt-get update -qq && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq php-cli && npm ci && npm run export-catalog",
+  "terminals": [
+    {
+      "name": "metro",
+      "command": "npm start"
+    },
+    {
+      "name": "backend-php",
+      "command": "npm run backend"
+    },
+    {
+      "name": "web",
+      "command": "cd web && python3 -m http.server 4173"
+    }
+  ]
+}
