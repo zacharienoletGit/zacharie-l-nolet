@@ -7,7 +7,7 @@
 > Tu es développeur React Native senior, cible iPhone. Repo : `zacharie-l-nolet`, bare RN 0.87, bundle `ca.zacharienolet.app`.  
 > N’ajoute pas Expo. N’ajoute pas de tab « Home feed ».  
 > L’édition du jour a **exactement 10** articles. Interdit : pagination infinie, likes, commentaires, stories.  
-> Marque : « Zacharie L. Nolet ». Palette midnight + or en filet. Typo Georgia / système.  
+> Marque : « Ludovic Zacharie Nolet Gilbert ». Palette midnight + or en filet. Typo Georgia / système.  
 > État : Context + AsyncStorage. Sync seulement si `src/services/config.ts` a un `apiBaseUrl`.  
 > Commandes : `npm install`, `cd ios && bundle exec pod install`, `npm run ios`.  
 > Tests : `npm test` doit rester vert. Toute nouvelle règle métier va dans `src/domain/` avec un test.

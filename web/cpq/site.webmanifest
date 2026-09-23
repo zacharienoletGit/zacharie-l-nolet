@@ -1,0 +1,27 @@
+{
+  "name": "CPQ · Ludovic Zacharie Nolet Gilbert",
+  "short_name": "CPQ",
+  "description": "CPQ : Configurer, tarifer, soumettre, par Ludovic Zacharie Nolet Gilbert.",
+  "lang": "fr-CA",
+  "start_url": "./",
+  "display": "browser",
+  "background_color": "#F3EDE0",
+  "theme_color": "#0B1A28",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

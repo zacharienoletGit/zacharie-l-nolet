@@ -5,24 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>Mon travail en direct · Zacharie L. Nolet</title>
-<meta name="description" content="Six morceaux du code de Zacharie L. Nolet qui tournent dans votre navigateur : recherche, synchronisation hors ligne, calculs de tableau de bord, configurateur de prix, export de données.">
-<meta name="author" content="Zacharie L. Nolet">
-<meta name="theme-color" content="#FAFAF7">
+<title>Mon travail en direct · Ludovic Zacharie Nolet Gilbert</title>
+<meta name="description" content="Six morceaux du code de Ludovic Zacharie Nolet Gilbert qui tournent dans votre navigateur : recherche, synchronisation hors ligne, calculs de tableau de bord, configurateur de prix, export de données.">
+<meta name="author" content="Ludovic Zacharie Nolet Gilbert">
+<meta name="theme-color" content="#F3EDE0">
 <link rel="canonical" href="https://zacharienoletgit.github.io/zacharie-l-nolet/preuves.html">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_CA">
-<meta property="og:site_name" content="Zacharie L. Nolet">
-<meta property="og:title" content="Mon travail en direct · Zacharie L. Nolet">
-<meta property="og:description" content="Six morceaux du code de Zacharie L. Nolet qui tournent dans votre navigateur : recherche, synchronisation hors ligne, calculs de tableau de bord, configurateur de prix, export de données.">
+<meta property="og:site_name" content="Ludovic Zacharie Nolet Gilbert">
+<meta property="og:title" content="Mon travail en direct · Ludovic Zacharie Nolet Gilbert">
+<meta property="og:description" content="Six morceaux du code de Ludovic Zacharie Nolet Gilbert qui tournent dans votre navigateur : recherche, synchronisation hors ligne, calculs de tableau de bord, configurateur de prix, export de données.">
 <meta property="og:url" content="https://zacharienoletgit.github.io/zacharie-l-nolet/preuves.html">
 <meta property="og:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Zacharie L. Nolet, portrait et nom sur fond d’encre">
+<meta property="og:image:alt" content="Ludovic Zacharie Nolet Gilbert, portrait et nom sur fond d’encre">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Mon travail en direct · Zacharie L. Nolet">
-<meta name="twitter:description" content="Six morceaux du code de Zacharie L. Nolet qui tournent dans votre navigateur : recherche, synchronisation hors ligne, calculs de tableau de bord, configurateur de prix, export de données.">
+<meta name="twitter:title" content="Mon travail en direct · Ludovic Zacharie Nolet Gilbert">
+<meta name="twitter:description" content="Six morceaux du code de Ludovic Zacharie Nolet Gilbert qui tournent dans votre navigateur : recherche, synchronisation hors ligne, calculs de tableau de bord, configurateur de prix, export de données.">
 <meta name="twitter:image" content="https://zacharienoletgit.github.io/zacharie-l-nolet/og-image.jpg">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
@@ -34,12 +34,13 @@
 <body>
 <a class="skip" href="#main">Aller au contenu</a>
 
-<div class="topbar">
+<div class="topbar" id="top">
   <nav aria-label="Pages">
-    <a class="brand" href="./">Z. L. Nolet</a>
+    <a class="brand" href="./">L. Z. Nolet Gilbert</a>
     <a href="./">Accueil</a>
     <a href="parcours.html">Parcours</a>
     <a href="preuves.html" aria-current="page">Preuves</a>
+    <a href="demo.html">Démo</a>
     <a href="engagement.html">Travailler ensemble</a>
     <a href="contact.html">Contact</a>
   </nav>
@@ -102,8 +103,8 @@
           <button class="btn" type="button" id="edPrev">Veille</button>
           <button class="btn" type="button" id="edNext">Lendemain</button>
         </div>
-        <p class="out" id="edhash"></p>
-        <ol class="list" id="edout"></ol>
+        <p class="out" id="edhash" role="status"></p>
+        <ol class="list" id="edout" aria-live="polite"></ol>
       </div>
     </article>
 
@@ -172,9 +173,9 @@
           <table id="ratioTable">
             <thead><tr><th scope="col">Région</th><th class="num" scope="col">À temps</th><th class="num" scope="col">Total</th><th class="num" scope="col">Taux</th></tr></thead>
             <tbody>
-              <tr><td>Centre-du-Québec</td><td class="num"><input type="number" id="r1a" value="95" min="0" max="1000000" aria-label="Centre-du-Québec, livraisons à temps"></td><td class="num"><input type="number" id="r1b" value="100" min="1" max="1000000" aria-label="Centre-du-Québec, livraisons totales"></td><td class="num" data-rate>95,0 %</td></tr>
-              <tr><td>Montréal</td><td class="num"><input type="number" id="r2a" value="1700" min="0" max="1000000" aria-label="Montréal, livraisons à temps"></td><td class="num"><input type="number" id="r2b" value="2000" min="1" max="1000000" aria-label="Montréal, livraisons totales"></td><td class="num" data-rate>85,0 %</td></tr>
-              <tr><td>Estrie</td><td class="num"><input type="number" id="r3a" value="45" min="0" max="1000000" aria-label="Estrie, livraisons à temps"></td><td class="num"><input type="number" id="r3b" value="50" min="1" max="1000000" aria-label="Estrie, livraisons totales"></td><td class="num" data-rate>90,0 %</td></tr>
+              <tr><td>Centre-du-Québec</td><td class="num"><input type="number" id="r1a" aria-describedby="ratioErr" value="95" min="0" max="1000000" aria-label="Centre-du-Québec, livraisons à temps"></td><td class="num"><input type="number" id="r1b" aria-describedby="ratioErr" value="100" min="1" max="1000000" aria-label="Centre-du-Québec, livraisons totales"></td><td class="num" data-rate>95,0 %</td></tr>
+              <tr><td>Montréal</td><td class="num"><input type="number" id="r2a" aria-describedby="ratioErr" value="1700" min="0" max="1000000" aria-label="Montréal, livraisons à temps"></td><td class="num"><input type="number" id="r2b" aria-describedby="ratioErr" value="2000" min="1" max="1000000" aria-label="Montréal, livraisons totales"></td><td class="num" data-rate>85,0 %</td></tr>
+              <tr><td>Estrie</td><td class="num"><input type="number" id="r3a" aria-describedby="ratioErr" value="45" min="0" max="1000000" aria-label="Estrie, livraisons à temps"></td><td class="num"><input type="number" id="r3b" aria-describedby="ratioErr" value="50" min="1" max="1000000" aria-label="Estrie, livraisons totales"></td><td class="num" data-rate>90,0 %</td></tr>
             </tbody>
           </table>
         </div>
@@ -259,11 +260,12 @@
 </main>
 
 <footer>
-  <span>Zacharie L. Nolet · Techniques de l’informatique, Cégep de Victoriaville · <a href="mailto:2012487@etudiant.cegepvicto.ca?subject=Mandat%2C%20stage%20ou%20contrat">2012487@etudiant.cegepvicto.ca</a></span>
+  <span>Ludovic Zacharie Nolet Gilbert · Techniques de l’informatique, Cégep de Victoriaville · <a href="mailto:2012487@etudiant.cegepvicto.ca?subject=Mandat%2C%20stage%20ou%20contrat">2012487@etudiant.cegepvicto.ca</a></span>
   <span>Site fait à la main, sans traceur ni outil externe. Les démonstrations exécutent le code de mon projet <span class="mono">zacharie-l-nolet</span>.</span>
   <nav class="footer-nav" aria-label="Pages légales et liens">
     <a href="confidentialite.html">Confidentialité</a>
     <a href="conditions.html">Conditions d’utilisation</a>
+    <a href="coulisses.html">Coulisses du site</a>
     <a href="sitemap.xml">Plan du site</a>
     <a href="https://github.com/zacharienoletGit/zacharie-l-nolet" rel="noopener">Dépôt GitHub</a>
     <a href="#top" id="toTop">Haut de page</a>

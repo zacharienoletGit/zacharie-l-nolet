@@ -59,7 +59,7 @@ export function OnboardingScreen() {
     <View style={[styles.flex, { backgroundColor: colors.bg, paddingTop: insets.top + 12 }]}>
       <View style={styles.brand}>
         <BrandMark size={96} />
-        <Text style={[type.kicker, { color: colors.accent }]}>Zacharie L. Nolet</Text>
+        <Text style={[type.kicker, { color: colors.accent }]}>Ludovic Zacharie Nolet Gilbert</Text>
       </View>
       <FlatList
         ref={list}

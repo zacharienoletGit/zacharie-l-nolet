@@ -1,11 +1,11 @@
 {
-  "name": "Zacharie L. Nolet",
-  "short_name": "Z. L. Nolet",
-  "description": "Cahier de compétences de Zacharie L. Nolet.",
+  "name": "Ludovic Zacharie Nolet Gilbert",
+  "short_name": "Nolet Gilbert",
+  "description": "Cahier de compétences de Ludovic Zacharie Nolet Gilbert.",
   "lang": "fr-CA",
   "start_url": "./",
   "display": "browser",
-  "background_color": "#FAFAF7",
+  "background_color": "#F3EDE0",
   "theme_color": "#0B1A28",
   "icons": [
     { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" },

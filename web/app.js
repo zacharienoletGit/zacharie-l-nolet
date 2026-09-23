@@ -172,7 +172,97 @@
   /* ======================================================================
      Preuves (page preuves.html seulement)
      ====================================================================== */
-  if (!$('q')) return;
+
+  /* Classeur partagé (zln-feuilles) : on relit le stockage avant chaque écriture, pour ne jamais écraser
+     une feuille écrite par un autre onglet ; l’événement storage rafraîchit l’affichage. */
+  const FEUILLES_KEY = 'zln-feuilles';
+  const cleanFeuille = (n) => ({ title: n.title.slice(0, 120), body: n.body.slice(0, 2000), ...(typeof n.articleId === 'string' ? { articleId: n.articleId.slice(0, 40) } : {}) });
+  const storedFeuilles = () => {
+    const stored = store.get(FEUILLES_KEY);
+    return Array.isArray(stored)
+      ? stored.filter(n => n && typeof n === 'object' && typeof n.title === 'string' && typeof n.body === 'string').map(cleanFeuille).slice(0, 60)
+      : null;
+  };
+  const readFeuilles = (fallback) => storedFeuilles() || fallback || [];
+  const sameFeuille = (a, b) => a.title === b.title && a.body === b.body && (a.articleId || '') === (b.articleId || '');
+  /* Quand une écriture est refusée (quota plein, stockage bloqué), l’écart entre l’écran et le stockage est gardé
+     en attente : feuilles ajoutées et feuilles retirées, une copie à la fois (deux feuilles identiques restent distinctes).
+     Chaque mutation repart du stockage avec cet écart appliqué ; une écriture réussie le solde. */
+  const diffOnce = (a, b) => { const rest = b.slice(); return a.filter(n => { const k = rest.findIndex(m => sameFeuille(m, n)); if (k >= 0) { rest.splice(k, 1); return false; } return true; }); };
+  const noPending = () => ({ added: [], removed: [] });
+  const overlay = (list, pending) => diffOnce(list, pending.removed).concat(pending.added);
+  /* Deux onglets peuvent lire le même classeur puis écrire l’un après l’autre : la seconde écriture effacerait la première.
+     Les mutations sont donc mises en file avec un verrou partagé entre onglets (Web Locks) ; sans verrou disponible
+     (contexte non sécurisé), la mutation s’exécute directement, relecture comprise. */
+  const withFeuillesLock = (fn) => (navigator.locks && navigator.locks.request)
+    ? navigator.locks.request(FEUILLES_KEY, () => fn())
+    : Promise.resolve().then(fn);
+  /* `local` est la liste affichée, non modifiée : elle sert de point de départ quand le stockage est illisible. */
+  const writeFeuilles = (mutate, local, pending) => withFeuillesLock(() => {
+    const stored = storedFeuilles();
+    const before = stored ? overlay(stored, pending) : local;
+    const next = mutate(before);
+    // Au-delà de soixante (classeur rempli par un autre onglet pendant qu’une feuille attendait), rien n’est écrit :
+    // une écriture serait relue tronquée et perdrait la feuille en attente. L’ajout est refusé, le retrait libère la place.
+    const saved = next.length <= 60 && store.set(FEUILLES_KEY, next);
+    const kept = saved ? readFeuilles(next) : next;
+    const base = saved ? kept : (stored || []);
+    return { saved, next: kept, applied: next.length !== before.length, pending: saved ? noPending() : { added: diffOnce(kept, base), removed: diffOnce(base, kept) } };
+  });
+  const onOtherTab = (fn) => window.addEventListener('storage', (e) => { if (e.key === FEUILLES_KEY || e.key === null) fn(); });
+
+  /* ---------- Coulisses : la page se mesure elle-même ---------- */
+  if ($('metaLoaded')) {
+    const ko = (n) => (n / 1024).toLocaleString('fr-CA', { maximumFractionDigits: 0 }) + ' Ko';
+    const measure = () => {
+      const nav = performance.getEntriesByType('navigation')[0];
+      const res = performance.getEntriesByType('resource');
+      const mine = (u) => u.startsWith(location.origin) || u.startsWith('file:');
+      const foreign = res.filter(r => !mine(r.name)).length;
+      const bytes = res.concat(nav ? [nav] : []).reduce((t, r) => t + (r.transferSize || r.encodedBodySize || r.decodedBodySize || 0), 0);
+      const n = res.length + (nav ? 1 : 0);
+      $('metaLoaded').textContent = (n === 1 ? '1 fichier chargé, la page elle-même' : `${n} fichiers chargés, page comprise`) +
+        (foreign ? `, dont ${foreign} depuis un autre site.` : ', tous depuis ce site.') +
+        (bytes ? ` Poids total : ${ko(bytes)}.` : ' Poids non mesurable hors d’un serveur web.');
+    };
+    if (document.readyState === 'complete') measure(); else window.addEventListener('load', () => setTimeout(measure, 0));
+
+    const cspMeta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+    const csp = cspMeta ? cspMeta.getAttribute('content') : '';
+    const has = (d) => csp.split(';').map(x => x.trim()).find(x => x.startsWith(d + ' ')) || '';
+    const said = [];
+    if (has('connect-src').includes("'none'")) said.push('aucune connexion sortante');
+    if (has('script-src') && !has('script-src').includes("'unsafe-inline'")) said.push('aucun script en ligne');
+    if (has('style-src') && !has('style-src').includes("'unsafe-inline'")) said.push('aucun style en ligne');
+    if (has('object-src').includes("'none'")) said.push('aucun objet embarqué');
+    if (has('form-action').includes("'none'")) said.push('aucun envoi de formulaire vers un serveur');
+    $('metaCsp').textContent = csp
+      ? `Cette page déclare : ${said.join(', ')}. Politique complète : ${csp}`
+      : 'Aucune politique trouvée dans l’en-tête de cette page.';
+
+    const lum = (rgb) => {
+      const m = rgb.match(/\d+(\.\d+)?/g);
+      if (!m || m.length < 3) return null;
+      const [r, g, b] = m.slice(0, 3).map(v => { const c = Number(v) / 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const ratio = (fg, bg) => { const a = lum(fg), b = lum(bg); return a === null || b === null ? null : ((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)); };
+    const probe = document.createElement('span'); probe.className = 'muted'; probe.hidden = true; document.body.appendChild(probe);
+    const cs = getComputedStyle(document.body), cm = getComputedStyle(probe);
+    const r1 = ratio(cs.color, cs.backgroundColor), r2 = ratio(cm.color, cs.backgroundColor);
+    probe.remove();
+    const f = (x) => x === null ? 'non mesurable' : x.toLocaleString('fr-CA', { maximumFractionDigits: 1 }) + ' pour 1';
+    $('metaContrast').textContent = `Texte courant sur le fond : ${f(r1)}. Texte secondaire sur le fond : ${f(r2)}.`;
+
+    const reducedNow = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const vt = 'startViewTransition' in document && 'onpagereveal' in window;
+    $('metaMotion').textContent = (reducedNow
+      ? 'Vous avez demandé moins d’animations : les deux sont coupées sur ce site.'
+      : 'Vos réglages permettent les animations : les deux du site sont actives.') +
+      (vt ? ' Votre navigateur connaît les transitions de vue entre pages : le nom devrait glisser de l’accueil à la barre de navigation.' : ' Votre navigateur ne connaît pas encore les transitions de vue entre pages : la page change sans animation.');
+  }
+
+
 
   /* Catalogue de démonstration : seulement les textes techniques du dépôt (11 sur 22). */
   const CATALOG = [{"id":"a-02","slug":"local-first-memoire","title":"Local-first, ou la mémoire qui t’appartient","dek":"Un carnet hors-ligne n’est pas un repli. C’est une architecture.","section":"informatique","source":"Atelier","region":"TECH","min":7,"rank":2,"keywords":["local-first","sync","architecture","notes"]},{"id":"a-03","slug":"grain-avant-abstraction","title":"Le grain avant l’abstraction","dek":"Un écran de trop, une table de trop : le code commence par ce que tu comptes.","section":"programmation","source":"Atelier","region":"TECH","min":8,"rank":3,"keywords":["grain","modèle","react-native","contrat"]},{"id":"a-04","slug":"la-source-nest-pas-le-rapport","title":"La source n’est pas le rapport","dek":"Un tableau de bord qui se prend pour l’usine ment deux fois : au métier, et à lui-même.","section":"intelligence_affaires","source":"Décision","region":"TECH","min":7,"rank":4,"keywords":["grain","source","mart","méthode"]},{"id":"a-05","slug":"operationnel-pas-une-copie","title":"L’opérationnel n’est pas une copie","dek":"Un ERP vivant n’est pas un export. Le traiter comme un fichier, c’est déjà se tromper de grain.","section":"sage_x3","source":"Décision","region":"TECH","min":6,"rank":5,"keywords":["sage","erp","opérationnel","grain"]},{"id":"a-06","slug":"cloner-ne-pas-inventer","title":"Cloner, ne pas inventer","dek":"Un champ déjà certifié en production n’est pas une suggestion. C’est une frontière.","section":"nectari","source":"Décision","region":"TECH","min":6,"rank":6,"keywords":["nectari","netari","certifié","mesure"]},{"id":"a-07","slug":"horloge-pas-le-metier","title":"L’horloge n’est pas le métier","dek":"Jitterbit cadence. Il ne décide pas ce qu’est une commande, un lot, une vérité.","section":"jitterbit","source":"Décision","region":"TECH","min":6,"rank":7,"keywords":["jitterbit","intégration","idempotence","contrat"]},{"id":"a-08","slug":"un-ratio-ne-se-somme-pas","title":"Un ratio ne se somme pas","dek":"Power BI n’est pas coupable. La somme d’un pourcentage, si.","section":"power_bi","source":"Décision","region":"TECH","min":6,"rank":8,"keywords":["power bi","ratio","grain","étoile"]},{"id":"a-11","slug":"cpq-regles-avant-ecran","title":"CPQ : les règles avant l’écran","dek":"Configurer un prix n’est pas un formulaire. C’est un graphe de contraintes.","section":"cpq","source":"Atelier","region":"TECH","min":7,"keywords":["cpq","règles","devis","contraintes"]},{"id":"a-12","slug":"vocabulaire-du-domaine","title":"Le vocabulaire est le domaine","dek":"Tant que « produit », « article » et « item » veulent trois choses, le logiciel mentira poliment.","section":"domaine_informatique","source":"Atelier","region":"TECH","min":6,"keywords":["domaine","vocabulaire","clé","modèle"]},{"id":"a-19","slug":"tests-avant-le-theme","title":"Les tests avant le thème","dek":"Un écran beau et non testé redevient un fil : on ne sait plus ce qui a cassé.","section":"programmation","source":"Atelier","region":"TECH","min":6,"keywords":["tests","contrat","react-native"]},{"id":"a-21","slug":"modele-etoile-sans-poster","title":"Le modèle en étoile, sans le poster","dek":"Une dimension n’est pas un filtre joli. C’est une clé que tu peux défendre.","section":"power_bi","source":"Décision","region":"TECH","min":6,"keywords":["étoile","dimension","fait","réconciliation"]}];
@@ -351,9 +441,46 @@
     return { picked, excluded, options, optionsTotal, discount, total: CPQ.base.price + optionsTotal - discount, trace };
   }
 
-  function renderFeuillesMarkdown(notes, exportedAt) {
+
+  function noteBlock(note, article) {
+    const title = note.title.trim() || 'Sans titre';
+    const link = article ? `\n_En marge de : ${article.title}_\n` : '\n';
+    return `### ${title}\n${link}\n${note.body.trim() || '_Feuille vide._'}\n`;
+  }
+
+  function renderClasseurMarkdown(input) {
+    const byId = new Map(input.articles.map(a => [a.id, a]));
     const lines = [
-      '# Classeur — Zacharie L. Nolet',
+      '# Classeur — Ludovic Zacharie Nolet Gilbert',
+      '',
+      `Exporté le ${input.exportedAt}.`,
+      '',
+      'Mémoire locale. Rien n’est un fil social.',
+      '',
+    ];
+    if (input.bookmarks.length) {
+      lines.push('## Coupures', '');
+      for (const mark of input.bookmarks) {
+        const article = byId.get(mark.articleId);
+        lines.push(`- ${article ? article.title : mark.articleId}`);
+      }
+      lines.push('');
+    }
+    if (!input.notes.length) {
+      lines.push('## Notes', '', '_Aucune feuille._', '');
+    } else {
+      lines.push('## Notes', '');
+      for (const note of input.notes) {
+        lines.push(noteBlock(note, note.articleId ? byId.get(note.articleId) : undefined));
+      }
+    }
+    return `${lines.join('\n').trim()}\n`;
+  }
+
+  function renderFeuillesMarkdown(notes, exportedAt, articles) {
+    const byId = new Map((articles || []).map(a => [a.id, a]));
+    const lines = [
+      '# Classeur — Ludovic Zacharie Nolet Gilbert',
       '',
       `Exporté le ${exportedAt}.`,
       '',
@@ -363,23 +490,201 @@
     if (!notes.length) {
       lines.push('## Notes', '', '_Aucune feuille._');
     }
-    for (const note of notes) {
-      const title = note.title.trim() || 'Sans titre';
-      lines.push(`### ${title}`, '', note.body.trim() || '_Feuille vide._', '');
-    }
+    for (const note of notes) lines.push(noteBlock(note, note.articleId ? byId.get(note.articleId) : undefined));
     return `${lines.join('\n').trim()}\n`;
   }
 
-  /* ---------- Sources affichées : le code montré est le code exécuté ---------- */
+
+  /* ---------- Démo : le cahier, en version web, avec les fonctions de l’application ---------- */
+  if ($('cahier')) {
+    const cahier = $('cahier');
+    const tabs = [...cahier.querySelectorAll('[role="tab"]')];
+    const panels = tabs.map(t => $(t.getAttribute('aria-controls')));
+    const select = (tab, focus) => {
+      tabs.forEach((t, i) => {
+        const on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        panels[i].hidden = !on;
+      });
+      if (focus) tab.focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t, false));
+      t.addEventListener('keydown', (e) => {
+        const k = e.key;
+        let j = null;
+        if (k === 'ArrowRight') j = (i + 1) % tabs.length;
+        else if (k === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
+        else if (k === 'Home') j = 0;
+        else if (k === 'End') j = tabs.length - 1;
+        if (j !== null) { e.preventDefault(); select(tabs[j], true); }
+      });
+    });
+
+    const clips = new Set();
+    let feuilles = readFeuilles([]);
+    let pending = noPending();
+    let pendingArticle = null;
+    const byId = (id) => CATALOG.find(a => a.id === id);
+    const today = new Date();
+    const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    $('chEdDate').value = iso(today);
+    // L’en-tête du cahier affiche la date de l’édition choisie, pas la date d’ouverture.
+    const civil = (s) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : today; };
+    const showDate = (s) => { $('chDate').textContent = civil(s).toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); };
+    // La feuille en cours peut être liée à un article : le lien est affiché et se détache d’un clic.
+    const setPending = (a) => {
+      pendingArticle = a ? a.id : null;
+      $('chNLink').hidden = !a;
+      $('chNLinkTitle').textContent = a ? a.title : '';
+    };
+
+    const row = (a, i, list) => `<li>
+      <span class="n">${String(i + 1).padStart(2, '0')}</span>
+      <h4>${esc(a.title)}</h4>
+      <p class="dek">${esc(a.dek)}</p>
+      <p class="meta">${esc(SECTIONS[a.section] || a.section)} · ${esc(a.source)} · ${a.min} min</p>
+      <div class="acts">
+        <button class="btn small" type="button" id="${list}-clip-${esc(a.id)}" data-clip="${esc(a.id)}" aria-pressed="${clips.has(a.id)}" aria-label="${clips.has(a.id) ? 'Retirer la coupure' : 'Découper'} : ${esc(a.title)}">${clips.has(a.id) ? 'Découpé' : 'Découper'}</button>
+        <button class="btn small" type="button" id="${list}-feuille-${esc(a.id)}" data-feuille="${esc(a.id)}" aria-label="Écrire une feuille sur : ${esc(a.title)}">Feuille</button>
+      </div>
+    </li>`;
+    // Après un retrait dans le Classeur, le bouton activé disparaît : le focus va au bouton voisin, sinon au titre de la liste.
+    const focusAfterRemoval = (listId, titleId, selector, index) => {
+      if (document.activeElement && document.activeElement !== document.body) return;
+      const buttons = [...$(listId).querySelectorAll(selector)];
+      const target = buttons[Math.min(index, buttons.length - 1)] || $(titleId);
+      if (target) target.focus();
+    };
+    const wire = (root) => {
+      root.querySelectorAll('[data-clip]').forEach(b => b.addEventListener('click', () => {
+        const id = b.dataset.clip;
+        const inClasseur = root === $('chClips');
+        const index = inClasseur ? [...root.querySelectorAll('[data-clip]')].indexOf(b) : -1;
+        if (clips.has(id)) clips.delete(id); else clips.add(id);
+        renderAll();
+        if (inClasseur) focusAfterRemoval('chClips', 'chClipsTitle', '[data-clip]', index);
+      }));
+      root.querySelectorAll('[data-feuille]').forEach(b => b.addEventListener('click', () => {
+        const a = byId(b.dataset.feuille);
+        setPending(a);
+        $('chNTitle').value = a ? a.title : '';
+        select($('tab-classeur'), false);
+        $('chNBody').focus();
+      }));
+    };
+    const renderEdition = () => keepFocus(() => {
+      const date = $('chEdDate').value || iso(today);
+      showDate(date);
+      const ed = fallbackEdition(CATALOG, date);
+      $('chEdition').innerHTML = ed.map((a, i) => row(a, i, 'ed')).join('');
+      wire($('chEdition'));
+      $('chEdNote').textContent = `Édition du ${date} : ${ed.length} textes sur ${CATALOG.length}, choisis par empreinte de la date, les mêmes sur chaque appareil.`;
+    });
+    const renderResults = () => keepFocus(() => {
+      const q = $('chQ').value;
+      const sec = $('chSec').value;
+      const found = filterArticles(CATALOG, q, sec);
+      $('chResults').innerHTML = found.length ? found.map((a, i) => row(a, i, 'res')).join('') : '<li class="empty">Aucun texte. Essayez un autre mot, avec ou sans accent.</li>';
+      wire($('chResults'));
+      $('chQn').textContent = q.trim() ? `Requête normalisée : « ${normalizeQuery(q)} » · ${found.length} texte${found.length > 1 ? 's' : ''}` : `${found.length} textes`;
+    });
+    const renderClasseur = () => keepFocus(() => {
+      const list = [...clips].map(byId).filter(Boolean);
+      $('chClips').innerHTML = list.length ? list.map((a, i) => row(a, i, 'clip')).join('') : '<li class="empty">Aucune coupure. Découpez un texte dans l’Édition ou les Rubriques.</li>';
+      wire($('chClips'));
+      $('chNotes').innerHTML = feuilles.length
+        ? feuilles.map((n, i) => { const a = n.articleId ? byId(n.articleId) : null; return `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><h4>${esc(n.title.trim() || 'Sans titre')}</h4>${a ? `<p class="meta">En marge de : ${esc(a.title)}</p>` : ''}<p class="dek">${esc(n.body)}</p><div class="acts"><button class="btn small" type="button" id="chrm-${i}" data-rm="${i}" aria-label="Retirer la feuille : ${esc(n.title.trim() || 'Sans titre')}">Retirer</button></div></li>`; }).join('')
+        : '<li class="empty">Aucune feuille. Écrivez-en une ci-dessous.</li>';
+      $('chNotes').querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', async () => {
+        const index = Number(b.dataset.rm);
+        const gone = feuilles[index];
+        // Une seule copie est retirée : celle du bouton activé si elle est encore à sa place, sinon la première identique.
+        const r = await writeFeuilles(cur => { const k = cur[index] && sameFeuille(cur[index], gone) ? index : cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, feuilles, pending);
+        feuilles = r.next; pending = r.pending;
+        $('chNStatus').textContent = r.saved ? 'Feuille retirée.' : 'Feuille retirée pour cette visite seulement : le navigateur refuse le stockage local.';
+        renderAll();
+        focusAfterRemoval('chNotes', 'chNotesTitle', '[data-rm]', index);
+      }));
+      $('chCount').textContent = String(clips.size + feuilles.length);
+      $('chKvTextes').textContent = String(CATALOG.length);
+      $('chKvClips').textContent = String(clips.size);
+      $('chKvNotes').textContent = String(feuilles.length);
+    });
+    const renderAll = () => { renderEdition(); renderResults(); renderClasseur(); };
+
+    $('chEdDate').addEventListener('change', renderEdition);
+    $('chQ').addEventListener('input', renderResults);
+    $('chSec').addEventListener('change', renderResults);
+    const chErr = $('chNErr');
+    const showChErr = (msg) => { chErr.textContent = msg; chErr.hidden = !msg; $('chNBody').setAttribute('aria-invalid', String(Boolean(msg))); };
+    $('chNoteForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = $('chNTitle').value.trim();
+      const body = $('chNBody').value.trim();
+      if (!body) { showChErr('Une feuille vide ne s’enregistre pas : écrivez au moins une ligne.'); $('chNBody').focus(); return; }
+      if (feuilles.length >= 60) { showChErr('Soixante feuilles, c’est un classeur plein. Retirez-en avant d’en ajouter.'); return; }
+      showChErr('');
+      const note = cleanFeuille({ title, body, articleId: pendingArticle || undefined });
+      const r = await writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), feuilles, pending);
+      if (!r.applied) {
+        // Un autre onglet a rempli le classeur entre-temps : rien n’est perdu, la saisie reste dans le formulaire.
+        feuilles = r.next; pending = r.pending; renderClasseur();
+        $('chNStatus').textContent = '';
+        showChErr('Soixante feuilles, c’est un classeur plein : une autre page vient de le remplir. Retirez-en avant d’en ajouter.');
+        return;
+      }
+      feuilles = r.next; pending = r.pending;
+      setPending(null);
+      $('chNTitle').value = ''; $('chNBody').value = '';
+      $('chNStatus').textContent = r.saved ? 'Feuille enregistrée dans votre navigateur.' : 'Feuille gardée pour cette visite seulement : le navigateur refuse le stockage local.';
+      renderClasseur();
+      $('chNTitle').focus();
+    });
+    $('chNBody').addEventListener('input', () => { if (!chErr.hidden && $('chNBody').value.trim()) showChErr(''); });
+    $('chNUnlink').addEventListener('click', () => { setPending(null); $('chNStatus').textContent = 'Feuille détachée de l’article : elle sera enregistrée comme feuille libre.'; $('chNBody').focus(); });
+    $('chMd').addEventListener('click', () => {
+      $('chMdOut').value = renderClasseurMarkdown({ notes: feuilles, bookmarks: [...clips].map(articleId => ({ articleId })), articles: CATALOG, exportedAt: new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }) });
+      $('chMdOut').hidden = false;
+      $('chMdOut').focus();
+    });
+    cahier.querySelectorAll('input[name="chSize"]').forEach(r => r.addEventListener('change', () => { cahier.dataset.size = r.value; }));
+    $('chWelcomeBtn').addEventListener('click', () => {
+      const w = $('chWelcome');
+      w.hidden = !w.hidden;
+      $('chWelcomeBtn').setAttribute('aria-expanded', String(!w.hidden));
+    });
+    $('chReset').addEventListener('click', () => {
+      clips.clear();
+      $('chQ').value = ''; $('chSec').value = '';
+      $('chEdDate').value = iso(today);
+      setPending(null);
+      cahier.dataset.size = 'lecture';
+      cahier.querySelector('input[name="chSize"][value="lecture"]').checked = true;
+      renderAll();
+      $('chResetMsg').textContent = 'Coupures et réglages remis à zéro. Vos feuilles restent dans votre navigateur.';
+    });
+    // Un autre onglet a écrit : on repart de l’état brut du stockage, avec l’écart en attente ; s’il est vide, l’écran reste tel quel.
+    onOtherTab(() => { const stored = storedFeuilles(); if (stored) feuilles = overlay(stored, pending); renderClasseur(); });
+    renderAll();
+  }
+
+
   const show = (id, fns, note) => {
     $(id).textContent = (note ? note + '\n\n' : '') + fns.map(f => f.toString().replace(/\n {2}/g, '\n')).join('\n\n');
   };
+
+
+  if (!$('q')) return;
+
+  /* ---------- Sources affichées : le code montré est le code exécuté ---------- */
   show('src1', [normalizeQuery, filterArticles], '// SECTIONS : libellés des 9 rubriques techniques (src/data/sections.ts)');
   show('src2', [hash32, fallbackEdition], '// EDITION_SIZE = 10');
   show('src3', [enqueue, entityKey, mergeNotes]);
   show('src4', [rateOfSums, averageOfRates]);
   show('src5', [configure], '// CPQ : base, 4 options, 3 règles (voir la trace à droite)');
-  show('src6', [renderFeuillesMarkdown]);
+  show('src6', [noteBlock, renderFeuillesMarkdown]);
 
   /* ---------- 01 Recherche ---------- */
   const qs = $('qs');
@@ -468,10 +773,16 @@
   const renderRatio = () => {
     const err = $('ratioErr');
     const raw = ratioIds.map(([a, b]) => ({ onTime: readNum(a), total: readNum(b) }));
-    const badRow = raw.findIndex(r => !Number.isFinite(r.onTime) || !Number.isFinite(r.total) || r.onTime < 0 || r.total <= 0 || r.onTime > r.total || r.total > 1000000);
-    ratioIds.forEach(([a, b], i) => { $(a).setAttribute('aria-invalid', String(i === badRow)); $(b).setAttribute('aria-invalid', String(i === badRow)); });
+    // Des dénombrements : entiers, bornés, et jamais plus de livraisons à temps que de livraisons. Chaque case est jugée seule.
+    const count = (v, min) => Number.isInteger(v) && v >= min && v <= 1000000;
+    const invalid = raw.map(r => ({
+      onTime: !count(r.onTime, 0) || (count(r.total, 1) && r.onTime > r.total),
+      total: !count(r.total, 1),
+    }));
+    ratioIds.forEach(([a, b], i) => { $(a).setAttribute('aria-invalid', String(invalid[i].onTime)); $(b).setAttribute('aria-invalid', String(invalid[i].total)); });
+    const badRow = invalid.findIndex(x => x.onTime || x.total);
     if (badRow >= 0) {
-      err.textContent = 'Une ligne est incomplète ou impossible : les deux nombres sont requis, le total doit être entre 1 et 1 000 000 et au moins égal aux livraisons à temps.';
+      err.textContent = 'Une ligne est incomplète ou impossible : des nombres entiers, un total entre 1 et 1 000 000 et au moins égal aux livraisons à temps.';
       err.hidden = false;
       document.querySelectorAll('#ratioTable [data-rate]').forEach(c => { c.textContent = '—'; });
       $('rAvg').textContent = '—';
@@ -530,17 +841,12 @@
   renderCpq();
 
   /* ---------- 06 Feuilles et export Markdown ---------- */
-  const SEED = [
-    { title: 'Clôture volontaire', body: 'Observé : une édition a une fin.\nInférence : le fil n’en a pas.\nÀ valider : est-ce que dix textes me suffisent une semaine ?' },
-    { title: 'Hors article', body: 'Une feuille libre n’a pas besoin d’une coupure. Le classeur n’est pas un bookmark manager.' },
-  ];
-  const stored = store.get('zln-feuilles');
-  let notes = Array.isArray(stored)
-    ? stored.filter(n => n && typeof n === 'object' && typeof n.title === 'string' && typeof n.body === 'string').map(n => ({ title: n.title.slice(0, 120), body: n.body.slice(0, 2000) })).slice(0, 60)
-    : SEED.slice();
+  // Même point de départ que la page Démo : le classeur partagé commence vide, rien n’est écrit sans geste de l’utilisateur.
+  let notes = readFeuilles([]);
+  let pending = noPending();
   const renderMd = () => {
     const ta = $('mdOut');
-    ta.value = renderFeuillesMarkdown(notes, new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }));
+    ta.value = renderFeuillesMarkdown(notes, new Date().toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }), CATALOG);
     flash(ta);
   };
   const renderNotes = () => keepFocus(() => {
@@ -548,25 +854,37 @@
     ul.innerHTML = notes.length
       ? notes.map((n, i) => `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${esc(n.title.trim() || 'Sans titre')}</span><button class="x" type="button" id="nx-${i}" data-i="${i}" aria-label="Retirer la note ${esc(n.title.trim() || 'sans titre')}">×</button></li>`).join('')
       : '<li class="empty">Aucune note. Écrivez-en une.</li>';
-    ul.querySelectorAll('.x').forEach(b => b.addEventListener('click', () => {
-      notes.splice(Number(b.dataset.i), 1);
-      const saved = store.set('zln-feuilles', notes);
+    ul.querySelectorAll('.x').forEach(b => b.addEventListener('click', async () => {
+      const index = Number(b.dataset.i);
+      const gone = notes[index];
+      const r = await writeFeuilles(cur => { const k = cur[index] && sameFeuille(cur[index], gone) ? index : cur.findIndex(n => sameFeuille(n, gone)); return k >= 0 ? cur.filter((_, j) => j !== k) : cur; }, notes, pending);
+      const saved = r.saved;
+      notes = r.next; pending = r.pending;
       renderNotes();
       $('nStatus').textContent = saved ? 'Note retirée.' : 'Note retirée pour cette visite seulement : le navigateur refuse le stockage local.';
+      if (!document.activeElement || document.activeElement === document.body) { const left = $('nList').querySelectorAll('.x'); (left[Math.min(Number(b.dataset.i), left.length - 1)] || $('nTitle')).focus(); }
     }));
     renderMd();
   });
   const nErr = $('nErr');
   const showNErr = (msg) => { nErr.textContent = msg; nErr.hidden = !msg; $('nBody').setAttribute('aria-invalid', String(Boolean(msg))); };
-  $('nForm').addEventListener('submit', (e) => {
+  $('nForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const title = $('nTitle').value.trim();
     const body = $('nBody').value.trim();
     if (!body) { showNErr('Une note vide ne s’enregistre pas : écrivez au moins une ligne.'); $('nBody').focus(); return; }
     if (notes.length >= 60) { showNErr('Soixante notes, c’est un classeur plein. Retirez-en avant d’en ajouter.'); return; }
     showNErr('');
-    notes.push({ title: title.slice(0, 120), body: body.slice(0, 2000) });
-    const saved = store.set('zln-feuilles', notes);
+    const note = cleanFeuille({ title, body });
+    const r = await writeFeuilles(cur => cur.length >= 60 ? cur : cur.concat([note]), notes, pending);
+    if (!r.applied) {
+      notes = r.next; pending = r.pending; renderNotes();
+      $('nStatus').textContent = '';
+      showNErr('Soixante notes, c’est un classeur plein : une autre page vient de le remplir. Retirez-en avant d’en ajouter.');
+      return;
+    }
+    const saved = r.saved;
+    notes = r.next; pending = r.pending;
     $('nTitle').value = '';
     $('nBody').value = '';
     renderNotes();
@@ -574,6 +892,7 @@
     $('nTitle').focus();
   });
   $('nBody').addEventListener('input', () => { if (!nErr.hidden && $('nBody').value.trim()) showNErr(''); });
+  onOtherTab(() => { const stored = storedFeuilles(); if (stored) notes = overlay(stored, pending); renderNotes(); });
   renderNotes();
   $('mdCopy').addEventListener('click', copyWith($('mdCopy'), $('mdMsg'), () => $('mdOut').value, 'Copié dans le presse-papiers.'));
 })();

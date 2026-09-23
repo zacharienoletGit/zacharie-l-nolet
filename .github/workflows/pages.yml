@@ -1,11 +1,12 @@
-# Déploie le dossier web/ sur GitHub Pages à chaque push sur main.
+# Vérifie web/ dans Chromium (scripts/verify-web.mjs) puis le déploie sur GitHub Pages à chaque push sur main.
+# Si une page déborde, jette une erreur ou perd un lien, rien n’est publié.
 # Le premier passage active Pages lui-même (enablement) ; sinon, Settings → Pages → Source = GitHub Actions.
 name: Pages
 
 on:
   push:
     branches: [main]
-    paths: ['web/**', '.github/workflows/pages.yml']
+    paths: ['web/**', 'scripts/verify-web.mjs', '.github/workflows/pages.yml']
   workflow_dispatch:
 
 permissions:
@@ -25,6 +26,19 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Installer Chromium (Playwright, hors du projet)
+        run: |
+          mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw"
+          npm init -y >/dev/null
+          npm install --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Vérifier les pages avant de publier
+        run: node scripts/verify-web.mjs
+        env:
+          PLAYWRIGHT_MODULE: ${{ runner.temp }}/pw/node_modules/playwright/index.mjs
       - uses: actions/configure-pages@v5
         with:
           enablement: true

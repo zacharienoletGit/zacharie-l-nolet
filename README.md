@@ -1,9 +1,9 @@
-# Zacharie L. Nolet
+# Ludovic Zacharie Nolet Gilbert
 
 Cahier de lecture iPhone — **pas un réseau social**.  
 React Native 0.87, workflow **bare** (Xcode / CocoaPods). Une édition de **dix textes** par jour, des rubriques, un classeur local (coupures + notes), sync PHP optionnelle.
 
-Marque : *Zacharie L. Nolet*. Palette : encre de minuit + filet d’or. Aucun fil infini, aucun like.
+Marque : *Ludovic Zacharie Nolet Gilbert*. Palette : encre de minuit + filet d’or. Aucun fil infini, aucun like.
 
 ## Prérequis
 
@@ -42,7 +42,7 @@ xed ios/ZacharieLNolet.xcworkspace
 ```
 
 Schéma : `ZacharieLNolet`. Bundle id : `ca.zacharienolet.app`.  
-Nom sous l’icône : **Z. L. Nolet** (le nom long est dans l’app).
+Nom sous l’icône : **Nolet Gilbert** (le nom long est dans l’app).
 
 ### Si `bundle exec pod install` échoue
 
@@ -144,10 +144,10 @@ Le JS est partagé. La cible de design est **iPhone**.
 - `docs/UX-CLASSEUR.md` — spec coupures / notes
 - `docs/TESTING.md` — tests et perf
 - `docs/REPRODUCE.md` — prompts de rôle pour un autre développeur
-- `web/` — site d’embauche (accueil avec vidéo, parcours, preuves exécutées avec clips vidéo, travailler ensemble, contact, CV imprimable + PDF). Site statique complet : 404, confidentialité, conditions, `robots.txt`, `sitemap.xml`, favicons, image Open Graph, en-têtes de sécurité (`_headers`). Déployé sur GitHub Pages par `.github/workflows/pages.yml` (activer Settings → Pages → Source : GitHub Actions).
+- `web/` — site d’embauche (accueil avec vidéo, parcours, preuves exécutées avec clips vidéo, travailler ensemble, contact, CV imprimable + PDF), plus deux sites distincts et autonomes dans le même dépôt : `web/donnees/` (science des données : régression, test A/B) et `web/cpq/` (configurateur avec devis). Site statique complet : 404, confidentialité, conditions, `robots.txt`, `sitemap.xml`, favicons, image Open Graph, en-têtes de sécurité (`_headers`). Déployé sur GitHub Pages par `.github/workflows/pages.yml` (activer Settings → Pages → Source : GitHub Actions).
 - `CLAUDE.md` — règles permanentes de code du dépôt (site réel, sécurité, légal, identité).
 - `docs/PROJETS.md` — feuille de route : dix-huit projets exemples, deux par compétence (dont une boutique de t-shirts Shopify et son plan de marketing sur les réseaux), avec jalons, critères de « fini » et ordre de livraison sur six mois.
 
 ## Licence
 
-Usage privé — Zacharie L. Nolet.
+Usage privé — Ludovic Zacharie Nolet Gilbert.

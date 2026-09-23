@@ -35,7 +35,7 @@ export function CabinetScreen({ navigation }: CabinetProps) {
   const exportClasseur = async () => {
     try {
       const mode = await shareMarkdownFile(
-        `Classeur-Zacharie-L-Nolet-${today}.md`,
+        `Classeur-Ludovic-Zacharie-Nolet-Gilbert-${today}.md`,
         renderClasseurMarkdown({
           notes,
           bookmarks,
@@ -69,7 +69,7 @@ export function CabinetScreen({ navigation }: CabinetProps) {
       ]}>
       <BrandMark size={88} />
       <Text style={[type.kicker, { color: colors.accent }]}>Cabinet</Text>
-      <Text style={[type.display, { color: colors.text }]}>Zacharie L. Nolet</Text>
+      <Text style={[type.display, { color: colors.text }]}>Ludovic Zacharie Nolet Gilbert</Text>
       <Text style={[type.dek, { color: colors.textMuted }]}>
         Ceci n’est pas un réseau social. Pas de likes, pas de commentaires, pas de fil. Un cahier,
         une édition, une mémoire.

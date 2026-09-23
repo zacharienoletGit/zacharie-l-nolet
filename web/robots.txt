@@ -3,3 +3,5 @@ User-agent: *
 Allow: /
 
 Sitemap: https://zacharienoletgit.github.io/zacharie-l-nolet/sitemap.xml
+Sitemap: https://zacharienoletgit.github.io/zacharie-l-nolet/donnees/sitemap.xml
+Sitemap: https://zacharienoletgit.github.io/zacharie-l-nolet/cpq/sitemap.xml

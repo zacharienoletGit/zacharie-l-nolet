@@ -33,7 +33,7 @@ describe('export markdown', () => {
       articles: [article],
       exportedAt: '2026-09-01T21:00:00-04:00',
     });
-    expect(md).toContain('# Classeur — Zacharie L. Nolet');
+    expect(md).toContain('# Classeur — Ludovic Zacharie Nolet Gilbert');
     expect(md).toContain('## Coupures');
     expect(md).toContain('L’édition contre le fil');
     expect(md).toContain('mardi 1 septembre 2026');
